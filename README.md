@@ -1,2 +1,1 @@
-# botcoin
-A bitcoin bot
+# Botcoin

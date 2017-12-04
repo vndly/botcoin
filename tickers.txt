@@ -1,0 +1,12 @@
+https://cex.io/api/ticker/BTC/USD
+https://api.coindesk.com/v1/bpi/currentprice/USD.json
+https://blockchain.info/ticker
+https://bitaps.com/api/ticker
+
+https://www.bitstamp.net/api/ticker/
+https://www.bitstamp.net/api/v2/ticker/btcusd
+
+https://github.com/sebaslogen/bitcoin-price-ticker/blob/master/data/data-providers.json
+
+https://min-api.cryptocompare.com/data/price?fsym=BTC&tsyms=USD&e=Poloniex
+e->https://www.cryptocompare.com/api/
