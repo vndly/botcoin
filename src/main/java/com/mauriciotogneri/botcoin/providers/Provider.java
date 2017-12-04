@@ -14,6 +14,7 @@ public abstract class Provider<T>
     private final String url;
     private final OkHttpClient client;
     private final Gson gson;
+    private float last;
 
     public Provider(Class<T> clazz, String url)
     {
@@ -40,11 +41,13 @@ public abstract class Provider<T>
     {
         try
         {
-            return value(payload());
+            last = value(payload());
+
+            return last;
         }
         catch (Exception e)
         {
-            return 0;
+            return last;
         }
     }
 

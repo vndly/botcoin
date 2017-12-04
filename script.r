@@ -1,9 +1,9 @@
 #table=read.csv("/home/max/github/botcoin/data.csv", header=TRUE)
-table=read.csv("/home/max/github/botcoin/log_1512428673476.csv", header=TRUE)
+table=read.csv("/home/max/github/botcoin/logs/log_1512429652433.csv", header=TRUE)
 attach(table)
 #View(table)
 
-table=table[,1:5]
+#table=table[,1:5]
 
 length=length(table[,1])
 min=20000
