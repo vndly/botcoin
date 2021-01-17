@@ -18,46 +18,48 @@ public class BtcEurWallet implements Wallet
     }
 
     @Override
-    public void buy(float buyAmount, float price)
+    public void buy(float btcToBuy, float price)
     {
-        float eurToSpend = buyAmount * price;
+        float eurToSpend = btcToBuy * price;
 
         balanceEUR = balanceEUR - eurToSpend;
         eurSpent = eurSpent + eurToSpend;
-        balanceBTC = balanceBTC + buyAmount;
+        balanceBTC = balanceBTC + btcToBuy;
 
-        printBuy(price, eurToSpend, buyAmount);
+        printBuy(price, btcToBuy, eurToSpend);
         printState();
     }
 
     @Override
-    public void sell(float sellAmount, float price)
+    public void sell(float btcToSell, float price)
     {
-        float eurToGain = sellAmount * price;
-        float originalCost = sellAmount * boughtPrice();
+        float eurToGain = btcToSell * price;
+        float originalCost = btcToSell * boughtPrice();
+        float profit = eurToGain - originalCost;
 
         balanceEUR = balanceEUR + eurToGain;
         eurSpent = eurSpent - originalCost;
-        balanceBTC = balanceBTC - sellAmount;
+        balanceBTC = balanceBTC - btcToSell;
 
-        printSell(price, eurToGain, sellAmount);
+        printSell(price, btcToSell, eurToGain, profit);
         printState();
     }
 
-    private void printBuy(float price, float amountSpent, float btcToBuy)
+    private void printBuy(float price, float btcToBuy, float eurSpent)
     {
         log.log("OPERATION:  BUY");
         log.log("PRICE:      " + String.format("%.2f", price) + " EUR");
-        log.log("SPENT:      " + String.format("%.2f", amountSpent) + " EUR");
         log.log("AMOUNT:     " + String.format("%.8f", btcToBuy) + " BTC");
+        log.log("SPENT:      " + String.format("%.2f", eurSpent) + " EUR");
     }
 
-    private void printSell(float price, float amountGained, float btcToSell)
+    private void printSell(float price, float btcToSell, float eurGained, float profit)
     {
         log.log("OPERATION:  SELL");
         log.log("PRICE:      " + String.format("%.2f", price) + " EUR");
-        log.log("GAINED:     " + String.format("%.2f", amountGained) + " EUR");
         log.log("AMOUNT:     " + String.format("%.8f", btcToSell) + " BTC");
+        log.log("GAINED:     " + String.format("%.2f", eurGained) + " EUR");
+        log.log("PROFIT:     " + String.format("%.2f", profit) + " EUR");
     }
 
     private void printState()
@@ -67,7 +69,7 @@ public class BtcEurWallet implements Wallet
         log.log("BALANCE:    " + String.format("%.8f", balanceBTC) + " BTC");
         log.log("SPENT:      " + String.format("%.2f", eurSpent) + " EUR");
         log.log("BOUGHT AT:  " + String.format("%.2f", boughtPrice()) + " EUR");
-        log.log("====================================");
+        log.log("\n====================================\n");
     }
 
     public float boughtPrice()

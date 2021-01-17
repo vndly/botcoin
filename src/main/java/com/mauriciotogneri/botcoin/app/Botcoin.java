@@ -47,10 +47,10 @@ public class Botcoin
     public static void main(String[] args) throws Exception
     {
         Log log = new Log("output/logs.txt");
-        BtcEurWallet wallet = new BtcEurWallet(1000, 0, log);
+        BtcEurWallet wallet = new BtcEurWallet(5000, 0, log);
         PriceProvider priceProvider = new FileProvider("input/prices.csv");
-        BuyStrategy buyStrategy = new BasicBuyStrategy(wallet, 10);
-        SellStrategy sellStrategy = new BasicSellStrategy(wallet, 10);
+        BuyStrategy buyStrategy = new BasicBuyStrategy(wallet, 50);
+        SellStrategy sellStrategy = new BasicSellStrategy(wallet, 50);
 
         Botcoin botcoin = new Botcoin(
                 wallet,
