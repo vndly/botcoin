@@ -9,10 +9,10 @@ public class BasicBuyStrategy implements BuyStrategy
     private final float minAmountToSpend;
     private final float percentageMultiplier;
 
-    public BasicBuyStrategy(BtcEurWallet wallet, float minAmountToSpend, float percentageMultiplier)
+    public BasicBuyStrategy(BtcEurWallet wallet, float minEurToSpend, float percentageMultiplier)
     {
         this.wallet = wallet;
-        this.minAmountToSpend = minAmountToSpend;
+        this.minAmountToSpend = minEurToSpend;
         this.percentageMultiplier = percentageMultiplier;
     }
 

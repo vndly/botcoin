@@ -8,10 +8,10 @@ public class BasicSellStrategy implements SellStrategy
     private final float minAmountToGain;
     private final float percentageMultiplier;
 
-    public BasicSellStrategy(BtcEurWallet wallet, float minAmountToGain, float percentageMultiplier)
+    public BasicSellStrategy(BtcEurWallet wallet, float minEurToGain, float percentageMultiplier)
     {
         this.wallet = wallet;
-        this.minAmountToGain = minAmountToGain;
+        this.minAmountToGain = minEurToGain;
         this.percentageMultiplier = percentageMultiplier;
     }
 
