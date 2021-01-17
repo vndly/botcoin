@@ -49,12 +49,13 @@ public class Botcoin
         PriceProvider priceProvider = new FileProvider("input/prices.csv");
         Log log = new Log("output/logs.txt");
 
-        float minEurAmount = 100;
-        float percentageMultiplier = 20;
+        float minEurThreshold = 1;
+        float minPercentageThreshold = 0f;
+        float percentageMultiplier = 1;
 
         BtcEurWallet wallet = new BtcEurWallet(5000, 0, log);
-        BuyStrategy buyStrategy = new BasicBuyStrategy(wallet, minEurAmount, percentageMultiplier);
-        SellStrategy sellStrategy = new BasicSellStrategy(wallet, minEurAmount, percentageMultiplier);
+        BuyStrategy buyStrategy = new BasicBuyStrategy(wallet, minEurThreshold, minPercentageThreshold, percentageMultiplier);
+        SellStrategy sellStrategy = new BasicSellStrategy(wallet, minEurThreshold, minPercentageThreshold, percentageMultiplier);
 
         Botcoin botcoin = new Botcoin(
                 wallet,

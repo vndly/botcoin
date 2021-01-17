@@ -6,13 +6,15 @@ public class BasicBuyStrategy implements BuyStrategy
 {
     private float allTimeHigh = 0;
     private final BtcEurWallet wallet;
-    private final float minAmountToSpend;
+    private final float minEurThreshold;
+    private final float minPercentageThreshold;
     private final float percentageMultiplier;
 
-    public BasicBuyStrategy(BtcEurWallet wallet, float minEurToSpend, float percentageMultiplier)
+    public BasicBuyStrategy(BtcEurWallet wallet, float minEurThreshold, float minPercentageThreshold, float percentageMultiplier)
     {
         this.wallet = wallet;
-        this.minAmountToSpend = minEurToSpend;
+        this.minEurThreshold = minEurThreshold;
+        this.minPercentageThreshold = minPercentageThreshold;
         this.percentageMultiplier = percentageMultiplier;
     }
 
@@ -26,11 +28,17 @@ public class BasicBuyStrategy implements BuyStrategy
             if (price < allTimeHigh)
             {
                 float percentageDown = 1 - (price / allTimeHigh);
-                float eurToSpend = wallet.balanceEUR() * percentageDown * percentageMultiplier;
 
-                if ((eurToSpend >= minAmountToSpend) && (wallet.balanceEUR() >= eurToSpend))
+                System.out.println(String.format("%.2f", percentageDown));
+
+                if (percentageDown >= minPercentageThreshold)
                 {
-                    result = eurToSpend / price;
+                    float eurToSpend = wallet.balanceEUR() * percentageDown * percentageMultiplier;
+
+                    if ((eurToSpend >= minEurThreshold) && (wallet.balanceEUR() >= eurToSpend))
+                    {
+                        result = eurToSpend / price;
+                    }
                 }
             }
             else
@@ -43,7 +51,7 @@ public class BasicBuyStrategy implements BuyStrategy
             float percentageDown = 1 - (price / wallet.boughtPrice());
             float eurToSpend = wallet.balanceEUR() * percentageDown * percentageMultiplier;
 
-            if ((eurToSpend >= minAmountToSpend) && (wallet.balanceEUR() >= eurToSpend))
+            if ((eurToSpend >= minEurThreshold) && (wallet.balanceEUR() >= eurToSpend))
             {
                 result = eurToSpend / price;
             }
