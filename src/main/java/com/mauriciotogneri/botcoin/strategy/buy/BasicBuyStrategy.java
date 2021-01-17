@@ -2,8 +2,6 @@ package com.mauriciotogneri.botcoin.strategy.buy;
 
 import com.mauriciotogneri.botcoin.wallet.BtcEurWallet;
 
-import static com.mauriciotogneri.botcoin.util.Decimal.crypto;
-
 public class BasicBuyStrategy implements BuyStrategy
 {
     private float allTimeHigh = 0;
@@ -30,7 +28,7 @@ public class BasicBuyStrategy implements BuyStrategy
 
                 if ((eurToSpend >= minAmountToSpend) && (wallet.balanceEUR() >= eurToSpend))
                 {
-                    result = crypto(eurToSpend / price);
+                    result = eurToSpend / price;
                 }
             }
             else
@@ -45,7 +43,7 @@ public class BasicBuyStrategy implements BuyStrategy
 
             if ((eurToSpend >= minAmountToSpend) && (wallet.balanceEUR() >= eurToSpend))
             {
-                result = crypto(eurToSpend / price);
+                result = eurToSpend / price;
             }
         }
 

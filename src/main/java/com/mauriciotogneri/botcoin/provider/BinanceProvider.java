@@ -1,7 +1,6 @@
 package com.mauriciotogneri.botcoin.provider;
 
 import com.mauriciotogneri.botcoin.network.HttpRequest;
-import com.mauriciotogneri.botcoin.util.Decimal;
 
 public class BinanceProvider implements PriceProvider
 {
@@ -27,7 +26,7 @@ public class BinanceProvider implements PriceProvider
 
         Payload payload = httpRequest.execute(url, Payload.class);
 
-        return Decimal.currency(payload.price);
+        return payload.price;
     }
 
     public static class Payload

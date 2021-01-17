@@ -2,9 +2,6 @@ package com.mauriciotogneri.botcoin.wallet;
 
 import com.mauriciotogneri.botcoin.util.Log;
 
-import static com.mauriciotogneri.botcoin.util.Decimal.crypto;
-import static com.mauriciotogneri.botcoin.util.Decimal.currency;
-
 public class BtcEurWallet implements Wallet
 {
     private float balanceEUR;
@@ -23,11 +20,11 @@ public class BtcEurWallet implements Wallet
     @Override
     public void buy(float buyAmount, float price)
     {
-        float eurToSpend = currency(buyAmount * price);
+        float eurToSpend = buyAmount * price;
 
-        balanceEUR = currency(balanceEUR - eurToSpend);
-        eurSpent = currency(eurSpent + eurToSpend);
-        balanceBTC = crypto(balanceBTC + buyAmount);
+        balanceEUR = balanceEUR - eurToSpend;
+        eurSpent = eurSpent + eurToSpend;
+        balanceBTC = balanceBTC + buyAmount;
 
         printBuy(price, eurToSpend, buyAmount);
         printState();
@@ -36,12 +33,12 @@ public class BtcEurWallet implements Wallet
     @Override
     public void sell(float sellAmount, float price)
     {
-        float eurToGain = currency(sellAmount * price);
-        float originalCost = currency(sellAmount * boughtPrice());
+        float eurToGain = sellAmount * price;
+        float originalCost = sellAmount * boughtPrice();
 
-        balanceEUR = currency(balanceEUR + eurToGain);
-        eurSpent = currency(eurSpent - originalCost);
-        balanceBTC = crypto(balanceBTC - sellAmount);
+        balanceEUR = balanceEUR + eurToGain;
+        eurSpent = eurSpent - originalCost;
+        balanceBTC = balanceBTC - sellAmount;
 
         printSell(price, eurToGain, sellAmount);
         printState();
@@ -50,26 +47,26 @@ public class BtcEurWallet implements Wallet
     private void printBuy(float price, float amountSpent, float btcToBuy)
     {
         log.log("OPERATION:  BUY");
-        log.log("PRICE:      " + price + " EUR");
-        log.log("SPENT:      " + amountSpent + " EUR");
+        log.log("PRICE:      " + String.format("%.2f", price) + " EUR");
+        log.log("SPENT:      " + String.format("%.2f", amountSpent) + " EUR");
         log.log("AMOUNT:     " + String.format("%.8f", btcToBuy) + " BTC");
     }
 
     private void printSell(float price, float amountGained, float btcToSell)
     {
         log.log("OPERATION:  SELL");
-        log.log("PRICE:      " + price + " EUR");
-        log.log("GAINED:     " + amountGained + " EUR");
+        log.log("PRICE:      " + String.format("%.2f", price) + " EUR");
+        log.log("GAINED:     " + String.format("%.2f", amountGained) + " EUR");
         log.log("AMOUNT:     " + String.format("%.8f", btcToSell) + " BTC");
     }
 
     private void printState()
     {
         log.log("");
-        log.log("BALANCE:    " + balanceEUR + " EUR");
+        log.log("BALANCE:    " + String.format("%.2f", balanceEUR) + " EUR");
         log.log("BALANCE:    " + String.format("%.8f", balanceBTC) + " BTC");
-        log.log("SPENT:      " + eurSpent + " EUR");
-        log.log("BOUGHT AT:  " + boughtPrice() + " EUR");
+        log.log("SPENT:      " + String.format("%.2f", eurSpent) + " EUR");
+        log.log("BOUGHT AT:  " + String.format("%.2f", boughtPrice()) + " EUR");
         log.log("====================================");
     }
 

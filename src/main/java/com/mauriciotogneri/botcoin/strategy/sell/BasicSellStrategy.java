@@ -2,8 +2,6 @@ package com.mauriciotogneri.botcoin.strategy.sell;
 
 import com.mauriciotogneri.botcoin.wallet.BtcEurWallet;
 
-import static com.mauriciotogneri.botcoin.util.Decimal.crypto;
-
 public class BasicSellStrategy implements SellStrategy
 {
     private final BtcEurWallet wallet;
@@ -28,7 +26,7 @@ public class BasicSellStrategy implements SellStrategy
 
             if ((eurToGain >= minAmountToSpend) && (wallet.balanceBTC() >= btcToSell))
             {
-                result = crypto(btcToSell);
+                result = btcToSell;
             }
         }
 

@@ -26,7 +26,7 @@ public class PriceCollector
         {
             long timestamp = System.currentTimeMillis() / 1000;
             float price = priceProvider.price();
-            String line = String.format("%s;%s\n", timestamp, price);
+            String line = String.format("%s;%.2f\n", timestamp, price);
 
             bufferedWriter.write(line);
             bufferedWriter.flush();
