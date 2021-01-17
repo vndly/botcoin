@@ -1,4 +1,6 @@
-package com.mauriciotogneri.botcoin.log;
+package com.mauriciotogneri.botcoin;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -11,7 +13,7 @@ public class Log
 {
     private final BufferedWriter writer;
 
-    public Log(File file) throws IOException
+    public Log(@NotNull File file) throws IOException
     {
         if (!file.exists())
         {
@@ -22,7 +24,7 @@ public class Log
         writer = new BufferedWriter(fileWriter);
     }
 
-    public void log(List<Float> values)
+    public void log(@NotNull List<Float> values)
     {
         List<String> list = values.stream().map(Object::toString).collect(Collectors.toList());
         log(String.join(",", list));
