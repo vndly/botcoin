@@ -15,6 +15,12 @@ public class BinanceProvider implements PriceProvider
         this.url = "https://api.binance.com/api/v3/ticker/price?symbol=" + symbol;
     }
 
+    @Override
+    public boolean hasMorePrices()
+    {
+        return true;
+    }
+
     public float price() throws Exception
     {
         Thread.sleep(frequency);

@@ -1,4 +1,4 @@
-package com.mauriciotogneri.botcoin;
+package com.mauriciotogneri.botcoin.app;
 
 import com.mauriciotogneri.botcoin.provider.FileProvider;
 import com.mauriciotogneri.botcoin.provider.PriceProvider;
@@ -6,6 +6,7 @@ import com.mauriciotogneri.botcoin.strategy.buy.BasicBuyStrategy;
 import com.mauriciotogneri.botcoin.strategy.buy.BuyStrategy;
 import com.mauriciotogneri.botcoin.strategy.sell.BasicSellStrategy;
 import com.mauriciotogneri.botcoin.strategy.sell.SellStrategy;
+import com.mauriciotogneri.botcoin.util.Log;
 import com.mauriciotogneri.botcoin.wallet.BtcEurWallet;
 import com.mauriciotogneri.botcoin.wallet.Wallet;
 
@@ -26,7 +27,7 @@ public class Botcoin
 
     public void start() throws Exception
     {
-        while (true)
+        while (priceProvider.hasMorePrices())
         {
             float price = priceProvider.price();
             float buyAmount = buyStrategy.buy(price);
@@ -45,10 +46,11 @@ public class Botcoin
 
     public static void main(String[] args) throws Exception
     {
-        Wallet wallet = new BtcEurWallet(0, 0);
+        Log log = new Log("output/logs.txt");
+        BtcEurWallet wallet = new BtcEurWallet(1000, 0, log);
         PriceProvider priceProvider = new FileProvider("input/prices.csv");
         BuyStrategy buyStrategy = new BasicBuyStrategy(wallet, 10);
-        SellStrategy sellStrategy = new BasicSellStrategy();
+        SellStrategy sellStrategy = new BasicSellStrategy(wallet, 10);
 
         Botcoin botcoin = new Botcoin(
                 wallet,
@@ -58,23 +60,4 @@ public class Botcoin
         );
         botcoin.start();
     }
-
-    /*private void collectPrices() throws Exception
-    {
-        FileWriter fileWriter = new FileWriter("prices.csv", true);
-        BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-        BinanceProvider binance = new BinanceProvider("BTCEUR");
-
-        while (true)
-        {
-            long timestamp = System.currentTimeMillis() / 1000;
-            float price = binance.price();
-            String line = String.format("%s;%s\n", timestamp, price);
-
-            bufferedWriter.write(line);
-            bufferedWriter.flush();
-
-            Thread.sleep(1000 * 60);
-        }
-    }*/
 }

@@ -4,18 +4,26 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.nio.channels.FileChannel;
 
 public class Log
 {
     private final BufferedWriter writer;
 
-    public Log(@NotNull File file) throws IOException
+    public Log(@NotNull String path) throws IOException
     {
-        if (!file.exists())
+        File file = new File(path);
+
+        if (file.exists())
+        {
+            FileChannel fileChannel = new FileOutputStream(file, true).getChannel();
+            fileChannel.truncate(0);
+            fileChannel.close();
+        }
+        else
         {
             file.createNewFile();
         }
@@ -24,18 +32,14 @@ public class Log
         writer = new BufferedWriter(fileWriter);
     }
 
-    public void log(@NotNull List<Float> values)
-    {
-        List<String> list = values.stream().map(Object::toString).collect(Collectors.toList());
-        log(String.join(",", list));
-    }
-
     public void log(String data)
     {
         try
         {
             writer.write(data + "\n");
             writer.flush();
+
+            System.out.println(data);
         }
         catch (Exception e)
         {

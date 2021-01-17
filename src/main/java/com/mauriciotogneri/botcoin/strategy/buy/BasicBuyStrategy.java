@@ -1,16 +1,16 @@
 package com.mauriciotogneri.botcoin.strategy.buy;
 
-import com.mauriciotogneri.botcoin.wallet.Wallet;
+import com.mauriciotogneri.botcoin.wallet.BtcEurWallet;
 
 import static com.mauriciotogneri.botcoin.util.Decimal.crypto;
 
 public class BasicBuyStrategy implements BuyStrategy
 {
-    private float lastPrice = 0;
+    private float allTimeHigh = 0;
+    private final BtcEurWallet wallet;
     private final float minAmountToSpend;
-    private final Wallet wallet;
 
-    public BasicBuyStrategy(Wallet wallet, float minAmountToSpend)
+    public BasicBuyStrategy(BtcEurWallet wallet, float minAmountToSpend)
     {
         this.wallet = wallet;
         this.minAmountToSpend = minAmountToSpend;
@@ -19,27 +19,36 @@ public class BasicBuyStrategy implements BuyStrategy
     @Override
     public float buy(float price)
     {
-        lastPrice = price;
+        float result = 0;
 
-        if ((price < this.lastPrice) && (this.lastPrice >= 0))
+        if (wallet.balanceBTC() == 0) // first buy
         {
-            float percentageDown = 100 - ((price * 100) / this.lastPrice);
-            float amountToSpend = wallet.balanceTarget() * percentageDown / 100;
-
-            if ((amountToSpend >= minAmountToSpend) && (wallet.balanceTarget() >= amountToSpend))
+            if (price < allTimeHigh)
             {
-                float btcToBuy = amountToSpend / price;
+                float percentageDown = 1 - (price / allTimeHigh);
+                float eurToSpend = wallet.balanceEUR() * percentageDown;
 
-                return crypto(btcToBuy);
+                if ((eurToSpend >= minAmountToSpend) && (wallet.balanceEUR() >= eurToSpend))
+                {
+                    result = crypto(eurToSpend / price);
+                }
             }
             else
             {
-                return 0;
+                allTimeHigh = price;
             }
         }
-        else
+        else if (price < wallet.boughtPrice()) // average down
         {
-            return 0;
+            float percentageDown = 1 - (price / wallet.boughtPrice());
+            float eurToSpend = wallet.balanceEUR() * percentageDown;
+
+            if ((eurToSpend >= minAmountToSpend) && (wallet.balanceEUR() >= eurToSpend))
+            {
+                result = crypto(eurToSpend / price);
+            }
         }
+
+        return result;
     }
 }
