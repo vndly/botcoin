@@ -74,7 +74,7 @@ public class BtcEurWallet implements Wallet
 
     public float boughtPrice()
     {
-        return eurSpent / balanceBTC;
+        return (balanceBTC > 0) ? (eurSpent / balanceBTC) : 0;
     }
 
     public float balanceBTC()
