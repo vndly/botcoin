@@ -1,4 +1,4 @@
-package com.mauriciotogneri.botcoin.providers;
+package com.mauriciotogneri.botcoin.provider;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -42,7 +42,7 @@ public class FileProvider implements PriceProvider
         fileReader.close();
 
         float[] result = new float[list.size()];
-        
+
         for (int i = 0; i < list.size(); i++)
         {
             result[i] = list.get(i);

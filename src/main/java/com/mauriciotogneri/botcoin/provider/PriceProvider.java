@@ -1,4 +1,4 @@
-package com.mauriciotogneri.botcoin.providers;
+package com.mauriciotogneri.botcoin.provider;
 
 public interface PriceProvider
 {

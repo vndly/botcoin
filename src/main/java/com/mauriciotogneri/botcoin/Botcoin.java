@@ -1,11 +1,13 @@
 package com.mauriciotogneri.botcoin;
 
-import com.mauriciotogneri.botcoin.providers.FileProvider;
-import com.mauriciotogneri.botcoin.providers.PriceProvider;
-import com.mauriciotogneri.botcoin.strategies.buy.BasicBuyStrategy;
-import com.mauriciotogneri.botcoin.strategies.buy.BuyStrategy;
-import com.mauriciotogneri.botcoin.strategies.sell.BasicSellStrategy;
-import com.mauriciotogneri.botcoin.strategies.sell.SellStrategy;
+import com.mauriciotogneri.botcoin.provider.FileProvider;
+import com.mauriciotogneri.botcoin.provider.PriceProvider;
+import com.mauriciotogneri.botcoin.strategy.buy.BasicBuyStrategy;
+import com.mauriciotogneri.botcoin.strategy.buy.BuyStrategy;
+import com.mauriciotogneri.botcoin.strategy.sell.BasicSellStrategy;
+import com.mauriciotogneri.botcoin.strategy.sell.SellStrategy;
+import com.mauriciotogneri.botcoin.wallet.BtcEurWallet;
+import com.mauriciotogneri.botcoin.wallet.Wallet;
 
 public class Botcoin
 {
@@ -27,11 +29,17 @@ public class Botcoin
         while (true)
         {
             float price = priceProvider.price();
+            float buyAmount = buyStrategy.buy(price);
+            float sellAmount = sellStrategy.sell(price);
 
-            float buyAmount = buyStrategy.buy();
-            float sellAmount = sellStrategy.sell();
-
-            System.out.println(price);
+            if (buyAmount > 0)
+            {
+                wallet.buy(buyAmount, price);
+            }
+            else if (sellAmount > 0)
+            {
+                wallet.sell(sellAmount, price);
+            }
         }
     }
 
@@ -40,7 +48,7 @@ public class Botcoin
         PriceProvider priceProvider = new FileProvider("input/prices.csv");
         BuyStrategy buyStrategy = new BasicBuyStrategy();
         SellStrategy sellStrategy = new BasicSellStrategy();
-        Wallet wallet = new Wallet(0, 0);
+        Wallet wallet = new BtcEurWallet(0, 0);
 
         Botcoin botcoin = new Botcoin(
                 priceProvider,

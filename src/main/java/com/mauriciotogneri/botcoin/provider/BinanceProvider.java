@@ -1,4 +1,4 @@
-package com.mauriciotogneri.botcoin.providers;
+package com.mauriciotogneri.botcoin.provider;
 
 import com.mauriciotogneri.botcoin.network.HttpRequest;
 import com.mauriciotogneri.botcoin.utils.Decimal;
