@@ -2,14 +2,14 @@ package com.mauriciotogneri.botcoin.wallet;
 
 import com.mauriciotogneri.botcoin.util.Log;
 
-public class BtcEurWallet implements Wallet
+public class EricWallet implements Wallet
 {
     private float balanceEUR;
     private float balanceBTC;
     private float eurSpent;
     private final Log log;
 
-    public BtcEurWallet(float balanceEUR, float balanceBTC, Log log)
+    public EricWallet(float balanceEUR, float balanceBTC, Log log)
     {
         this.balanceEUR = balanceEUR;
         this.balanceBTC = balanceBTC;

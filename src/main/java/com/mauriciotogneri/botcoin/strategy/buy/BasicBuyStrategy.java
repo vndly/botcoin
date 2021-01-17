@@ -1,16 +1,16 @@
 package com.mauriciotogneri.botcoin.strategy.buy;
 
-import com.mauriciotogneri.botcoin.wallet.BtcEurWallet;
+import com.mauriciotogneri.botcoin.wallet.MomoWallet;
 
 public class BasicBuyStrategy implements BuyStrategy
 {
     private float allTimeHigh = 0;
-    private final BtcEurWallet wallet;
+    private final MomoWallet wallet;
     private final float minEurThreshold;
     private final float minPercentageThreshold;
     private final float percentageMultiplier;
 
-    public BasicBuyStrategy(BtcEurWallet wallet, float minEurThreshold, float minPercentageThreshold, float percentageMultiplier)
+    public BasicBuyStrategy(MomoWallet wallet, float minEurThreshold, float minPercentageThreshold, float percentageMultiplier)
     {
         this.wallet = wallet;
         this.minEurThreshold = minEurThreshold;

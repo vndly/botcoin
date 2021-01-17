@@ -7,7 +7,7 @@ import com.mauriciotogneri.botcoin.strategy.buy.BuyStrategy;
 import com.mauriciotogneri.botcoin.strategy.sell.BasicSellStrategy;
 import com.mauriciotogneri.botcoin.strategy.sell.SellStrategy;
 import com.mauriciotogneri.botcoin.util.Log;
-import com.mauriciotogneri.botcoin.wallet.BtcEurWallet;
+import com.mauriciotogneri.botcoin.wallet.MomoWallet;
 import com.mauriciotogneri.botcoin.wallet.Wallet;
 
 public class Botcoin
@@ -67,7 +67,7 @@ public class Botcoin
         float minPercentageThreshold = 0f;
         float percentageMultiplier = 1;
 
-        BtcEurWallet wallet = new BtcEurWallet(5000, 0, log);
+        MomoWallet wallet = new MomoWallet(5000, 0, log);
         BuyStrategy buyStrategy = new BasicBuyStrategy(wallet, minEurThreshold, minPercentageThreshold, percentageMultiplier);
         SellStrategy sellStrategy = new BasicSellStrategy(wallet, minEurThreshold, minPercentageThreshold, percentageMultiplier);
 
