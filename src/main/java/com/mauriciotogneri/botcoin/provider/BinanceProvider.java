@@ -1,7 +1,7 @@
 package com.mauriciotogneri.botcoin.provider;
 
 import com.mauriciotogneri.botcoin.network.HttpRequest;
-import com.mauriciotogneri.botcoin.utils.Decimal;
+import com.mauriciotogneri.botcoin.util.Decimal;
 
 public class BinanceProvider implements PriceProvider
 {

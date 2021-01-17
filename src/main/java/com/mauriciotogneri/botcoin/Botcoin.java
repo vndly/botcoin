@@ -11,17 +11,17 @@ import com.mauriciotogneri.botcoin.wallet.Wallet;
 
 public class Botcoin
 {
+    private final Wallet wallet;
     private final PriceProvider priceProvider;
     private final BuyStrategy buyStrategy;
     private final SellStrategy sellStrategy;
-    private final Wallet wallet;
 
-    public Botcoin(PriceProvider priceProvider, BuyStrategy buyStrategy, SellStrategy sellStrategy, Wallet wallet)
+    public Botcoin(Wallet wallet, PriceProvider priceProvider, BuyStrategy buyStrategy, SellStrategy sellStrategy)
     {
+        this.wallet = wallet;
         this.priceProvider = priceProvider;
         this.buyStrategy = buyStrategy;
         this.sellStrategy = sellStrategy;
-        this.wallet = wallet;
     }
 
     public void start() throws Exception
@@ -45,16 +45,16 @@ public class Botcoin
 
     public static void main(String[] args) throws Exception
     {
-        PriceProvider priceProvider = new FileProvider("input/prices.csv");
-        BuyStrategy buyStrategy = new BasicBuyStrategy();
-        SellStrategy sellStrategy = new BasicSellStrategy();
         Wallet wallet = new BtcEurWallet(0, 0);
+        PriceProvider priceProvider = new FileProvider("input/prices.csv");
+        BuyStrategy buyStrategy = new BasicBuyStrategy(wallet, 10);
+        SellStrategy sellStrategy = new BasicSellStrategy();
 
         Botcoin botcoin = new Botcoin(
+                wallet,
                 priceProvider,
                 buyStrategy,
-                sellStrategy,
-                wallet
+                sellStrategy
         );
         botcoin.start();
     }

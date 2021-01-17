@@ -5,4 +5,8 @@ public interface Wallet
     void buy(float buyAmount, float price);
 
     void sell(float sellAmount, float price);
+
+    float balanceSource();
+
+    float balanceTarget();
 }
