@@ -5,12 +5,14 @@ import com.mauriciotogneri.botcoin.wallet.BtcEurWallet;
 public class BasicSellStrategy implements SellStrategy
 {
     private final BtcEurWallet wallet;
-    private final float minAmountToSpend;
+    private final float minAmountToGain;
+    private final float percentageMultiplier;
 
-    public BasicSellStrategy(BtcEurWallet wallet, float minAmountToSpend)
+    public BasicSellStrategy(BtcEurWallet wallet, float minAmountToGain, float percentageMultiplier)
     {
         this.wallet = wallet;
-        this.minAmountToSpend = minAmountToSpend;
+        this.minAmountToGain = minAmountToGain;
+        this.percentageMultiplier = percentageMultiplier;
     }
 
     @Override
@@ -21,10 +23,10 @@ public class BasicSellStrategy implements SellStrategy
         if ((price > wallet.boughtPrice()) && (wallet.boughtPrice() > 0))
         {
             float percentageUp = (price / wallet.boughtPrice()) - 1;
-            float btcToSell = Math.min(wallet.balanceBTC() * percentageUp, wallet.balanceBTC());
+            float btcToSell = Math.min(wallet.balanceBTC() * percentageUp * percentageMultiplier, wallet.balanceBTC());
             float eurToGain = btcToSell * price;
 
-            if ((eurToGain >= minAmountToSpend) && (wallet.balanceBTC() >= btcToSell))
+            if ((eurToGain >= minAmountToGain) && (wallet.balanceBTC() >= btcToSell))
             {
                 result = btcToSell;
             }

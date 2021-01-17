@@ -7,11 +7,13 @@ public class BasicBuyStrategy implements BuyStrategy
     private float allTimeHigh = 0;
     private final BtcEurWallet wallet;
     private final float minAmountToSpend;
+    private final float percentageMultiplier;
 
-    public BasicBuyStrategy(BtcEurWallet wallet, float minAmountToSpend)
+    public BasicBuyStrategy(BtcEurWallet wallet, float minAmountToSpend, float percentageMultiplier)
     {
         this.wallet = wallet;
         this.minAmountToSpend = minAmountToSpend;
+        this.percentageMultiplier = percentageMultiplier;
     }
 
     @Override
@@ -24,7 +26,7 @@ public class BasicBuyStrategy implements BuyStrategy
             if (price < allTimeHigh)
             {
                 float percentageDown = 1 - (price / allTimeHigh);
-                float eurToSpend = wallet.balanceEUR() * percentageDown;
+                float eurToSpend = wallet.balanceEUR() * percentageDown * percentageMultiplier;
 
                 if ((eurToSpend >= minAmountToSpend) && (wallet.balanceEUR() >= eurToSpend))
                 {
@@ -39,7 +41,7 @@ public class BasicBuyStrategy implements BuyStrategy
         else if (price < wallet.boughtPrice()) // average down
         {
             float percentageDown = 1 - (price / wallet.boughtPrice());
-            float eurToSpend = wallet.balanceEUR() * percentageDown;
+            float eurToSpend = wallet.balanceEUR() * percentageDown * percentageMultiplier;
 
             if ((eurToSpend >= minAmountToSpend) && (wallet.balanceEUR() >= eurToSpend))
             {
