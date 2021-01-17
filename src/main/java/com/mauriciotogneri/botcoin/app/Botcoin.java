@@ -46,6 +46,20 @@ public class Botcoin
 
     public static void main(String[] args) throws Exception
     {
+        String owner = System.getenv("OWNER");
+
+        if (owner.equals("momo"))
+        {
+            momoEntry();
+        }
+        else
+        {
+            ericEntry();
+        }
+    }
+
+    private static void momoEntry() throws Exception
+    {
         PriceProvider priceProvider = new FileProvider("input/prices.csv");
         Log log = new Log("output/logs.txt");
 
@@ -64,5 +78,10 @@ public class Botcoin
                 sellStrategy
         );
         botcoin.start();
+    }
+
+    private static void ericEntry() throws Exception
+    {
+        // TODO
     }
 }

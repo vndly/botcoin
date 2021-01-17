@@ -22,7 +22,7 @@ public class PriceCollector
         FileWriter fileWriter = new FileWriter(output, true);
         BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
 
-        while (true)
+        while (priceProvider.hasMorePrices())
         {
             long timestamp = System.currentTimeMillis() / 1000;
             float price = priceProvider.price();
@@ -38,7 +38,7 @@ public class PriceCollector
         PriceProvider binance = new BinanceProvider("BTCEUR", 1000 * 60);
 
         PriceCollector priceCollector = new PriceCollector(
-                "prices.csv",
+                "input/prices.csv",
                 binance
         );
         priceCollector.start();

@@ -69,6 +69,7 @@ public class BtcEurWallet implements Wallet
         log.log("BALANCE:    " + String.format("%.8f", balanceBTC) + " BTC");
         log.log("SPENT:      " + String.format("%.2f", eurSpent) + " EUR");
         log.log("BOUGHT AT:  " + String.format("%.2f", boughtPrice()) + " EUR");
+        // TODO: show total
         log.log("\n====================================\n");
     }
 
