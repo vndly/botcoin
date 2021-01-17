@@ -27,7 +27,7 @@ public class BtcEurWallet implements Wallet
         balanceBTC = balanceBTC + btcToBuy;
 
         printBuy(price, btcToBuy, eurToSpend);
-        printState();
+        printState(price);
     }
 
     @Override
@@ -42,7 +42,7 @@ public class BtcEurWallet implements Wallet
         balanceBTC = balanceBTC - btcToSell;
 
         printSell(price, btcToSell, eurToGain, profit);
-        printState();
+        printState(price);
     }
 
     private void printBuy(float price, float btcToBuy, float eurSpent)
@@ -62,14 +62,14 @@ public class BtcEurWallet implements Wallet
         log.log("PROFIT:     " + String.format("%.2f", profit) + " EUR");
     }
 
-    private void printState()
+    private void printState(float price)
     {
         log.log("");
         log.log("BALANCE:    " + String.format("%.2f", balanceEUR) + " EUR");
         log.log("BALANCE:    " + String.format("%.8f", balanceBTC) + " BTC");
         log.log("SPENT:      " + String.format("%.2f", eurSpent) + " EUR");
         log.log("BOUGHT AT:  " + String.format("%.2f", boughtPrice()) + " EUR");
-        // TODO: show total
+        log.log("TOTAL:      " + String.format("%.2f", balanceEUR + (balanceBTC * price)) + " EUR");
         log.log("\n====================================\n");
     }
 
