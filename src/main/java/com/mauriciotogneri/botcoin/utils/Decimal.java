@@ -1,4 +1,4 @@
-package com.mauriciotogneri.botcoin;
+package com.mauriciotogneri.botcoin.utils;
 
 import java.math.BigDecimal;
 
