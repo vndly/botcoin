@@ -29,6 +29,8 @@ public class BasicSellStrategy implements SellStrategy
             if (percentageUp >= minPercentageThreshold)
             {
                 float btcToSell = Math.min(wallet.balanceBTC() * percentageUp * percentageMultiplier, wallet.balanceBTC());
+                // TODO: if the BTC balance is less than a threshold => sell all
+
                 float eurToGain = btcToSell * price;
 
                 if ((eurToGain >= minEurThreshold) && (wallet.balanceBTC() >= btcToSell))

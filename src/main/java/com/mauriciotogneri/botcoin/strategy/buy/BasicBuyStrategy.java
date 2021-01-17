@@ -29,8 +29,6 @@ public class BasicBuyStrategy implements BuyStrategy
             {
                 float percentageDown = 1 - (price / allTimeHigh);
 
-                System.out.println(String.format("%.2f", percentageDown));
-
                 if (percentageDown >= minPercentageThreshold)
                 {
                     float eurToSpend = wallet.balanceEUR() * percentageDown * percentageMultiplier;
