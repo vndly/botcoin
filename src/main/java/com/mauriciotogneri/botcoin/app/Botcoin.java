@@ -51,11 +51,12 @@ public class Botcoin
 
         float minEurThreshold = 0;
         float minPercentageThreshold = 0.01f;
-        float percentageMultiplier = 1;
+        float percentageMultiplier = 10;
+        float sellAllLimit = 0.001f;
 
         BasicWallet wallet = new BasicWallet(5000, 0, log);
         BuyStrategy buyStrategy = new BasicBuyStrategy(wallet, minEurThreshold, minPercentageThreshold, percentageMultiplier);
-        SellStrategy sellStrategy = new BasicSellStrategy(wallet, minEurThreshold, minPercentageThreshold, percentageMultiplier);
+        SellStrategy sellStrategy = new BasicSellStrategy(wallet, minEurThreshold, minPercentageThreshold, percentageMultiplier, sellAllLimit);
 
         Botcoin botcoin = new Botcoin(
                 wallet,

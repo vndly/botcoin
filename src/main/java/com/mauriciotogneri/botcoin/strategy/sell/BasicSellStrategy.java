@@ -8,13 +8,15 @@ public class BasicSellStrategy implements SellStrategy
     private final float minEurThreshold;
     private final float minPercentageThreshold;
     private final float percentageMultiplier;
+    private final float sellAllLimit;
 
-    public BasicSellStrategy(BasicWallet wallet, float minEurThreshold, float minPercentageThreshold, float percentageMultiplier)
+    public BasicSellStrategy(BasicWallet wallet, float minEurThreshold, float minPercentageThreshold, float percentageMultiplier, float sellAllLimit)
     {
         this.wallet = wallet;
         this.minEurThreshold = minEurThreshold;
         this.minPercentageThreshold = minPercentageThreshold;
         this.percentageMultiplier = percentageMultiplier;
+        this.sellAllLimit = sellAllLimit;
     }
 
     @Override
@@ -29,7 +31,11 @@ public class BasicSellStrategy implements SellStrategy
             if (percentageUp >= minPercentageThreshold)
             {
                 float btcToSell = Math.min(wallet.balanceBTC() * percentageUp * percentageMultiplier, wallet.balanceBTC());
-                // TODO: if the BTC balance is less than a threshold => sell all
+
+                if (wallet.balanceBTC() <= sellAllLimit)
+                {
+                    btcToSell = wallet.balanceBTC();
+                }
 
                 float eurToGain = btcToSell * price;
 
