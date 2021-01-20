@@ -34,7 +34,7 @@ public class Log
 
     public void log(String data)
     {
-        /*try
+        try
         {
             writer.write(data + "\n");
             writer.flush();
@@ -44,6 +44,6 @@ public class Log
         catch (Exception e)
         {
             e.printStackTrace();
-        }*/
+        }
     }
 }

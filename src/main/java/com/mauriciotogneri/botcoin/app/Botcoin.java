@@ -62,38 +62,18 @@ public class Botcoin
         float bestY = 0;
         int index = 1;
 
-        for (int a = 1; a <= 100; a += 10)
+        /*for (int a = 1; a <= 100; a += 5)
         {
-            for (int b = 1; b <= 100; b += 10)
+            for (int b = 1; b <= 100; b += 5)
             {
-                for (int x = 1; x <= 100; x += 10)
+                for (int x = 1; x <= 10; x += 1)
                 {
-                    for (int y = 1; y <= 100; y += 10)
+                    for (int y = 1; y <= 10; y += 1)
                     {
-                        System.out.println((index++ / 100) + "%");
+                        System.out.println((index++ / 400f) + "%");
 
                         PriceProvider priceProvider = new FileProvider(firstPriceProvider.prices());
-
-                        float minPercentageDown = (float) x / 100f; //0.01f;
-                        float percentageBuyMultiplier = a; //70;
-                        float minEurToSpend = 10;
-
-                        float minPercentageUp = (float) y / 100f; //0.05f;
-                        float percentageSellMultiplier = b; //100;
-                        float sellAllLimit = 0.001f;
-                        float minEurToGain = 10;
-
-                        BasicWallet wallet = new BasicWallet(5000, 0, log);
-                        BuyStrategy buyStrategy = new BasicBuyStrategy(wallet, minPercentageDown, percentageBuyMultiplier, minEurToSpend);
-                        SellStrategy sellStrategy = new BasicSellStrategy(wallet, minPercentageUp, percentageSellMultiplier, sellAllLimit, minEurToGain);
-
-                        Botcoin botcoin = new Botcoin(
-                                wallet,
-                                priceProvider,
-                                buyStrategy,
-                                sellStrategy
-                        );
-                        float totalBalance = botcoin.start();
+                        float totalBalance = getPrice(log, priceProvider, a, b, x, y);
 
                         if (totalBalance > maxProfit)
                         {
@@ -106,12 +86,40 @@ public class Botcoin
                     }
                 }
             }
-        }
+        }*/
+
+        PriceProvider priceProvider = new FileProvider(firstPriceProvider.prices());
+        maxProfit = getPrice(log, priceProvider, 100, 100, 1, 5);
 
         System.out.println(String.format("MAX PROFIT: %s", maxProfit));
         System.out.println(String.format("BEST A: %s", bestA));
         System.out.println(String.format("BEST B: %s", bestB));
         System.out.println(String.format("BEST X: %s", bestX));
         System.out.println(String.format("BEST Y: %s", bestY));
+    }
+
+    private static float getPrice(Log log, PriceProvider priceProvider, int a, int b, int x, int y) throws Exception
+    {
+        float minPercentageDown = (float) x / 100f; //0.01f;
+        float percentageBuyMultiplier = a; //70;
+        float minEurToSpend = 10;
+
+        float minPercentageUp = (float) y / 100f; //0.05f;
+        float percentageSellMultiplier = b; //100;
+        float sellAllLimit = 0.001f;
+        float minEurToGain = 10;
+
+        BasicWallet wallet = new BasicWallet(5000, 0, log);
+        BuyStrategy buyStrategy = new BasicBuyStrategy(wallet, minPercentageDown, percentageBuyMultiplier, minEurToSpend);
+        SellStrategy sellStrategy = new BasicSellStrategy(wallet, minPercentageUp, percentageSellMultiplier, sellAllLimit, minEurToGain);
+
+        Botcoin botcoin = new Botcoin(
+                wallet,
+                priceProvider,
+                buyStrategy,
+                sellStrategy
+        );
+
+        return botcoin.start();
     }
 }
