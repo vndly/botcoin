@@ -45,7 +45,7 @@ public class PriceCollector
     @NotNull
     private PriceEntry[] priceEntries(long lastTimestamp)
     {
-        String url = String.format("https://api.binance.com/api/v3/klines?symbol=BTCEUR&interval=1m&endTime=%s", lastTimestamp);
+        String url = String.format("https://api.binance.com/api/v3/klines?symbol=BTCEUR&interval=1d&endTime=%s", lastTimestamp);
         Object[][] entries = httpRequest.execute(url, Object[][].class);
         List<PriceEntry> result = new ArrayList<>();
 
