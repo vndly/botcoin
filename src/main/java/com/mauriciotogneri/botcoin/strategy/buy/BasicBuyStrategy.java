@@ -51,7 +51,7 @@ public class BasicBuyStrategy implements BuyStrategy
         {
             float eurToSpend = Math.min(wallet.balanceEUR() * percentageDown * percentageBuyMultiplier, wallet.balanceEUR());
 
-            if ((eurToSpend > 0) && (eurToSpend >= minEurToSpend) && (wallet.balanceEUR() >= eurToSpend))
+            if ((eurToSpend > 0) && (eurToSpend >= minEurToSpend) && (eurToSpend <= wallet.balanceEUR()))
             {
                 result = eurToSpend / price;
             }

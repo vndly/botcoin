@@ -50,7 +50,7 @@ public class Botcoin
         Log log = new Log("output/logs.txt");
 
         float minPercentageDown = 0.01f;
-        float percentageBuyMultiplier = 10;
+        float percentageBuyMultiplier = 40;
         float minEurToSpend = 10;
 
         float minPercentageUp = 0.01f;
