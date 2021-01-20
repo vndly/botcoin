@@ -78,7 +78,7 @@ public class Botcoin
                         float percentageBuyMultiplier = a; //70;
                         float minEurToSpend = 10;
 
-                        float minPercentageUp = (float) y / 100; //0.05f;
+                        float minPercentageUp = (float) y / 100f; //0.05f;
                         float percentageSellMultiplier = b; //100;
                         float sellAllLimit = 0.001f;
                         float minEurToGain = 10;
