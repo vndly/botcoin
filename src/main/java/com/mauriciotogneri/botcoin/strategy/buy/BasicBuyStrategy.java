@@ -27,17 +27,7 @@ public class BasicBuyStrategy implements BuyStrategy
         {
             if (price < allTimeHigh)
             {
-                float percentageDown = 1 - (price / allTimeHigh);
-
-                if (percentageDown >= minPercentageThreshold)
-                {
-                    float eurToSpend = Math.min(wallet.balanceEUR() * percentageDown * percentageMultiplier, wallet.balanceEUR());
-
-                    if ((eurToSpend >= minEurThreshold) && (wallet.balanceEUR() >= eurToSpend))
-                    {
-                        result = eurToSpend / price;
-                    }
-                }
+                result = byFrom(price, allTimeHigh);
             }
             else
             {
@@ -46,16 +36,24 @@ public class BasicBuyStrategy implements BuyStrategy
         }
         else if (price < wallet.boughtPrice()) // average down
         {
-            float percentageDown = 1 - (price / wallet.boughtPrice());
+            result = byFrom(price, wallet.boughtPrice());
+        }
 
-            if (percentageDown >= minPercentageThreshold)
+        return result;
+    }
+
+    private float byFrom(float price, float limit)
+    {
+        float result = 0;
+        float percentageDown = 1 - (price / limit);
+
+        if (percentageDown >= minPercentageThreshold)
+        {
+            float eurToSpend = Math.min(wallet.balanceEUR() * percentageDown * percentageMultiplier, wallet.balanceEUR());
+
+            if ((eurToSpend >= minEurThreshold) && (wallet.balanceEUR() >= eurToSpend))
             {
-                float eurToSpend = Math.min(wallet.balanceEUR() * percentageDown * percentageMultiplier, wallet.balanceEUR());
-
-                if ((eurToSpend >= minEurThreshold) && (wallet.balanceEUR() >= eurToSpend))
-                {
-                    result = eurToSpend / price;
-                }
+                result = eurToSpend / price;
             }
         }
 
