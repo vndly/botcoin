@@ -108,6 +108,10 @@ public class Botcoin
             }
         }
 
-        System.out.println(String.format("MAX PROFIT %s %s %s %s %s", maxProfit, bestA, bestB, bestX, bestY));
+        System.out.println(String.format("MAX PROFIT: %s", maxProfit));
+        System.out.println(String.format("BEST A: %s", bestA));
+        System.out.println(String.format("BEST B: %s", bestB));
+        System.out.println(String.format("BEST X: %s", bestX));
+        System.out.println(String.format("BEST Y: %s", bestY));
     }
 }
