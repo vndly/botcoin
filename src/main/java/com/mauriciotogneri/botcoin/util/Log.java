@@ -39,7 +39,7 @@ public class Log
             writer.write(data + "\n");
             writer.flush();
 
-            System.out.println(data);
+            //System.out.println(data);
         }
         catch (Exception e)
         {

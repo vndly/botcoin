@@ -47,6 +47,12 @@ public class BasicWallet implements Wallet
         printState(price);
     }
 
+    @Override
+    public float totalBalance(float price)
+    {
+        return balanceEUR + (balanceBTC * price);
+    }
+
     private void printBuy(float price, float btcToBuy, float eurSpent, boolean firstBuy)
     {
         log.log("OPERATION:  " + (firstBuy ? "FIRST BUY" : "BUY DOWN"));
@@ -71,7 +77,7 @@ public class BasicWallet implements Wallet
         log.log("BALANCE:    " + String.format("%.8f", balanceBTC) + " BTC");
         log.log("SPENT:      " + String.format("%.2f", eurSpent) + " EUR");
         log.log("BOUGHT AT:  " + String.format("%.2f", boughtPrice()) + " EUR");
-        log.log("TOTAL:      " + String.format("%.2f", balanceEUR + (balanceBTC * price)) + " EUR");
+        log.log("TOTAL:      " + String.format("%.2f", totalBalance(price)) + " EUR");
         log.log("\n====================================\n");
     }
 

@@ -25,8 +25,10 @@ public class Botcoin
         this.sellStrategy = sellStrategy;
     }
 
-    public void start() throws Exception
+    public float start() throws Exception
     {
+        float lastPrice = 0;
+
         while (priceProvider.hasMorePrices())
         {
             float price = priceProvider.price();
@@ -41,7 +43,11 @@ public class Botcoin
             {
                 wallet.sell(sellAmount, price);
             }
+
+            lastPrice = price;
         }
+
+        return wallet.totalBalance(lastPrice);
     }
 
     public static void main(String[] args) throws Exception
@@ -68,6 +74,7 @@ public class Botcoin
                 buyStrategy,
                 sellStrategy
         );
-        botcoin.start();
+        float totalBalance = botcoin.start();
+        System.out.println(String.format("TOTAL BALANCE %s", totalBalance));
     }
 }
