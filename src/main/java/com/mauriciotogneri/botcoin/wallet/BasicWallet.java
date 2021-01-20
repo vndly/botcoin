@@ -21,13 +21,14 @@ public class BasicWallet implements Wallet
     @Override
     public void buy(float btcToBuy, float price)
     {
+        boolean firstBuy = balanceBTC == 0;
         float eurToSpend = btcToBuy * price;
 
         balanceEUR = balanceEUR - eurToSpend;
         eurSpent = eurSpent + eurToSpend;
         balanceBTC = balanceBTC + btcToBuy;
 
-        printBuy(price, btcToBuy, eurToSpend);
+        printBuy(price, btcToBuy, eurToSpend, firstBuy);
         printState(price);
     }
 
@@ -46,9 +47,9 @@ public class BasicWallet implements Wallet
         printState(price);
     }
 
-    private void printBuy(float price, float btcToBuy, float eurSpent)
+    private void printBuy(float price, float btcToBuy, float eurSpent, boolean firstBuy)
     {
-        log.log("OPERATION:  BUY");
+        log.log("OPERATION:  " + (firstBuy ? "FIRST BUY" : "BUY DOWN"));
         log.log("PRICE:      " + String.format("%.2f", price) + " EUR");
         log.log("AMOUNT:     " + String.format("%.8f", btcToBuy) + " BTC");
         log.log("SPENT:      " + String.format("%.2f", eurSpent) + " EUR");

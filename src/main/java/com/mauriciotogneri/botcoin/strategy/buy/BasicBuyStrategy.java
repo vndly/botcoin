@@ -6,16 +6,16 @@ public class BasicBuyStrategy implements BuyStrategy
 {
     private float allTimeHigh = 0;
     private final BasicWallet wallet;
-    private final float minEurThreshold;
-    private final float minPercentageThreshold;
-    private final float percentageMultiplier;
+    private final float minPercentageDown;
+    private final float percentageBuyMultiplier;
+    private final float minEurToSpend;
 
-    public BasicBuyStrategy(BasicWallet wallet, float minEurThreshold, float minPercentageThreshold, float percentageMultiplier)
+    public BasicBuyStrategy(BasicWallet wallet, float minPercentageDown, float percentageBuyMultiplier, float minEurToSpend)
     {
         this.wallet = wallet;
-        this.minEurThreshold = minEurThreshold;
-        this.minPercentageThreshold = minPercentageThreshold;
-        this.percentageMultiplier = percentageMultiplier;
+        this.minPercentageDown = minPercentageDown;
+        this.percentageBuyMultiplier = percentageBuyMultiplier;
+        this.minEurToSpend = minEurToSpend;
     }
 
     @Override
@@ -47,11 +47,11 @@ public class BasicBuyStrategy implements BuyStrategy
         float result = 0;
         float percentageDown = 1 - (price / limit);
 
-        if (percentageDown >= minPercentageThreshold)
+        if (percentageDown >= minPercentageDown)
         {
-            float eurToSpend = Math.min(wallet.balanceEUR() * percentageDown * percentageMultiplier, wallet.balanceEUR());
+            float eurToSpend = Math.min(wallet.balanceEUR() * percentageDown * percentageBuyMultiplier, wallet.balanceEUR());
 
-            if ((eurToSpend >= minEurThreshold) && (wallet.balanceEUR() >= eurToSpend))
+            if ((eurToSpend > 0) && (eurToSpend >= minEurToSpend) && (wallet.balanceEUR() >= eurToSpend))
             {
                 result = eurToSpend / price;
             }

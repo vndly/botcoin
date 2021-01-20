@@ -5,18 +5,18 @@ import com.mauriciotogneri.botcoin.wallet.BasicWallet;
 public class BasicSellStrategy implements SellStrategy
 {
     private final BasicWallet wallet;
-    private final float minEurThreshold;
-    private final float minPercentageThreshold;
-    private final float percentageMultiplier;
+    private final float minPercentageUp;
+    private final float percentageSellMultiplier;
     private final float sellAllLimit;
+    private final float minEurToGain;
 
-    public BasicSellStrategy(BasicWallet wallet, float minEurThreshold, float minPercentageThreshold, float percentageMultiplier, float sellAllLimit)
+    public BasicSellStrategy(BasicWallet wallet, float minPercentageUp, float percentageSellMultiplier, float sellAllLimit, float minEurToGain)
     {
         this.wallet = wallet;
-        this.minEurThreshold = minEurThreshold;
-        this.minPercentageThreshold = minPercentageThreshold;
-        this.percentageMultiplier = percentageMultiplier;
+        this.minPercentageUp = minPercentageUp;
+        this.percentageSellMultiplier = percentageSellMultiplier;
         this.sellAllLimit = sellAllLimit;
+        this.minEurToGain = minEurToGain;
     }
 
     @Override
@@ -28,9 +28,9 @@ public class BasicSellStrategy implements SellStrategy
         {
             float percentageUp = (price / wallet.boughtPrice()) - 1;
 
-            if (percentageUp >= minPercentageThreshold)
+            if (percentageUp >= minPercentageUp)
             {
-                float btcToSell = Math.min(wallet.balanceBTC() * percentageUp * percentageMultiplier, wallet.balanceBTC());
+                float btcToSell = Math.min(wallet.balanceBTC() * percentageUp * percentageSellMultiplier, wallet.balanceBTC());
 
                 if (wallet.balanceBTC() <= sellAllLimit)
                 {
@@ -39,7 +39,7 @@ public class BasicSellStrategy implements SellStrategy
 
                 float eurToGain = btcToSell * price;
 
-                if ((eurToGain >= minEurThreshold) && (wallet.balanceBTC() >= btcToSell))
+                if ((eurToGain >= minEurToGain) && (wallet.balanceBTC() >= btcToSell))
                 {
                     result = btcToSell;
                 }
