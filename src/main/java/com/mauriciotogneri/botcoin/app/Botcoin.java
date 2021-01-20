@@ -89,7 +89,7 @@ public class Botcoin
         }*/
 
         PriceProvider priceProvider = new FileProvider(firstPriceProvider.prices());
-        maxProfit = getPrice(log, priceProvider, 100, 100, 1, 5);
+        maxProfit = getPrice(log, priceProvider, 100, 100, 1, 4);
 
         System.out.println(String.format("MAX PROFIT: %s", maxProfit));
         System.out.println(String.format("BEST A: %s", bestA));
