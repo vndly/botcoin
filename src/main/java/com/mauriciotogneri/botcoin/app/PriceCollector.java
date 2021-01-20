@@ -38,7 +38,7 @@ public class PriceCollector
             }
 
             bufferedWriter.flush();
-            Thread.sleep(1000 * 60);
+            Thread.sleep(1000);
         }
     }
 
