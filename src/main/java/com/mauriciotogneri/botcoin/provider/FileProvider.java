@@ -18,6 +18,11 @@ public class FileProvider implements PriceProvider
         this.prices = load(path);
     }
 
+    public FileProvider(float[] prices)
+    {
+        this.prices = prices;
+    }
+
     @NotNull
     private float[] load(String path) throws Exception
     {
@@ -49,6 +54,11 @@ public class FileProvider implements PriceProvider
         }
 
         return result;
+    }
+
+    public float[] prices()
+    {
+        return prices;
     }
 
     @Override

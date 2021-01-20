@@ -35,6 +35,7 @@ public class BasicWallet implements Wallet
     @Override
     public void sell(float btcToSell, float price)
     {
+        boolean sellAll = btcToSell == balanceBTC;
         float eurToGain = btcToSell * price;
         float originalCost = btcToSell * boughtPrice();
         float profit = eurToGain - originalCost;
@@ -43,7 +44,7 @@ public class BasicWallet implements Wallet
         eurSpent = eurSpent - originalCost;
         balanceBTC = balanceBTC - btcToSell;
 
-        printSell(price, btcToSell, eurToGain, profit);
+        printSell(price, btcToSell, eurToGain, profit, sellAll);
         printState(price);
     }
 
@@ -61,9 +62,9 @@ public class BasicWallet implements Wallet
         log.log("SPENT:      " + String.format("%.2f", eurSpent) + " EUR");
     }
 
-    private void printSell(float price, float btcToSell, float eurGained, float profit)
+    private void printSell(float price, float btcToSell, float eurGained, float profit, boolean sellAll)
     {
-        log.log("OPERATION:  SELL");
+        log.log("OPERATION:  " + (sellAll ? "SELL ALL" : "SELL PARTIAL"));
         log.log("PRICE:      " + String.format("%.2f", price) + " EUR");
         log.log("AMOUNT:     " + String.format("%.8f", btcToSell) + " BTC");
         log.log("GAINED:     " + String.format("%.2f", eurGained) + " EUR");
