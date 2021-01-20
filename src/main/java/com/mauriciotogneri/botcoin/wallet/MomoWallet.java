@@ -2,6 +2,7 @@ package com.mauriciotogneri.botcoin.wallet;
 
 import com.mauriciotogneri.botcoin.util.Log;
 
+// https://medium.com/swlh/battle-of-the-bots-how-market-makers-fight-it-out-on-crypto-exchanges-2482eb937107
 public class MomoWallet implements Wallet
 {
     private float balanceEUR;
