@@ -2,14 +2,15 @@ package com.mauriciotogneri.botcoin.wallet;
 
 import com.mauriciotogneri.botcoin.util.Log;
 
-public class EricWallet implements Wallet
+// https://medium.com/swlh/battle-of-the-bots-how-market-makers-fight-it-out-on-crypto-exchanges-2482eb937107
+public class BasicWallet implements Wallet
 {
     private float balanceEUR;
     private float balanceBTC;
     private float eurSpent;
     private final Log log;
 
-    public EricWallet(float balanceEUR, float balanceBTC, Log log)
+    public BasicWallet(float balanceEUR, float balanceBTC, Log log)
     {
         this.balanceEUR = balanceEUR;
         this.balanceBTC = balanceBTC;

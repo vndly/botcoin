@@ -7,7 +7,7 @@ import com.mauriciotogneri.botcoin.strategy.buy.BuyStrategy;
 import com.mauriciotogneri.botcoin.strategy.sell.BasicSellStrategy;
 import com.mauriciotogneri.botcoin.strategy.sell.SellStrategy;
 import com.mauriciotogneri.botcoin.util.Log;
-import com.mauriciotogneri.botcoin.wallet.MomoWallet;
+import com.mauriciotogneri.botcoin.wallet.BasicWallet;
 import com.mauriciotogneri.botcoin.wallet.Wallet;
 
 public class Botcoin
@@ -46,28 +46,14 @@ public class Botcoin
 
     public static void main(String[] args) throws Exception
     {
-        String owner = System.getenv("OWNER");
-
-        if (owner.equals("momo"))
-        {
-            momoEntry();
-        }
-        else
-        {
-            ericEntry();
-        }
-    }
-
-    private static void momoEntry() throws Exception
-    {
         PriceProvider priceProvider = new FileProvider("input/prices.csv");
         Log log = new Log("output/logs.txt");
 
-        float minEurThreshold = 1;
-        float minPercentageThreshold = 0f;
+        float minEurThreshold = 0;
+        float minPercentageThreshold = 0.01f;
         float percentageMultiplier = 1;
 
-        MomoWallet wallet = new MomoWallet(5000, 0, log);
+        BasicWallet wallet = new BasicWallet(5000, 0, log);
         BuyStrategy buyStrategy = new BasicBuyStrategy(wallet, minEurThreshold, minPercentageThreshold, percentageMultiplier);
         SellStrategy sellStrategy = new BasicSellStrategy(wallet, minEurThreshold, minPercentageThreshold, percentageMultiplier);
 
@@ -78,10 +64,5 @@ public class Botcoin
                 sellStrategy
         );
         botcoin.start();
-    }
-
-    private static void ericEntry() throws Exception
-    {
-        // TODO
     }
 }

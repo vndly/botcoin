@@ -1,16 +1,16 @@
 package com.mauriciotogneri.botcoin.strategy.buy;
 
-import com.mauriciotogneri.botcoin.wallet.MomoWallet;
+import com.mauriciotogneri.botcoin.wallet.BasicWallet;
 
 public class BasicBuyStrategy implements BuyStrategy
 {
     private float allTimeHigh = 0;
-    private final MomoWallet wallet;
+    private final BasicWallet wallet;
     private final float minEurThreshold;
     private final float minPercentageThreshold;
     private final float percentageMultiplier;
 
-    public BasicBuyStrategy(MomoWallet wallet, float minEurThreshold, float minPercentageThreshold, float percentageMultiplier)
+    public BasicBuyStrategy(BasicWallet wallet, float minEurThreshold, float minPercentageThreshold, float percentageMultiplier)
     {
         this.wallet = wallet;
         this.minEurThreshold = minEurThreshold;
@@ -31,7 +31,7 @@ public class BasicBuyStrategy implements BuyStrategy
 
                 if (percentageDown >= minPercentageThreshold)
                 {
-                    float eurToSpend = wallet.balanceEUR() * percentageDown * percentageMultiplier;
+                    float eurToSpend = Math.min(wallet.balanceEUR() * percentageDown * percentageMultiplier, wallet.balanceEUR());
 
                     if ((eurToSpend >= minEurThreshold) && (wallet.balanceEUR() >= eurToSpend))
                     {
@@ -47,11 +47,15 @@ public class BasicBuyStrategy implements BuyStrategy
         else if (price < wallet.boughtPrice()) // average down
         {
             float percentageDown = 1 - (price / wallet.boughtPrice());
-            float eurToSpend = wallet.balanceEUR() * percentageDown * percentageMultiplier;
 
-            if ((eurToSpend >= minEurThreshold) && (wallet.balanceEUR() >= eurToSpend))
+            if (percentageDown >= minPercentageThreshold)
             {
-                result = eurToSpend / price;
+                float eurToSpend = Math.min(wallet.balanceEUR() * percentageDown * percentageMultiplier, wallet.balanceEUR());
+
+                if ((eurToSpend >= minEurThreshold) && (wallet.balanceEUR() >= eurToSpend))
+                {
+                    result = eurToSpend / price;
+                }
             }
         }
 

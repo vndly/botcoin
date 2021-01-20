@@ -1,15 +1,15 @@
 package com.mauriciotogneri.botcoin.strategy.sell;
 
-import com.mauriciotogneri.botcoin.wallet.MomoWallet;
+import com.mauriciotogneri.botcoin.wallet.BasicWallet;
 
 public class BasicSellStrategy implements SellStrategy
 {
-    private final MomoWallet wallet;
+    private final BasicWallet wallet;
     private final float minEurThreshold;
     private final float minPercentageThreshold;
     private final float percentageMultiplier;
 
-    public BasicSellStrategy(MomoWallet wallet, float minEurThreshold, float minPercentageThreshold, float percentageMultiplier)
+    public BasicSellStrategy(BasicWallet wallet, float minEurThreshold, float minPercentageThreshold, float percentageMultiplier)
     {
         this.wallet = wallet;
         this.minEurThreshold = minEurThreshold;
