@@ -58,18 +58,15 @@ public class Botcoin
         double maxProfit = 0;
         int bestI = 0;
         int bestJ = 0;
+        float bestX = 0;
 
-        //for (int i =1; i <= 100; i++)
-        //{
-        //    for (int j =1; j <= 100; j++)
-        //    {
         PriceProvider priceProvider = new FileProvider(firstPriceProvider.prices());
 
         float minPercentageDown = 0.01f;
         float percentageBuyMultiplier = 70;
         float minEurToSpend = 10;
 
-        float minPercentageUp = 0.01f;
+        float minPercentageUp = 0.05f;
         float percentageSellMultiplier = 100;
         float sellAllLimit = 0.001f;
         float minEurToGain = 10;
@@ -91,10 +88,9 @@ public class Botcoin
             maxProfit = totalBalance;
             //bestI = i;
             //bestJ = j;
+            // bestX = x;
         }
-        //    }
-        //}
 
-        System.out.println(String.format("MAX PROFIT %s %s %s", maxProfit, bestI, bestJ));
+        System.out.println(String.format("MAX PROFIT %s %s %s %s", maxProfit, bestI, bestJ, bestX));
     }
 }
