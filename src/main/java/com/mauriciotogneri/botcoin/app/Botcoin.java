@@ -52,7 +52,7 @@ public class Botcoin
 
     public static void main(String[] args) throws Exception
     {
-        FileProvider firstPriceProvider = new FileProvider("input/prices1.csv");
+        FileProvider firstPriceProvider = new FileProvider("input/prices_BTC_EUR_1m.csv");
         Log log = new Log("output/logs.txt");
 
         double maxProfit = 0;
