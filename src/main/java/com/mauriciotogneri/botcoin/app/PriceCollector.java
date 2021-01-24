@@ -93,7 +93,12 @@ public class PriceCollector
 
     public static void main(String[] args) throws Exception
     {
-        PriceCollector priceCollector = new PriceCollector("LINKEUR", "1m", 2000, "input/prices3.csv");
+        String pair = "LINKEUR";
+        String interval = "1m";
+        Integer limit = 2000;
+        String fileName = String.format("input/prices_%s_%s.csv", pair, interval);
+
+        PriceCollector priceCollector = new PriceCollector(pair, interval, limit, fileName);
         priceCollector.start();
     }
 }
