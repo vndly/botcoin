@@ -34,6 +34,11 @@ public class PriceCollector
         {
             PriceEntry[] entries = priceEntries(lastTimestamp);
 
+            if (entries.length == 0)
+            {
+                break;
+            }
+
             for (PriceEntry entry : entries)
             {
                 String line = String.format("%s;%.2f\n", entry.timestamp, entry.price);
