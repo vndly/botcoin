@@ -12,11 +12,15 @@ import java.util.List;
 
 public class PriceCollector
 {
+    private final String pair;
+    private final String interval;
     private final String output;
     private final HttpRequest httpRequest = new HttpRequest();
 
-    public PriceCollector(String output)
+    public PriceCollector(String pair, String interval, String output)
     {
+        this.pair = pair;
+        this.interval = interval;
         this.output = output;
     }
 
@@ -45,7 +49,7 @@ public class PriceCollector
     @NotNull
     private PriceEntry[] priceEntries(long lastTimestamp)
     {
-        String url = String.format("https://api.binance.com/api/v3/klines?symbol=BTCEUR&interval=1d&endTime=%s", lastTimestamp);
+        String url = String.format("https://api.binance.com/api/v3/klines?symbol=%s&interval=%s&endTime=%s&limit=5", pair, interval, lastTimestamp);
         Object[][] entries = httpRequest.execute(url, Object[][].class);
         List<PriceEntry> result = new ArrayList<>();
 
@@ -78,7 +82,7 @@ public class PriceCollector
 
     public static void main(String[] args) throws Exception
     {
-        PriceCollector priceCollector = new PriceCollector("input/prices.csv");
+        PriceCollector priceCollector = new PriceCollector("LINKEUR", "1m", "input/prices3.csv");
         priceCollector.start();
     }
 }
