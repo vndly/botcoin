@@ -14,13 +14,15 @@ public class PriceCollector
 {
     private final String pair;
     private final String interval;
+    private final Integer limit;
     private final String output;
     private final HttpRequest httpRequest = new HttpRequest();
 
-    public PriceCollector(String pair, String interval, String output)
+    public PriceCollector(String pair, String interval, Integer limit, String output)
     {
         this.pair = pair;
         this.interval = interval;
+        this.limit = limit;
         this.output = output;
     }
 
@@ -29,15 +31,11 @@ public class PriceCollector
         FileWriter fileWriter = new FileWriter(output, true);
         BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
         long lastTimestamp = System.currentTimeMillis();
+        int count = 0;
 
         while (true)
         {
             PriceEntry[] entries = priceEntries(lastTimestamp);
-
-            if (entries.length == 0)
-            {
-                break;
-            }
 
             for (PriceEntry entry : entries)
             {
@@ -47,6 +45,14 @@ public class PriceCollector
             }
 
             bufferedWriter.flush();
+
+            count += entries.length;
+
+            if (((limit != 0) && (count >= limit)) || (entries.length == 0))
+            {
+                break;
+            }
+
             Thread.sleep(1000);
         }
     }
@@ -87,7 +93,7 @@ public class PriceCollector
 
     public static void main(String[] args) throws Exception
     {
-        PriceCollector priceCollector = new PriceCollector("LINKEUR", "1m", "input/prices3.csv");
+        PriceCollector priceCollector = new PriceCollector("LINKEUR", "1m", 2000, "input/prices3.csv");
         priceCollector.start();
     }
 }
