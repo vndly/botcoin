@@ -10,6 +10,7 @@ import com.mauriciotogneri.botcoin.util.Log;
 import com.mauriciotogneri.botcoin.wallet.BasicWallet;
 import com.mauriciotogneri.botcoin.wallet.Wallet;
 
+// TODO: https://github.com/binance/binance-spot-api-docs/blob/master/web-socket-streams.md
 public class Botcoin
 {
     private final Wallet wallet;
