@@ -2,9 +2,9 @@ package com.mauriciotogneri.botcoin.wallet;
 
 public interface Wallet
 {
-    void buy(float buyAmount, float price);
+    void buy(double buyAmount, double price);
 
-    void sell(float sellAmount, float price);
+    void sell(double sellAmount, double price);
 
-    float totalBalance(float price);
+    double totalBalance(double price);
 }

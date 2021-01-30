@@ -11,22 +11,17 @@ import java.util.List;
 public class FileProvider implements PriceProvider
 {
     private int index = 0;
-    private final float[] prices;
+    private final double[] prices;
 
     public FileProvider(String path) throws Exception
     {
         this.prices = load(path);
     }
 
-    public FileProvider(float[] prices)
-    {
-        this.prices = prices;
-    }
-
     @NotNull
-    private float[] load(String path) throws Exception
+    private double[] load(String path) throws Exception
     {
-        List<Float> list = new ArrayList<>();
+        List<Double> list = new ArrayList<>();
 
         File file = new File(path);
         FileReader fileReader = new FileReader(file);
@@ -39,14 +34,14 @@ public class FileProvider implements PriceProvider
 
             if (parts.length > 1)
             {
-                float price = Float.parseFloat(parts[1]);
+                double price = Double.parseDouble(parts[1]);
                 list.add(price);
             }
         }
 
         fileReader.close();
 
-        float[] result = new float[list.size()];
+        double[] result = new double[list.size()];
 
         for (int i = 0; i < list.size(); i++)
         {
@@ -56,7 +51,12 @@ public class FileProvider implements PriceProvider
         return result;
     }
 
-    public float[] prices()
+    public void reset()
+    {
+        index = 0;
+    }
+
+    public double[] prices()
     {
         return prices;
     }
@@ -64,11 +64,11 @@ public class FileProvider implements PriceProvider
     @Override
     public boolean hasMorePrices()
     {
-        return index < prices.length;
+        return (index < prices.length);
     }
 
     @Override
-    public float price()
+    public double price()
     {
         return prices[index++];
     }

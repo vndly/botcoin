@@ -5,12 +5,12 @@ import com.mauriciotogneri.botcoin.util.Log;
 // https://medium.com/swlh/battle-of-the-bots-how-market-makers-fight-it-out-on-crypto-exchanges-2482eb937107
 public class BasicWallet implements Wallet
 {
-    private float balanceEUR;
-    private float balanceBTC;
-    private float eurSpent;
+    private double balanceEUR;
+    private double balanceBTC;
+    private double eurSpent;
     private final Log log;
 
-    public BasicWallet(float balanceEUR, float balanceBTC, Log log)
+    public BasicWallet(double balanceEUR, double balanceBTC, Log log)
     {
         this.balanceEUR = balanceEUR;
         this.balanceBTC = balanceBTC;
@@ -19,10 +19,10 @@ public class BasicWallet implements Wallet
     }
 
     @Override
-    public void buy(float btcToBuy, float price)
+    public void buy(double btcToBuy, double price)
     {
         boolean firstBuy = balanceBTC == 0;
-        float eurToSpend = btcToBuy * price;
+        double eurToSpend = btcToBuy * price;
 
         balanceEUR = balanceEUR - eurToSpend;
         eurSpent = eurSpent + eurToSpend;
@@ -33,12 +33,12 @@ public class BasicWallet implements Wallet
     }
 
     @Override
-    public void sell(float btcToSell, float price)
+    public void sell(double btcToSell, double price)
     {
         boolean sellAll = btcToSell == balanceBTC;
-        float eurToGain = btcToSell * price;
-        float originalCost = btcToSell * boughtPrice();
-        float profit = eurToGain - originalCost;
+        double eurToGain = btcToSell * price;
+        double originalCost = btcToSell * boughtPrice();
+        double profit = eurToGain - originalCost;
 
         balanceEUR = balanceEUR + eurToGain;
         eurSpent = eurSpent - originalCost;
@@ -49,12 +49,12 @@ public class BasicWallet implements Wallet
     }
 
     @Override
-    public float totalBalance(float price)
+    public double totalBalance(double price)
     {
         return balanceEUR + (balanceBTC * price);
     }
 
-    private void printBuy(float price, float btcToBuy, float eurSpent, boolean firstBuy)
+    private void printBuy(double price, double btcToBuy, double eurSpent, boolean firstBuy)
     {
         log.log("OPERATION:  " + (firstBuy ? "FIRST BUY" : "BUY DOWN"));
         log.log("PRICE:      " + String.format("%.2f", price) + " EUR");
@@ -62,7 +62,7 @@ public class BasicWallet implements Wallet
         log.log("SPENT:      " + String.format("%.2f", eurSpent) + " EUR");
     }
 
-    private void printSell(float price, float btcToSell, float eurGained, float profit, boolean sellAll)
+    private void printSell(double price, double btcToSell, double eurGained, double profit, boolean sellAll)
     {
         log.log("OPERATION:  " + (sellAll ? "SELL ALL" : "SELL PARTIAL"));
         log.log("PRICE:      " + String.format("%.2f", price) + " EUR");
@@ -71,7 +71,7 @@ public class BasicWallet implements Wallet
         log.log("PROFIT:     " + String.format("%.2f", profit) + " EUR");
     }
 
-    private void printState(float price)
+    private void printState(double price)
     {
         log.log("");
         log.log("BALANCE:    " + String.format("%.2f", balanceEUR) + " EUR");
@@ -82,17 +82,17 @@ public class BasicWallet implements Wallet
         log.log("\n====================================\n");
     }
 
-    public float boughtPrice()
+    public double boughtPrice()
     {
         return (balanceBTC > 0) ? (eurSpent / balanceBTC) : 0;
     }
 
-    public float balanceBTC()
+    public double balanceBTC()
     {
         return balanceBTC;
     }
 
-    public float balanceEUR()
+    public double balanceEUR()
     {
         return balanceEUR;
     }

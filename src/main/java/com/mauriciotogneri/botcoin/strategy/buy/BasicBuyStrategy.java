@@ -4,13 +4,13 @@ import com.mauriciotogneri.botcoin.wallet.BasicWallet;
 
 public class BasicBuyStrategy implements BuyStrategy
 {
-    private float allTimeHigh = 0;
+    private double allTimeHigh = 0;
     private final BasicWallet wallet;
-    private final float minPercentageDown;
-    private final float percentageBuyMultiplier;
-    private final float minEurToSpend;
+    private final double minPercentageDown;
+    private final double percentageBuyMultiplier;
+    private final double minEurToSpend;
 
-    public BasicBuyStrategy(BasicWallet wallet, float minPercentageDown, float percentageBuyMultiplier, float minEurToSpend)
+    public BasicBuyStrategy(BasicWallet wallet, double minPercentageDown, double percentageBuyMultiplier, double minEurToSpend)
     {
         this.wallet = wallet;
         this.minPercentageDown = minPercentageDown;
@@ -19,9 +19,9 @@ public class BasicBuyStrategy implements BuyStrategy
     }
 
     @Override
-    public float buy(float price)
+    public double buy(double price)
     {
-        float result = 0;
+        double result = 0;
 
         if (wallet.balanceBTC() == 0) // first buy
         {
@@ -42,14 +42,14 @@ public class BasicBuyStrategy implements BuyStrategy
         return result;
     }
 
-    private float byFrom(float price, float limit)
+    private double byFrom(double price, double limit)
     {
-        float result = 0;
-        float percentageDown = 1 - (price / limit);
+        double result = 0;
+        double percentageDown = 1 - (price / limit);
 
         if (percentageDown >= minPercentageDown)
         {
-            float eurToSpend = Math.min(wallet.balanceEUR() * percentageDown * percentageBuyMultiplier, wallet.balanceEUR());
+            double eurToSpend = Math.min(wallet.balanceEUR() * percentageDown * percentageBuyMultiplier, wallet.balanceEUR());
 
             if ((eurToSpend > 0) && (eurToSpend >= minEurToSpend) && (eurToSpend <= wallet.balanceEUR()))
             {

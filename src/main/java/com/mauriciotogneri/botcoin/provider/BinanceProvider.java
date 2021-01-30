@@ -20,7 +20,8 @@ public class BinanceProvider implements PriceProvider
         return true;
     }
 
-    public float price() throws Exception
+    @Override
+    public double price() throws Exception
     {
         Thread.sleep(frequency);
 
@@ -31,6 +32,6 @@ public class BinanceProvider implements PriceProvider
 
     public static class Payload
     {
-        public float price;
+        public double price;
     }
 }

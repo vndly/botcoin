@@ -5,12 +5,12 @@ import com.mauriciotogneri.botcoin.wallet.BasicWallet;
 public class BasicSellStrategy implements SellStrategy
 {
     private final BasicWallet wallet;
-    private final float minPercentageUp;
-    private final float percentageSellMultiplier;
-    private final float sellAllLimit;
-    private final float minEurToGain;
+    private final double minPercentageUp;
+    private final double percentageSellMultiplier;
+    private final double sellAllLimit;
+    private final double minEurToGain;
 
-    public BasicSellStrategy(BasicWallet wallet, float minPercentageUp, float percentageSellMultiplier, float sellAllLimit, float minEurToGain)
+    public BasicSellStrategy(BasicWallet wallet, double minPercentageUp, double percentageSellMultiplier, double sellAllLimit, double minEurToGain)
     {
         this.wallet = wallet;
         this.minPercentageUp = minPercentageUp;
@@ -20,24 +20,24 @@ public class BasicSellStrategy implements SellStrategy
     }
 
     @Override
-    public float sell(float price)
+    public double sell(double price)
     {
-        float result = 0;
+        double result = 0;
 
         if ((price > wallet.boughtPrice()) && (wallet.boughtPrice() > 0))
         {
-            float percentageUp = (price / wallet.boughtPrice()) - 1;
+            double percentageUp = (price / wallet.boughtPrice()) - 1;
 
             if (percentageUp >= minPercentageUp)
             {
-                float btcToSell = Math.min(wallet.balanceBTC() * percentageUp * percentageSellMultiplier, wallet.balanceBTC());
+                double btcToSell = Math.min(wallet.balanceBTC() * percentageUp * percentageSellMultiplier, wallet.balanceBTC());
 
                 if (wallet.balanceBTC() <= sellAllLimit)
                 {
                     btcToSell = wallet.balanceBTC();
                 }
 
-                float eurToGain = btcToSell * price;
+                double eurToGain = btcToSell * price;
 
                 if ((eurToGain >= minEurToGain) && (wallet.balanceBTC() >= btcToSell))
                 {

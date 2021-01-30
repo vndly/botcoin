@@ -26,15 +26,15 @@ public class Botcoin
         this.sellStrategy = sellStrategy;
     }
 
-    public float start() throws Exception
+    public double start() throws Exception
     {
-        float lastPrice = 0;
+        double lastPrice = 0;
 
         while (priceProvider.hasMorePrices())
         {
-            float price = priceProvider.price();
-            float buyAmount = buyStrategy.buy(price);
-            float sellAmount = sellStrategy.sell(price);
+            double price = priceProvider.price();
+            double buyAmount = buyStrategy.buy(price);
+            double sellAmount = sellStrategy.sell(price);
 
             if (buyAmount > 0)
             {
@@ -59,8 +59,8 @@ public class Botcoin
         double maxProfit = 0;
         int bestA = 0;
         int bestB = 0;
-        float bestX = 0;
-        float bestY = 0;
+        double bestX = 0;
+        double bestY = 0;
         int index = 1;
 
         /*for (int a = 1; a <= 100; a += 5)
@@ -74,7 +74,7 @@ public class Botcoin
                         System.out.println((index++ / 400f) + "%");
 
                         PriceProvider priceProvider = new FileProvider(firstPriceProvider.prices());
-                        float totalBalance = getPrice(log, priceProvider, a, b, x, y);
+                        double totalBalance = getPrice(log, priceProvider, a, b, x, y);
 
                         if (totalBalance > maxProfit)
                         {
@@ -89,8 +89,7 @@ public class Botcoin
             }
         }*/
 
-        PriceProvider priceProvider = new FileProvider(firstPriceProvider.prices());
-        maxProfit = getPrice(log, priceProvider, 100, 100, 1, 4);
+        maxProfit = getPrice(log, firstPriceProvider, 100, 100, 1, 4);
 
         System.out.println(String.format("MAX PROFIT: %s", maxProfit));
         System.out.println(String.format("BEST A: %s", bestA));
@@ -99,16 +98,16 @@ public class Botcoin
         System.out.println(String.format("BEST Y: %s", bestY));
     }
 
-    private static float getPrice(Log log, PriceProvider priceProvider, int a, int b, int x, int y) throws Exception
+    private static double getPrice(Log log, PriceProvider priceProvider, int a, int b, int x, int y) throws Exception
     {
-        float minPercentageDown = (float) x / 100f; //0.01f;
-        float percentageBuyMultiplier = a; //70;
-        float minEurToSpend = 10;
+        double minPercentageDown = (double) x / 100f; //0.01f;
+        double percentageBuyMultiplier = a; //70;
+        double minEurToSpend = 10;
 
-        float minPercentageUp = (float) y / 100f; //0.05f;
-        float percentageSellMultiplier = b; //100;
-        float sellAllLimit = 0.001f;
-        float minEurToGain = 10;
+        double minPercentageUp = (double) y / 100f; //0.05f;
+        double percentageSellMultiplier = b; //100;
+        double sellAllLimit = 0.001f;
+        double minEurToGain = 10;
 
         BasicWallet wallet = new BasicWallet(5000, 0, log);
         BuyStrategy buyStrategy = new BasicBuyStrategy(wallet, minPercentageDown, percentageBuyMultiplier, minEurToSpend);
