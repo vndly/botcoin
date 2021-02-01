@@ -18,25 +18,20 @@ public class BasicStrategy implements Strategy
     @Override
     public Operation operation(double price)
     {
-        Operation operation = null;
         double buyAmount = buyStrategy.buy(price);
         double sellAmount = sellStrategy.sell(price);
 
         if (buyAmount > 0)
         {
-            wallet.buy(buyAmount, price);
-            operation = Operation.buy(sellAmount);
+            return Operation.buy(sellAmount);
         }
         else if (sellAmount > 0)
         {
-            wallet.sell(sellAmount, price);
-            operation = Operation.sell(sellAmount);
+            return Operation.sell(sellAmount);
         }
         else
         {
-            operation = Operation.nothing();
+            return Operation.nothing();
         }
-
-        return operation;
     }
 }
