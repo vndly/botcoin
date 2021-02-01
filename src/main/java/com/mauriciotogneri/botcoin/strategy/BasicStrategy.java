@@ -1,16 +1,12 @@
 package com.mauriciotogneri.botcoin.strategy;
 
-import com.mauriciotogneri.botcoin.wallet.Wallet;
-
 public class BasicStrategy implements Strategy
 {
-    private final Wallet wallet;
     private final BasicBuyStrategy buyStrategy;
     private final BasicSellStrategy sellStrategy;
 
-    public BasicStrategy(Wallet wallet, BasicBuyStrategy buyStrategy, BasicSellStrategy sellStrategy)
+    public BasicStrategy(BasicBuyStrategy buyStrategy, BasicSellStrategy sellStrategy)
     {
-        this.wallet = wallet;
         this.buyStrategy = buyStrategy;
         this.sellStrategy = sellStrategy;
     }

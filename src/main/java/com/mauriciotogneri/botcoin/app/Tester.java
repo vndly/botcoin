@@ -78,7 +78,7 @@ public class Tester
         Wallet wallet = new Wallet(balanceEUR, balanceBTC, log);
         BasicBuyStrategy buyStrategy = new BasicBuyStrategy(wallet, minPercentageDown, percentageBuyMultiplier, minEurToSpend);
         BasicSellStrategy sellStrategy = new BasicSellStrategy(wallet, minPercentageUp, percentageSellMultiplier, sellAllLimit, minEurToGain);
-        Strategy strategy = new BasicStrategy(wallet, buyStrategy, sellStrategy);
+        Strategy strategy = new BasicStrategy(buyStrategy, sellStrategy);
 
         Botcoin botcoin = new Botcoin(wallet, priceProvider, strategy);
 
