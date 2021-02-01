@@ -77,14 +77,4 @@ public class Wallet
     {
         return balanceA.amount + (balanceB.amount * price);
     }
-
-    public Balance balanceA()
-    {
-        return balanceB;
-    }
-
-    public Balance balanceB()
-    {
-        return balanceA;
-    }
 }
