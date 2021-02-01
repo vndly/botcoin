@@ -15,7 +15,7 @@ public class BinanceProvider implements PriceProvider
     }
 
     @Override
-    public boolean hasMorePrices()
+    public boolean hasPrice()
     {
         return true;
     }

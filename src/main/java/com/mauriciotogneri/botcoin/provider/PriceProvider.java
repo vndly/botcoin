@@ -2,7 +2,7 @@ package com.mauriciotogneri.botcoin.provider;
 
 public interface PriceProvider
 {
-    boolean hasMorePrices();
+    boolean hasPrice();
 
     double price() throws Exception;
 }

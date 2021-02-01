@@ -1,16 +1,16 @@
-package com.mauriciotogneri.botcoin.strategy.sell;
+package com.mauriciotogneri.botcoin.strategy;
 
-import com.mauriciotogneri.botcoin.wallet.BasicWallet;
+import com.mauriciotogneri.botcoin.wallet.Wallet;
 
-public class BasicSellStrategy implements SellStrategy
+public class BasicSellStrategy
 {
-    private final BasicWallet wallet;
+    private final Wallet wallet;
     private final double minPercentageUp;
     private final double percentageSellMultiplier;
     private final double sellAllLimit;
     private final double minEurToGain;
 
-    public BasicSellStrategy(BasicWallet wallet, double minPercentageUp, double percentageSellMultiplier, double sellAllLimit, double minEurToGain)
+    public BasicSellStrategy(Wallet wallet, double minPercentageUp, double percentageSellMultiplier, double sellAllLimit, double minEurToGain)
     {
         this.wallet = wallet;
         this.minPercentageUp = minPercentageUp;
@@ -19,7 +19,6 @@ public class BasicSellStrategy implements SellStrategy
         this.minEurToGain = minEurToGain;
     }
 
-    @Override
     public double sell(double price)
     {
         double result = 0;
@@ -30,16 +29,16 @@ public class BasicSellStrategy implements SellStrategy
 
             if (percentageUp >= minPercentageUp)
             {
-                double btcToSell = Math.min(wallet.balanceBTC() * percentageUp * percentageSellMultiplier, wallet.balanceBTC());
+                double btcToSell = Math.min(wallet.balanceA.amount * percentageUp * percentageSellMultiplier, wallet.balanceA.amount);
 
-                if (wallet.balanceBTC() <= sellAllLimit)
+                if (wallet.balanceA.amount <= sellAllLimit)
                 {
-                    btcToSell = wallet.balanceBTC();
+                    btcToSell = wallet.balanceA.amount;
                 }
 
                 double eurToGain = btcToSell * price;
 
-                if ((eurToGain >= minEurToGain) && (wallet.balanceBTC() >= btcToSell))
+                if ((eurToGain >= minEurToGain) && (wallet.balanceA.amount >= btcToSell))
                 {
                     result = btcToSell;
                 }

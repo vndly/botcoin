@@ -62,7 +62,7 @@ public class FileProvider implements PriceProvider
     }
 
     @Override
-    public boolean hasMorePrices()
+    public boolean hasPrice()
     {
         return (index < prices.length);
     }
