@@ -64,7 +64,7 @@ public class Wallet
         log.log("");
         log.log("BALANCE:    " + balanceA.toString());
         log.log("BALANCE:    " + balanceB.toString());
-        log.log("TOTAL:      " + balanceA.format(totalBalance(price)) + " " + balanceA.currency);
+        log.log("TOTAL:      " + balanceA.format(totalBalance(price)));
         log.log("\n====================================\n");
     }
 

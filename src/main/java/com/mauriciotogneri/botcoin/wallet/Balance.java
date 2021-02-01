@@ -2,20 +2,18 @@ package com.mauriciotogneri.botcoin.wallet;
 
 public class Balance
 {
-    public final String currency;
-    public final int decimals;
+    public final Currency currency;
     public double amount;
 
-    public Balance(String currency, int decimals, double amount)
+    public Balance(Currency currency, double amount)
     {
         this.currency = currency;
-        this.decimals = decimals;
         this.amount = amount;
     }
 
     public String format(double value)
     {
-        return String.format("%." + decimals + "f %s", value, currency);
+        return String.format("%." + currency.decimals + "f %s", value, currency);
     }
 
     @Override

@@ -8,6 +8,7 @@ import com.mauriciotogneri.botcoin.strategy.BasicStrategy;
 import com.mauriciotogneri.botcoin.strategy.Strategy;
 import com.mauriciotogneri.botcoin.util.Log;
 import com.mauriciotogneri.botcoin.wallet.Balance;
+import com.mauriciotogneri.botcoin.wallet.Currency;
 import com.mauriciotogneri.botcoin.wallet.Wallet;
 
 public class Tester
@@ -70,8 +71,10 @@ public class Tester
         double sellAllLimit = 0.001f;
         double minEurToGain = 10;
 
-        Balance balanceEUR = new Balance("EUR", 2, 5000);
-        Balance balanceBTC = new Balance("BTC", 8, 0);
+        Currency eur = new Currency("EUR", 2);
+        Currency btc = new Currency("BTC", 8);
+        Balance balanceEUR = new Balance(eur, 5000);
+        Balance balanceBTC = new Balance(btc, 0);
         Wallet wallet = new Wallet(balanceEUR, balanceBTC, log);
         BasicBuyStrategy buyStrategy = new BasicBuyStrategy(wallet, minPercentageDown, percentageBuyMultiplier, minEurToSpend);
         BasicSellStrategy sellStrategy = new BasicSellStrategy(wallet, minPercentageUp, percentageSellMultiplier, sellAllLimit, minEurToGain);
