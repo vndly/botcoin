@@ -22,7 +22,7 @@ public class BasicBuyStrategy
     {
         double result = 0;
 
-        if (wallet.balanceA.amount == 0) // first buy
+        if (wallet.balanceB.amount == 0) // first buy
         {
             if (price < allTimeHigh)
             {
@@ -48,9 +48,9 @@ public class BasicBuyStrategy
 
         if (percentageDown >= minPercentageDown)
         {
-            double eurToSpend = Math.min(wallet.balanceB.amount * percentageDown * percentageBuyMultiplier, wallet.balanceB.amount);
+            double eurToSpend = Math.min(wallet.balanceA.amount * percentageDown * percentageBuyMultiplier, wallet.balanceA.amount);
 
-            if ((eurToSpend > 0) && (eurToSpend >= minEurToSpend) && (eurToSpend <= wallet.balanceB.amount))
+            if ((eurToSpend > 0) && (eurToSpend >= minEurToSpend) && (eurToSpend <= wallet.balanceA.amount))
             {
                 result = eurToSpend / price;
             }

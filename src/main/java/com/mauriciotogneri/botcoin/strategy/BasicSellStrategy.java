@@ -29,16 +29,16 @@ public class BasicSellStrategy
 
             if (percentageUp >= minPercentageUp)
             {
-                double btcToSell = Math.min(wallet.balanceA.amount * percentageUp * percentageSellMultiplier, wallet.balanceA.amount);
+                double btcToSell = Math.min(wallet.balanceB.amount * percentageUp * percentageSellMultiplier, wallet.balanceB.amount);
 
-                if (wallet.balanceA.amount <= sellAllLimit)
+                if (wallet.balanceB.amount <= sellAllLimit)
                 {
-                    btcToSell = wallet.balanceA.amount;
+                    btcToSell = wallet.balanceB.amount;
                 }
 
                 double eurToGain = btcToSell * price;
 
-                if ((eurToGain >= minEurToGain) && (wallet.balanceA.amount >= btcToSell))
+                if ((eurToGain >= minEurToGain) && (wallet.balanceB.amount >= btcToSell))
                 {
                     result = btcToSell;
                 }

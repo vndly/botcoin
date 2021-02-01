@@ -15,12 +15,12 @@ public class Balance
 
     public String format(double value)
     {
-        return String.format("%." + decimals + "f", value);
+        return String.format("%." + decimals + "f %s", value, currency);
     }
 
     @Override
     public String toString()
     {
-        return String.format("%s %s", format(amount), currency);
+        return format(amount);
     }
 }
