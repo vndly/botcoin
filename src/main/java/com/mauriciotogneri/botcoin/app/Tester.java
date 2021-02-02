@@ -1,6 +1,5 @@
 package com.mauriciotogneri.botcoin.app;
 
-import com.mauriciotogneri.botcoin.provider.BinanceProvider;
 import com.mauriciotogneri.botcoin.provider.FileProvider;
 import com.mauriciotogneri.botcoin.provider.PriceProvider;
 import com.mauriciotogneri.botcoin.strategy.BasicBuyStrategy;
@@ -51,8 +50,6 @@ public class Tester
                 }
             }
         }*/
-
-        firstPriceProvider = new BinanceProvider("BTCEUR", 60);
 
         maxProfit = getPrice(log, firstPriceProvider, 100, 100, 1, 4);
 

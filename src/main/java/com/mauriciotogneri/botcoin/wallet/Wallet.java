@@ -24,7 +24,7 @@ public class Wallet
         spent += toSpend;
         balanceB.amount += toBuy;
 
-        printBuy(price, toBuy, toSpend);
+        log.buy(balanceB.of(toBuy), balanceA.of(price), balanceA.of(spent));
         printState(price);
     }
 
@@ -38,25 +38,8 @@ public class Wallet
         spent -= originalCost;
         balanceB.amount -= toSell;
 
-        printSell(price, toSell, toGain, profit);
+        log.sell(balanceB.of(toSell), balanceA.of(price), balanceA.of(toGain), balanceA.of(profit));
         printState(price);
-    }
-
-    private void printBuy(double price, double toBuy, double spent)
-    {
-        log.log("OPERATION:  BUY\n");
-        log.log("AMOUNT:     " + balanceB.format(toBuy));
-        log.log("PRICE:      " + balanceA.format(price));
-        log.log("SPENT:      " + balanceA.format(spent));
-    }
-
-    private void printSell(double price, double toSell, double gained, double profit)
-    {
-        log.log("OPERATION:  SELL\n");
-        log.log("AMOUNT:     " + balanceB.format(toSell));
-        log.log("PRICE:      " + balanceA.format(price));
-        log.log("GAINED:     " + balanceA.format(gained));
-        log.log("PROFIT:     " + balanceA.format(profit));
     }
 
     private void printState(double price)
