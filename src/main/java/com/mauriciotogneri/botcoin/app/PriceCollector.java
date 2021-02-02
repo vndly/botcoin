@@ -1,6 +1,9 @@
 package com.mauriciotogneri.botcoin.app;
 
-import com.mauriciotogneri.botcoin.network.HttpRequest;
+import com.binance.api.client.BinanceApiRestClient;
+import com.binance.api.client.domain.market.Candlestick;
+import com.binance.api.client.domain.market.CandlestickInterval;
+import com.mauriciotogneri.botcoin.provider.BinanceApi;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -16,7 +19,7 @@ public class PriceCollector
     private final String interval;
     private final Integer limit;
     private final String output;
-    private final HttpRequest httpRequest = new HttpRequest();
+    private final BinanceApiRestClient client;
 
     public PriceCollector(String pair, String interval, Integer limit, String output)
     {
@@ -24,6 +27,7 @@ public class PriceCollector
         this.interval = interval;
         this.limit = limit;
         this.output = output;
+        this.client = BinanceApi.client();
     }
 
     public void start() throws Exception
@@ -60,15 +64,14 @@ public class PriceCollector
     @NotNull
     private PriceEntry[] priceEntries(long lastTimestamp)
     {
-        String url = String.format("https://api.binance.com/api/v3/klines?symbol=%s&interval=%s&endTime=%s", pair, interval, lastTimestamp);
-        Object[][] entries = httpRequest.execute(url, Object[][].class);
         List<PriceEntry> result = new ArrayList<>();
+        List<Candlestick> candlesticks = client.getCandlestickBars(pair, CandlestickInterval.valueOf(interval), null, null, lastTimestamp);
 
-        for (Object[] entry : entries)
+        for (Candlestick candlestick : candlesticks)
         {
-            long timestamp = ((Double) entry[0]).longValue();
-            double high = Double.parseDouble((String) entry[2]);
-            double low = Double.parseDouble((String) entry[3]);
+            long timestamp = candlestick.getCloseTime();
+            double high = Double.parseDouble(candlestick.getHigh());
+            double low = Double.parseDouble(candlestick.getLow());
             double price = (high + low) / 2;
 
             result.add(new PriceEntry(timestamp, price));
@@ -94,7 +97,7 @@ public class PriceCollector
     public static void main(String[] args) throws Exception
     {
         String pair = "LINKEUR";
-        String interval = "1m";
+        String interval = "ONE_MINUTE";
         Integer limit = 2000;
         String fileName = String.format("input/prices_%s_%s.csv", pair, interval);
 
