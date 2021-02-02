@@ -19,11 +19,11 @@ public class BasicStrategy implements Strategy
 
         if (buyAmount > 0)
         {
-            return Operation.buy(buyAmount);
+            return Operation.buy(buyAmount, price);
         }
         else if (sellAmount > 0)
         {
-            return Operation.sell(sellAmount);
+            return Operation.sell(sellAmount, price);
         }
         else
         {

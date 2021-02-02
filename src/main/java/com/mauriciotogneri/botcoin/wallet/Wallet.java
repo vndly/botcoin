@@ -2,6 +2,7 @@ package com.mauriciotogneri.botcoin.wallet;
 
 import com.mauriciotogneri.botcoin.operations.BuyOperation;
 import com.mauriciotogneri.botcoin.operations.SellOperation;
+import com.mauriciotogneri.botcoin.strategy.Operation;
 
 public class Wallet
 {
@@ -15,39 +16,39 @@ public class Wallet
         this.balanceB = balanceB;
     }
 
-    public BuyOperation buy(double toBuy, double price)
+    public BuyOperation buy(Operation operation)
     {
-        double toSpend = toBuy * price;
+        double toSpend = operation.amount * operation.price;
 
         balanceA.amount -= toSpend;
-        balanceB.amount += toBuy;
+        balanceB.amount += operation.amount;
         spent += toSpend;
 
-        return new BuyOperation(balanceB.of(toBuy),
-                                balanceA.of(price),
+        return new BuyOperation(balanceB.of(operation.amount),
+                                balanceA.of(operation.price),
                                 balanceA.of(spent),
                                 balanceA,
                                 balanceB,
-                                balanceA.of(totalBalance(price)));
+                                balanceA.of(totalBalance(operation.price)));
     }
 
-    public SellOperation sell(double toSell, double price)
+    public SellOperation sell(Operation operation)
     {
-        double originalCost = toSell * boughtPrice();
-        double toGain = toSell * price;
+        double originalCost = operation.amount * boughtPrice();
+        double toGain = operation.amount * operation.price;
         double profit = toGain - originalCost;
 
         balanceA.amount += toGain;
-        balanceB.amount -= toSell;
+        balanceB.amount -= operation.amount;
         spent -= originalCost;
 
-        return new SellOperation(balanceB.of(toSell),
-                                 balanceA.of(price),
+        return new SellOperation(balanceB.of(operation.amount),
+                                 balanceA.of(operation.price),
                                  balanceA.of(toGain),
                                  balanceA.of(profit),
                                  balanceA,
                                  balanceB,
-                                 balanceA.of(totalBalance(price)));
+                                 balanceA.of(totalBalance(operation.price)));
     }
 
     public double boughtPrice()

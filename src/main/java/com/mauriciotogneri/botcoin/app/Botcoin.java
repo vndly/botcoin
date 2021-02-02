@@ -37,13 +37,13 @@ public class Botcoin
             if (operation.action == Action.BUY)
             {
                 // TODO
-                BuyOperation buyOperation = wallet.buy(operation.amount, price);
+                BuyOperation buyOperation = wallet.buy(operation);
                 log.buy(buyOperation);
             }
             else if (operation.action == Action.SELL)
             {
                 // TODO
-                SellOperation sellOperation = wallet.sell(operation.amount, price);
+                SellOperation sellOperation = wallet.sell(operation);
                 log.sell(sellOperation);
             }
 
