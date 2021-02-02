@@ -20,8 +20,8 @@ public class Wallet
         double toSpend = toBuy * price;
 
         balanceA.amount -= toSpend;
-        spent += toSpend;
         balanceB.amount += toBuy;
+        spent += toSpend;
 
         return new BuyOperation(balanceB.of(toBuy),
                                 balanceA.of(price),
@@ -38,8 +38,8 @@ public class Wallet
         double profit = toGain - originalCost;
 
         balanceA.amount += toGain;
-        spent -= originalCost;
         balanceB.amount -= toSell;
+        spent -= originalCost;
 
         return new SellOperation(balanceB.of(toSell),
                                  balanceA.of(price),
