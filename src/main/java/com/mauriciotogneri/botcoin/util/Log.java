@@ -62,28 +62,44 @@ public class Log
         }
     }
 
-    public void buy(@NotNull Balance amount, @NotNull Balance price, @NotNull Balance spent)
+    public void buy(@NotNull Balance amount,
+                    @NotNull Balance price,
+                    @NotNull Balance spent,
+                    @NotNull Balance balanceA,
+                    @NotNull Balance balanceB,
+                    @NotNull Balance total)
     {
         console("OPERATION: BUY\n");
         console("AMOUNT:    " + amount);
         console("PRICE:     " + price);
         console("SPENT:     " + spent);
+        balance(balanceA, balanceB, total);
 
         JsonObject json = new JsonObject();
         json.addProperty("operation", "buy");
         json.add("amount", amount.json());
         json.add("price", price.json());
         json.add("spent", spent.json());
-        file(gson.toJson(json));
+        json.add("balanceA", balanceA.json());
+        json.add("balanceB", balanceB.json());
+        json.add("total", total.json());
+        file(gson.toJson(json) + ",");
     }
 
-    public void sell(@NotNull Balance amount, @NotNull Balance price, @NotNull Balance gained, @NotNull Balance profit)
+    public void sell(@NotNull Balance amount,
+                     @NotNull Balance price,
+                     @NotNull Balance gained,
+                     @NotNull Balance profit,
+                     @NotNull Balance balanceA,
+                     @NotNull Balance balanceB,
+                     @NotNull Balance total)
     {
         console("OPERATION: SELL\n");
         console("AMOUNT:    " + amount);
         console("PRICE:     " + price);
         console("GAINED:    " + gained);
         console("PROFIT:    " + profit);
+        balance(balanceA, balanceB, total);
 
         JsonObject json = new JsonObject();
         json.addProperty("operation", "sell");
@@ -91,6 +107,18 @@ public class Log
         json.add("price", price.json());
         json.add("gained", gained.json());
         json.add("profit", profit.json());
-        file(gson.toJson(json));
+        json.add("balanceA", balanceA.json());
+        json.add("balanceB", balanceB.json());
+        json.add("total", total.json());
+        file(gson.toJson(json) + ",");
+    }
+
+    public void balance(@NotNull Balance balanceA, @NotNull Balance balanceB, @NotNull Balance total)
+    {
+        console("");
+        console("BALANCE:   " + balanceA);
+        console("BALANCE:   " + balanceB);
+        console("TOTAL:     " + total);
+        console("\n====================================\n");
     }
 }

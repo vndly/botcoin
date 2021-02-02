@@ -16,7 +16,7 @@ public class Tester
     public static void main(String[] args) throws Exception
     {
         PriceProvider firstPriceProvider = new FileProvider("input/prices_BTCEUR_1m.csv");
-        Log log = new Log("output/logs.txt");
+        Log log = new Log("output/logs.json");
 
         double maxProfit = 0;
         int bestA = 0;

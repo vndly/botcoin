@@ -24,8 +24,12 @@ public class Wallet
         spent += toSpend;
         balanceB.amount += toBuy;
 
-        log.buy(balanceB.of(toBuy), balanceA.of(price), balanceA.of(spent));
-        printState(price);
+        log.buy(balanceB.of(toBuy),
+                balanceA.of(price),
+                balanceA.of(spent),
+                balanceA,
+                balanceB,
+                balanceA.of(totalBalance(price)));
     }
 
     public void sell(double toSell, double price)
@@ -38,17 +42,13 @@ public class Wallet
         spent -= originalCost;
         balanceB.amount -= toSell;
 
-        log.sell(balanceB.of(toSell), balanceA.of(price), balanceA.of(toGain), balanceA.of(profit));
-        printState(price);
-    }
-
-    private void printState(double price)
-    {
-        log.log("");
-        log.log("BALANCE:    " + balanceA.toString());
-        log.log("BALANCE:    " + balanceB.toString());
-        log.log("TOTAL:      " + balanceA.format(totalBalance(price)));
-        log.log("\n====================================\n");
+        log.sell(balanceB.of(toSell),
+                 balanceA.of(price),
+                 balanceA.of(toGain),
+                 balanceA.of(profit),
+                 balanceA,
+                 balanceB,
+                 balanceA.of(totalBalance(price)));
     }
 
     public double boughtPrice()
