@@ -105,16 +105,14 @@ function render(prices, buys, sells)
                 data: buys,
                 onSeries: 'dataseries',
                 shape: 'squarepin',
-                color: '#00db04',
-                width: 30
+                color: '#00db04'
             },
             {
                 type: 'flags',
                 data: sells,
                 onSeries: 'dataseries',
                 shape: 'squarepin',
-                color: '#0088e3',
-                width: 30
+                color: '#0088e3'
             }
         ]
     })
