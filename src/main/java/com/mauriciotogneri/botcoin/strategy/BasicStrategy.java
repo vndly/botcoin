@@ -12,22 +12,22 @@ public class BasicStrategy implements Strategy
     }
 
     @Override
-    public Operation operation(double price)
+    public Intent intent(double price)
     {
         double buyAmount = buyStrategy.buy(price);
         double sellAmount = sellStrategy.sell(price);
 
         if (buyAmount > 0)
         {
-            return Operation.buy(buyAmount, price);
+            return Intent.buy(buyAmount, price);
         }
         else if (sellAmount > 0)
         {
-            return Operation.sell(sellAmount, price);
+            return Intent.sell(sellAmount, price);
         }
         else
         {
-            return Operation.nothing();
+            return Intent.nothing();
         }
     }
 }

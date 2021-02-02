@@ -2,7 +2,7 @@ package com.mauriciotogneri.botcoin.wallet;
 
 import com.mauriciotogneri.botcoin.operations.BuyOperation;
 import com.mauriciotogneri.botcoin.operations.SellOperation;
-import com.mauriciotogneri.botcoin.strategy.Operation;
+import com.mauriciotogneri.botcoin.strategy.Intent;
 
 public class Wallet
 {
@@ -16,39 +16,39 @@ public class Wallet
         this.balanceB = balanceB;
     }
 
-    public BuyOperation buy(Operation operation)
+    public BuyOperation buy(Intent intent)
     {
-        double toSpend = operation.amount * operation.price;
+        double toSpend = intent.amount * intent.price;
 
         balanceA.amount -= toSpend;
-        balanceB.amount += operation.amount;
+        balanceB.amount += intent.amount;
         spent += toSpend;
 
-        return new BuyOperation(balanceB.of(operation.amount),
-                                balanceA.of(operation.price),
+        return new BuyOperation(balanceB.of(intent.amount),
+                                balanceA.of(intent.price),
                                 balanceA.of(spent),
                                 balanceA,
                                 balanceB,
-                                balanceA.of(totalBalance(operation.price)));
+                                balanceA.of(totalBalance(intent.price)));
     }
 
-    public SellOperation sell(Operation operation)
+    public SellOperation sell(Intent intent)
     {
-        double originalCost = operation.amount * boughtPrice();
-        double toGain = operation.amount * operation.price;
+        double originalCost = intent.amount * boughtPrice();
+        double toGain = intent.amount * intent.price;
         double profit = toGain - originalCost;
 
         balanceA.amount += toGain;
-        balanceB.amount -= operation.amount;
+        balanceB.amount -= intent.amount;
         spent -= originalCost;
 
-        return new SellOperation(balanceB.of(operation.amount),
-                                 balanceA.of(operation.price),
+        return new SellOperation(balanceB.of(intent.amount),
+                                 balanceA.of(intent.price),
                                  balanceA.of(toGain),
                                  balanceA.of(profit),
                                  balanceA,
                                  balanceB,
-                                 balanceA.of(totalBalance(operation.price)));
+                                 balanceA.of(totalBalance(intent.price)));
     }
 
     public double boughtPrice()

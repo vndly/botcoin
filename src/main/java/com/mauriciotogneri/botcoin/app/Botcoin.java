@@ -4,7 +4,7 @@ import com.mauriciotogneri.botcoin.operations.BuyOperation;
 import com.mauriciotogneri.botcoin.operations.SellOperation;
 import com.mauriciotogneri.botcoin.provider.PriceProvider;
 import com.mauriciotogneri.botcoin.strategy.Action;
-import com.mauriciotogneri.botcoin.strategy.Operation;
+import com.mauriciotogneri.botcoin.strategy.Intent;
 import com.mauriciotogneri.botcoin.strategy.Strategy;
 import com.mauriciotogneri.botcoin.util.Log;
 import com.mauriciotogneri.botcoin.wallet.Wallet;
@@ -32,18 +32,18 @@ public class Botcoin
         while (priceProvider.hasPrice())
         {
             double price = priceProvider.price();
-            Operation operation = strategy.operation(price);
+            Intent intent = strategy.intent(price);
 
-            if (operation.action == Action.BUY)
+            if (intent.action == Action.BUY)
             {
                 // TODO
-                BuyOperation buyOperation = wallet.buy(operation);
+                BuyOperation buyOperation = wallet.buy(intent);
                 log.buy(buyOperation);
             }
-            else if (operation.action == Action.SELL)
+            else if (intent.action == Action.SELL)
             {
                 // TODO
-                SellOperation sellOperation = wallet.sell(operation);
+                SellOperation sellOperation = wallet.sell(intent);
                 log.sell(sellOperation);
             }
 

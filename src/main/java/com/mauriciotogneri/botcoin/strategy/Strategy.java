@@ -2,5 +2,5 @@ package com.mauriciotogneri.botcoin.strategy;
 
 public interface Strategy
 {
-    Operation operation(double price);
+    Intent intent(double price);
 }
