@@ -52,12 +52,30 @@ function eventHistory(json, type)
 	            x: element.timestamp,
 	            y: element.price,
 	            title: type.toUpperCase() + ': ' + counter++,
-	            text: JSON.stringify(element, null, 4)
+	            text: eventSummary(element)
 	        })
         }
     }
 
     return list
+}
+
+function eventSummary(json)
+{
+	var data = json.buy || json.sell
+	var result = ''
+
+	for (const [key, value] of Object.entries(data))
+	{
+		if (result !== '')
+		{
+			result += '<br/>'
+		}
+
+        result += `${key}: ${value.amount} ${value.currency}`
+    }
+
+	return result
 }
 
 function processResult(json)
