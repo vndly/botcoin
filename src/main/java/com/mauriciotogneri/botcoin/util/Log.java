@@ -19,6 +19,7 @@ import java.nio.channels.FileChannel;
 
 public class Log
 {
+    private boolean empty = true;
     private final BufferedWriter writer;
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
@@ -56,7 +57,16 @@ public class Log
     {
         try
         {
-            writer.write(data + "\n");
+            if (empty)
+            {
+                empty = false;
+            }
+            else
+            {
+                writer.write(",\n");
+            }
+
+            writer.write(data);
             writer.flush();
         }
         catch (Exception e)
@@ -84,7 +94,7 @@ public class Log
         JsonObject json = price.json();
         json.add("buy", buyJson);
 
-        file(gson.toJson(json) + ",");
+        file(gson.toJson(json));
     }
 
     public void sell(@NotNull Price price, @NotNull SellOperation sellOperation)
@@ -108,7 +118,7 @@ public class Log
         JsonObject json = price.json();
         json.add("sell", sellJson);
 
-        file(gson.toJson(json) + ",");
+        file(gson.toJson(json));
     }
 
     public void balance(@NotNull Balance balanceA, @NotNull Balance balanceB, @NotNull Balance total)
@@ -122,6 +132,6 @@ public class Log
 
     public void price(@NotNull Price price)
     {
-        file(gson.toJson(price.json()) + ",");
+        file(gson.toJson(price.json()));
     }
 }
