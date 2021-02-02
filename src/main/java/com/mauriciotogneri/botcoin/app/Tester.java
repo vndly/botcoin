@@ -6,6 +6,7 @@ import com.mauriciotogneri.botcoin.strategy.BasicBuyStrategy;
 import com.mauriciotogneri.botcoin.strategy.BasicSellStrategy;
 import com.mauriciotogneri.botcoin.strategy.BasicStrategy;
 import com.mauriciotogneri.botcoin.strategy.Strategy;
+import com.mauriciotogneri.botcoin.trader.BinanceTrader;
 import com.mauriciotogneri.botcoin.trader.Trader;
 import com.mauriciotogneri.botcoin.util.Log;
 import com.mauriciotogneri.botcoin.wallet.Balance;
@@ -78,7 +79,7 @@ public class Tester
         BasicBuyStrategy buyStrategy = new BasicBuyStrategy(wallet, minPercentageDown, percentageBuyMultiplier, minEurToSpend);
         BasicSellStrategy sellStrategy = new BasicSellStrategy(wallet, minPercentageUp, percentageSellMultiplier, sellAllLimit, minEurToGain);
         Strategy strategy = new BasicStrategy(buyStrategy, sellStrategy);
-        Trader trader = new Trader();
+        Trader trader = new BinanceTrader();
         Botcoin botcoin = new Botcoin(wallet, priceProvider, strategy, trader, log);
 
         return botcoin.start();
