@@ -4,9 +4,9 @@ function show(pricesFile)
 {
     loadPrices(pricesFile, function(response)
     {
-        /*var data = JSON.parse(response)
+        var data = JSON.parse('[' + response + ']')
 
-        var select = document.getElementById('select')
+        /*var select = document.getElementById('select')
         select.addEventListener('change', function()
         {
             processResult(data[select.value])
@@ -26,7 +26,7 @@ function show(pricesFile)
             select.value = 0
             processResult(data[select.value])
         }*/
-        console.log(response)
+        //console.log(response)
     })
 }
 
