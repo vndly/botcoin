@@ -73,12 +73,12 @@ public class Tester
 
         Balance balanceEUR = new Balance(Currency.EUR, 5000);
         Balance balanceBTC = new Balance(Currency.BTC, 0);
-        Wallet wallet = new Wallet(balanceEUR, balanceBTC, log);
+        Wallet wallet = new Wallet(balanceEUR, balanceBTC);
         BasicBuyStrategy buyStrategy = new BasicBuyStrategy(wallet, minPercentageDown, percentageBuyMultiplier, minEurToSpend);
         BasicSellStrategy sellStrategy = new BasicSellStrategy(wallet, minPercentageUp, percentageSellMultiplier, sellAllLimit, minEurToGain);
         Strategy strategy = new BasicStrategy(buyStrategy, sellStrategy);
 
-        Botcoin botcoin = new Botcoin(wallet, priceProvider, strategy);
+        Botcoin botcoin = new Botcoin(wallet, priceProvider, strategy, log);
 
         return botcoin.start();
     }
