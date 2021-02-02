@@ -1,4 +1,4 @@
-package com.mauriciotogneri.botcoin.operations;
+package com.mauriciotogneri.botcoin.operation;
 
 import com.mauriciotogneri.botcoin.wallet.Balance;
 

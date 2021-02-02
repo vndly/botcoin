@@ -6,6 +6,7 @@ import com.mauriciotogneri.botcoin.strategy.BasicBuyStrategy;
 import com.mauriciotogneri.botcoin.strategy.BasicSellStrategy;
 import com.mauriciotogneri.botcoin.strategy.BasicStrategy;
 import com.mauriciotogneri.botcoin.strategy.Strategy;
+import com.mauriciotogneri.botcoin.trader.Trader;
 import com.mauriciotogneri.botcoin.util.Log;
 import com.mauriciotogneri.botcoin.wallet.Balance;
 import com.mauriciotogneri.botcoin.wallet.Currency;
@@ -18,7 +19,7 @@ public class Tester
         PriceProvider firstPriceProvider = new FileProvider("input/prices_BTCEUR_1m.csv");
         Log log = new Log("output/logs.json");
 
-        double maxProfit = 0;
+        Balance maxProfit = new Balance(Currency.EUR, 0);
         int bestA = 0;
         int bestB = 0;
         double bestX = 0;
@@ -60,7 +61,7 @@ public class Tester
         System.out.println(String.format("BEST Y: %s", bestY));
     }
 
-    private static double getPrice(Log log, PriceProvider priceProvider, int a, int b, int x, int y) throws Exception
+    private static Balance getPrice(Log log, PriceProvider priceProvider, int a, int b, int x, int y) throws Exception
     {
         double minPercentageDown = (double) x / 100f; //0.01f;
         double percentageBuyMultiplier = a; //70;
@@ -77,8 +78,8 @@ public class Tester
         BasicBuyStrategy buyStrategy = new BasicBuyStrategy(wallet, minPercentageDown, percentageBuyMultiplier, minEurToSpend);
         BasicSellStrategy sellStrategy = new BasicSellStrategy(wallet, minPercentageUp, percentageSellMultiplier, sellAllLimit, minEurToGain);
         Strategy strategy = new BasicStrategy(buyStrategy, sellStrategy);
-
-        Botcoin botcoin = new Botcoin(wallet, priceProvider, strategy, log);
+        Trader trader = new Trader();
+        Botcoin botcoin = new Botcoin(wallet, priceProvider, strategy, trader, log);
 
         return botcoin.start();
     }

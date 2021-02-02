@@ -3,8 +3,8 @@ package com.mauriciotogneri.botcoin.util;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
-import com.mauriciotogneri.botcoin.operations.BuyOperation;
-import com.mauriciotogneri.botcoin.operations.SellOperation;
+import com.mauriciotogneri.botcoin.operation.BuyOperation;
+import com.mauriciotogneri.botcoin.operation.SellOperation;
 import com.mauriciotogneri.botcoin.wallet.Balance;
 
 import org.jetbrains.annotations.NotNull;
