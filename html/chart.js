@@ -37,22 +37,22 @@ function priceHistory(json)
     return list
 }
 
-function buysHistory(json)
+function eventHistory(json, type)
 {
     const list = []
+    var counter = 1
 
     for (var index in json)
     {
         var element = json[index]
 
-        if (element.buy)
+        if (element[type])
         {
 	        list.push({
-	            type: 'buy',
 	            x: element.timestamp,
 	            y: element.price,
-	            title: 'buy: ' + index,
-	            text: 'yes'
+	            title: type.toUpperCase() + ': ' + counter++,
+	            text: JSON.stringify(element, null, 4)
 	        })
         }
     }
@@ -63,14 +63,13 @@ function buysHistory(json)
 function processResult(json)
 {
     const prices = priceHistory(json)
-    console.log(prices)
-    const buys = buysHistory(json)
-    console.log(buys)
+    const buys = eventHistory(json, 'buy')
+    const sells = eventHistory(json, 'sell')
 
-    render(prices, buys)
+    render(prices, buys, sells)
 }
 
-function render(prices, buys)
+function render(prices, buys, sells)
 {
     chart = Highcharts.stockChart('container', {
 
@@ -98,14 +97,23 @@ function render(prices, buys)
             {
                 name: 'Price',
                 data: prices,
-                id: 'dataseries'
+                id: 'dataseries',
+                color: '#e3e300'
             },
             {
                 type: 'flags',
                 data: buys,
                 onSeries: 'dataseries',
                 shape: 'squarepin',
-                color: '#00DB04',
+                color: '#00db04',
+                width: 30
+            },
+            {
+                type: 'flags',
+                data: sells,
+                onSeries: 'dataseries',
+                shape: 'squarepin',
+                color: '#0088e3',
                 width: 30
             }
         ]
