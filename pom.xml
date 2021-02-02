@@ -90,7 +90,7 @@
         <dependency>
             <groupId>com.github.binance-exchange</groupId>
             <artifactId>binance-java-api</artifactId>
-            <version>master</version>
+            <version>-SNAPSHOT</version>
         </dependency>
 
     </dependencies>
