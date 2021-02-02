@@ -71,10 +71,8 @@ public class Tester
         double sellAllLimit = 0.001f;
         double minEurToGain = 10;
 
-        Currency eur = new Currency("EUR", 2);
-        Currency btc = new Currency("BTC", 8);
-        Balance balanceEUR = new Balance(eur, 5000);
-        Balance balanceBTC = new Balance(btc, 0);
+        Balance balanceEUR = new Balance(Currency.EUR, 5000);
+        Balance balanceBTC = new Balance(Currency.BTC, 0);
         Wallet wallet = new Wallet(balanceEUR, balanceBTC, log);
         BasicBuyStrategy buyStrategy = new BasicBuyStrategy(wallet, minPercentageDown, percentageBuyMultiplier, minEurToSpend);
         BasicSellStrategy sellStrategy = new BasicSellStrategy(wallet, minPercentageUp, percentageSellMultiplier, sellAllLimit, minEurToGain);
