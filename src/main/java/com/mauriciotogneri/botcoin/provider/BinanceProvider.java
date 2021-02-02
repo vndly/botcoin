@@ -23,12 +23,15 @@ public class BinanceProvider implements PriceProvider
     }
 
     @Override
-    public double price() throws Exception
+    public Price price() throws Exception
     {
         Thread.sleep(frequency * 1000L);
         TickerPrice tickerPrice = client.getPrice(symbol);
 
-        return Double.parseDouble(tickerPrice.getPrice());
+        return new Price(
+                System.currentTimeMillis(),
+                Double.parseDouble(tickerPrice.getPrice())
+        );
     }
 
     public static class Payload

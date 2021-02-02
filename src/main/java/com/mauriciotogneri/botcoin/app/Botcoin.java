@@ -2,6 +2,7 @@ package com.mauriciotogneri.botcoin.app;
 
 import com.mauriciotogneri.botcoin.operation.BuyOperation;
 import com.mauriciotogneri.botcoin.operation.SellOperation;
+import com.mauriciotogneri.botcoin.provider.Price;
 import com.mauriciotogneri.botcoin.provider.PriceProvider;
 import com.mauriciotogneri.botcoin.strategy.Action;
 import com.mauriciotogneri.botcoin.strategy.Intent;
@@ -36,8 +37,8 @@ public class Botcoin
 
         while (priceProvider.hasPrice())
         {
-            double price = priceProvider.price();
-            Intent intent = strategy.intent(price);
+            Price price = priceProvider.price();
+            Intent intent = strategy.intent(price.value);
 
             if (intent.action == Action.BUY)
             {
@@ -52,7 +53,7 @@ public class Botcoin
                 log.sell(sellOperation);
             }
 
-            lastPrice = price;
+            lastPrice = price.value;
         }
 
         return wallet.totalBalance(lastPrice);

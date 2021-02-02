@@ -11,7 +11,7 @@ import java.util.List;
 public class FileProvider implements PriceProvider
 {
     private int index = 0;
-    private final double[] prices;
+    private final Price[] prices;
 
     public FileProvider(String path) throws Exception
     {
@@ -19,9 +19,9 @@ public class FileProvider implements PriceProvider
     }
 
     @NotNull
-    private double[] load(String path) throws Exception
+    private Price[] load(String path) throws Exception
     {
-        List<Double> list = new ArrayList<>();
+        List<Price> list = new ArrayList<>();
 
         File file = new File(path);
         FileReader fileReader = new FileReader(file);
@@ -34,14 +34,15 @@ public class FileProvider implements PriceProvider
 
             if (parts.length > 1)
             {
+                long timestamp = Long.parseLong(parts[0]);
                 double price = Double.parseDouble(parts[1]);
-                list.add(price);
+                list.add(new Price(timestamp, price));
             }
         }
 
         fileReader.close();
 
-        double[] result = new double[list.size()];
+        Price[] result = new Price[list.size()];
 
         for (int i = 0; i < list.size(); i++)
         {
@@ -56,7 +57,7 @@ public class FileProvider implements PriceProvider
         index = 0;
     }
 
-    public double[] prices()
+    public Price[] prices()
     {
         return prices;
     }
@@ -68,7 +69,7 @@ public class FileProvider implements PriceProvider
     }
 
     @Override
-    public double price()
+    public Price price()
     {
         return prices[index++];
     }

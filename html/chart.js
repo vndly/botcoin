@@ -30,11 +30,6 @@ function show(pricesFile)
     })
 }
 
-/*function entryName(index, entry)
-{
-    return (parseInt(index) + 1) + '. ' + operationsSummary(entry.operations) + ' | ' + entry.totalProfit + ' | ' + entry.averagePercentageProfit.toFixed(2) + '%'
-}*/
-
 function loadPrices(file, callback)
 {
     var xobj = new XMLHttpRequest()
@@ -49,6 +44,11 @@ function loadPrices(file, callback)
     }
     xobj.send(null)
 }
+
+/*function entryName(index, entry)
+{
+    return (parseInt(index) + 1) + '. ' + operationsSummary(entry.operations) + ' | ' + entry.totalProfit + ' | ' + entry.averagePercentageProfit.toFixed(2) + '%'
+}*/
 
 /*function processResult(json)
 {

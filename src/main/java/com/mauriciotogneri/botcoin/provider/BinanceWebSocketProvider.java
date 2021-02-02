@@ -14,8 +14,11 @@ public class BinanceWebSocketProvider implements PriceProvider
     }
 
     @Override
-    public double price() throws Exception
+    public Price price() throws Exception
     {
-        return 0;
+        return new Price(
+                System.currentTimeMillis(),
+                0
+        );
     }
 }

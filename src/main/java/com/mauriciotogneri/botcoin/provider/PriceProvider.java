@@ -4,5 +4,5 @@ public interface PriceProvider
 {
     boolean hasPrice();
 
-    double price() throws Exception;
+    Price price() throws Exception;
 }
