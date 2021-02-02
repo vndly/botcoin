@@ -44,13 +44,17 @@ public class Botcoin
             {
                 TradeInfo trade = trader.buy(intent);
                 BuyOperation buyOperation = wallet.buy(trade);
-                log.buy(buyOperation);
+                log.buy(price, buyOperation);
             }
             else if (intent.action == Action.SELL)
             {
                 TradeInfo trade = trader.sell(intent);
                 SellOperation sellOperation = wallet.sell(trade);
-                log.sell(sellOperation);
+                log.sell(price, sellOperation);
+            }
+            else
+            {
+                log.price(price);
             }
 
             lastPrice = price.value;
