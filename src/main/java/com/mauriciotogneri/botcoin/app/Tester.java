@@ -45,8 +45,8 @@ public class Tester
         ));
         print(newOrderResponse);*/
 
-        /*Order openOrder = client.getOrderStatus(new OrderStatusRequest("BTCEUR", 307525507L));
-        print(openOrder);*/
+        //Order orderStatus = client.getOrderStatus(new OrderStatusRequest("BTCEUR", 307540435L));
+        //print(orderStatus);
 
         List<Order> openOrders = client.getOpenOrders(new OrderRequest("BTCEUR"));
         print(openOrders);
