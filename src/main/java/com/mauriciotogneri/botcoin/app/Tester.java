@@ -2,7 +2,6 @@ package com.mauriciotogneri.botcoin.app;
 
 import com.binance.api.client.BinanceApiRestClient;
 import com.binance.api.client.domain.account.Order;
-import com.binance.api.client.domain.account.Trade;
 import com.binance.api.client.domain.account.request.OrderRequest;
 import com.google.gson.Gson;
 import com.mauriciotogneri.botcoin.exchange.BinanceApi;
@@ -33,8 +32,8 @@ public class Tester
     {
         BinanceApiRestClient client = BinanceApi.client();
 
-        List<Trade> trades = client.getMyTrades("BTCEUR");
-        print(trades);
+        //List<Trade> trades = client.getMyTrades("BTCEUR");
+        //print(trades);
 
         //CancelOrderResponse cancelOrderResponse = client.cancelOrder(new CancelOrderRequest("BTCEUR", 307513170L));
         //print(cancelOrderResponse);
@@ -44,8 +43,8 @@ public class Tester
                 OrderSide.SELL,
                 OrderType.LIMIT,
                 TimeInForce.GTC,
-                "0.003000", // min 0.0001 BTC
-                "30850.00"
+                "0.002000", // min 0.0001 BTC
+                "31050.00"
         ));
         print(newOrderResponse);*/
 
