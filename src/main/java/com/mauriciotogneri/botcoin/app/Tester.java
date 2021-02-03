@@ -1,22 +1,63 @@
 package com.mauriciotogneri.botcoin.app;
 
-import com.mauriciotogneri.botcoin.provider.DataProvider;
-import com.mauriciotogneri.botcoin.provider.FilePriceProvider;
-import com.mauriciotogneri.botcoin.provider.Price;
+import com.binance.api.client.BinanceApiRestClient;
+import com.binance.api.client.domain.account.Order;
+import com.binance.api.client.domain.account.request.OrderRequest;
+import com.google.gson.Gson;
+import com.mauriciotogneri.botcoin.exchange.BinanceApi;
+import com.mauriciotogneri.botcoin.exchange.BinanceTrader;
 import com.mauriciotogneri.botcoin.momo.BasicBuyStrategy;
 import com.mauriciotogneri.botcoin.momo.BasicSellStrategy;
 import com.mauriciotogneri.botcoin.momo.BasicStrategy;
+import com.mauriciotogneri.botcoin.provider.DataProvider;
+import com.mauriciotogneri.botcoin.provider.FilePriceProvider;
+import com.mauriciotogneri.botcoin.provider.Price;
 import com.mauriciotogneri.botcoin.strategy.Strategy;
-import com.mauriciotogneri.botcoin.exchange.BinanceTrader;
 import com.mauriciotogneri.botcoin.trader.Trader;
 import com.mauriciotogneri.botcoin.util.Log;
 import com.mauriciotogneri.botcoin.wallet.Balance;
 import com.mauriciotogneri.botcoin.wallet.Currency;
 import com.mauriciotogneri.botcoin.wallet.Wallet;
 
+import java.util.List;
+
 public class Tester
 {
     public static void main(String[] args) throws Exception
+    {
+        testApi();
+    }
+
+    private static void testApi()
+    {
+        BinanceApiRestClient client = BinanceApi.client();
+
+        //CancelOrderResponse cancelOrderResponse = client.cancelOrder(new CancelOrderRequest("BTCEUR", 307513170L));
+        //print(cancelOrderResponse);
+
+        /*NewOrderResponse newOrderResponse = client.newOrder(new NewOrder(
+                "BTCEUR",
+                OrderSide.SELL,
+                OrderType.LIMIT,
+                TimeInForce.GTC,
+                "0.003000",
+                "30850.00"
+        ));
+        print(newOrderResponse);*/
+
+        /*Order openOrder = client.getOrderStatus(new OrderStatusRequest("BTCEUR", 307525507L));
+        print(openOrder);*/
+
+        List<Order> openOrders = client.getOpenOrders(new OrderRequest("BTCEUR"));
+        print(openOrders);
+    }
+
+    private static void print(Object object)
+    {
+        System.out.println(new Gson().newBuilder().setPrettyPrinting().create().toJson(object));
+    }
+
+    private static void testFile() throws Exception
     {
         double minPercentageDown = 0.01;
         double percentageBuyMultiplier = 70;
