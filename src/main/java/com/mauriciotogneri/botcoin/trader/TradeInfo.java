@@ -9,9 +9,14 @@ public class TradeInfo
     public final double quantity;
     public final double price;
 
+    public TradeInfo(double quantity, double price)
+    {
+        this.quantity = quantity;
+        this.price = price;
+    }
+
     public TradeInfo(@NotNull Trade trade)
     {
-        this.quantity = Double.parseDouble(trade.getQty());
-        this.price = Double.parseDouble(trade.getPrice());
+        this(Double.parseDouble(trade.getQty()), Double.parseDouble(trade.getPrice()));
     }
 }

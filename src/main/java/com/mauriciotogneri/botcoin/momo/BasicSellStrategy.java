@@ -1,4 +1,4 @@
-package com.mauriciotogneri.botcoin.strategy;
+package com.mauriciotogneri.botcoin.momo;
 
 import com.mauriciotogneri.botcoin.wallet.Wallet;
 

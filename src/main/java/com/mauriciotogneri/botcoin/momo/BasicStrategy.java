@@ -1,6 +1,8 @@
-package com.mauriciotogneri.botcoin.strategy;
+package com.mauriciotogneri.botcoin.momo;
 
 import com.mauriciotogneri.botcoin.provider.Price;
+import com.mauriciotogneri.botcoin.strategy.Intent;
+import com.mauriciotogneri.botcoin.strategy.Strategy;
 
 import org.jetbrains.annotations.NotNull;
 

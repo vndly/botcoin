@@ -10,10 +10,8 @@ import com.mauriciotogneri.botcoin.strategy.Strategy;
 import com.mauriciotogneri.botcoin.trader.TradeInfo;
 import com.mauriciotogneri.botcoin.trader.Trader;
 import com.mauriciotogneri.botcoin.util.Log;
-import com.mauriciotogneri.botcoin.wallet.Balance;
 import com.mauriciotogneri.botcoin.wallet.Wallet;
 
-// https://medium.com/swlh/battle-of-the-bots-how-market-makers-fight-it-out-on-crypto-exchanges-2482eb937107
 public class Botcoin<T extends Data>
 {
     private final Wallet wallet;

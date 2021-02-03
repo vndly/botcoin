@@ -1,7 +1,9 @@
-package com.mauriciotogneri.botcoin.trader;
+package com.mauriciotogneri.botcoin.exchange;
 
 import com.binance.api.client.domain.account.Trade;
 import com.mauriciotogneri.botcoin.strategy.Intent;
+import com.mauriciotogneri.botcoin.trader.TradeInfo;
+import com.mauriciotogneri.botcoin.trader.Trader;
 
 import org.jetbrains.annotations.NotNull;
 
