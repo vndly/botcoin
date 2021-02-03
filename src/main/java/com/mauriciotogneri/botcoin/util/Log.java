@@ -5,7 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.mauriciotogneri.botcoin.operation.BuyOperation;
 import com.mauriciotogneri.botcoin.operation.SellOperation;
-import com.mauriciotogneri.botcoin.provider.Price;
+import com.mauriciotogneri.botcoin.provider.Data;
 import com.mauriciotogneri.botcoin.wallet.Balance;
 
 import org.jetbrains.annotations.NotNull;
@@ -75,7 +75,7 @@ public class Log
         }
     }
 
-    public void buy(@NotNull Price price, @NotNull BuyOperation buyOperation)
+    public void buy(@NotNull Data data, @NotNull BuyOperation buyOperation)
     {
         console("OPERATION: BUY\n");
         console("AMOUNT:    " + buyOperation.amount);
@@ -91,13 +91,13 @@ public class Log
         buyJson.add("balanceB", buyOperation.balanceB.json());
         buyJson.add("total", buyOperation.total.json());
 
-        JsonObject json = price.json();
+        JsonObject json = data.json();
         json.add("buy", buyJson);
 
         file(gson.toJson(json));
     }
 
-    public void sell(@NotNull Price price, @NotNull SellOperation sellOperation)
+    public void sell(@NotNull Data data, @NotNull SellOperation sellOperation)
     {
         console("OPERATION: SELL\n");
         console("AMOUNT:    " + sellOperation.amount);
@@ -115,7 +115,7 @@ public class Log
         sellJson.add("balanceB", sellOperation.balanceB.json());
         sellJson.add("total", sellOperation.total.json());
 
-        JsonObject json = price.json();
+        JsonObject json = data.json();
         json.add("sell", sellJson);
 
         file(gson.toJson(json));
@@ -130,8 +130,8 @@ public class Log
         console("\n====================================\n");
     }
 
-    public void price(@NotNull Price price)
+    public void price(@NotNull Data data)
     {
-        file(gson.toJson(price.json()));
+        file(gson.toJson(data.json()));
     }
 }

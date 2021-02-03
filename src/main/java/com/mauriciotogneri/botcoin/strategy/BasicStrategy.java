@@ -1,6 +1,10 @@
 package com.mauriciotogneri.botcoin.strategy;
 
-public class BasicStrategy implements Strategy
+import com.mauriciotogneri.botcoin.provider.Price;
+
+import org.jetbrains.annotations.NotNull;
+
+public class BasicStrategy implements Strategy<Price>
 {
     private final BasicBuyStrategy buyStrategy;
     private final BasicSellStrategy sellStrategy;
@@ -12,18 +16,18 @@ public class BasicStrategy implements Strategy
     }
 
     @Override
-    public Intent intent(double price)
+    public Intent intent(@NotNull Price price)
     {
-        double buyAmount = buyStrategy.buy(price);
-        double sellAmount = sellStrategy.sell(price);
+        double buyAmount = buyStrategy.buy(price.value);
+        double sellAmount = sellStrategy.sell(price.value);
 
         if (buyAmount > 0)
         {
-            return Intent.buy(buyAmount, price);
+            return Intent.buy(buyAmount, price.value);
         }
         else if (sellAmount > 0)
         {
-            return Intent.sell(sellAmount, price);
+            return Intent.sell(sellAmount, price.value);
         }
         else
         {

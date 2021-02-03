@@ -1,6 +1,8 @@
 package com.mauriciotogneri.botcoin.strategy;
 
-public interface Strategy
+import com.mauriciotogneri.botcoin.provider.Data;
+
+public interface Strategy<T extends Data>
 {
-    Intent intent(double price);
+    Intent intent(T data);
 }

@@ -8,12 +8,12 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FileProvider implements PriceProvider
+public class FilePriceProvider implements DataProvider<Price>
 {
     private int index = 0;
     private final Price[] prices;
 
-    public FileProvider(String path) throws Exception
+    public FilePriceProvider(String path) throws Exception
     {
         this.prices = load(path);
     }
@@ -63,13 +63,13 @@ public class FileProvider implements PriceProvider
     }
 
     @Override
-    public boolean hasPrice()
+    public boolean hasData()
     {
         return (index < prices.length);
     }
 
     @Override
-    public Price price()
+    public Price data()
     {
         return prices[index++];
     }
