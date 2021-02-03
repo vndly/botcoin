@@ -1,4 +1,4 @@
-package com.mauriciotogneri.botcoin.provider;
+package com.mauriciotogneri.botcoin.exchange;
 
 import com.binance.api.client.BinanceApiClientFactory;
 import com.binance.api.client.BinanceApiRestClient;

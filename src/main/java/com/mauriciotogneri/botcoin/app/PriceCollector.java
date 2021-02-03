@@ -3,7 +3,7 @@ package com.mauriciotogneri.botcoin.app;
 import com.binance.api.client.BinanceApiRestClient;
 import com.binance.api.client.domain.market.Candlestick;
 import com.binance.api.client.domain.market.CandlestickInterval;
-import com.mauriciotogneri.botcoin.provider.BinanceApi;
+import com.mauriciotogneri.botcoin.exchange.BinanceApi;
 
 import org.jetbrains.annotations.NotNull;
 

@@ -1,7 +1,9 @@
-package com.mauriciotogneri.botcoin.provider;
+package com.mauriciotogneri.botcoin.exchange;
 
 import com.binance.api.client.BinanceApiRestClient;
 import com.binance.api.client.domain.market.TickerPrice;
+import com.mauriciotogneri.botcoin.provider.DataProvider;
+import com.mauriciotogneri.botcoin.provider.Price;
 
 public class BinancePriceProvider implements DataProvider<Price>
 {
@@ -32,10 +34,5 @@ public class BinancePriceProvider implements DataProvider<Price>
                 System.currentTimeMillis(),
                 Double.parseDouble(tickerPrice.getPrice())
         );
-    }
-
-    public static class Payload
-    {
-        public double price;
     }
 }

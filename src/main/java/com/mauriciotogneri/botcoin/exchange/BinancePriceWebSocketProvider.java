@@ -1,4 +1,7 @@
-package com.mauriciotogneri.botcoin.provider;
+package com.mauriciotogneri.botcoin.exchange;
+
+import com.mauriciotogneri.botcoin.provider.DataProvider;
+import com.mauriciotogneri.botcoin.provider.Price;
 
 // TODO: https://github.com/binance/binance-spot-api-docs/blob/master/web-socket-streams.md
 public class BinancePriceWebSocketProvider implements DataProvider<Price>
