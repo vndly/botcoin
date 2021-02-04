@@ -122,6 +122,7 @@ public class BasicStrategy implements Strategy<Price>
         //balance(buyOperation.balanceA, buyOperation.balanceB, buyOperation.total);
 
         JsonObject json = new JsonObject();
+        json.addProperty("type", "buy");
         json.add("amount", balanceB.of(quantity).json());
         json.add("price", balanceA.of(price).json());
         json.add("spent", balanceA.of(spent).json());
@@ -154,6 +155,7 @@ public class BasicStrategy implements Strategy<Price>
         //balance(sellOperation.balanceA, sellOperation.balanceB, sellOperation.total);
 
         JsonObject json = new JsonObject();
+        json.addProperty("type", "sell");
         json.add("amount", balanceB.of(quantity).json());
         json.add("price", balanceA.of(price).json());
         json.add("gained", balanceA.of(toGain).json());
