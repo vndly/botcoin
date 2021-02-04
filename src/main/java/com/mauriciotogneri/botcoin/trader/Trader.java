@@ -1,10 +1,11 @@
 package com.mauriciotogneri.botcoin.trader;
 
-import com.mauriciotogneri.botcoin.strategy.Intent;
+import com.binance.api.client.domain.account.NewOrder;
+import com.binance.api.client.domain.account.NewOrderResponse;
+
+import java.util.List;
 
 public interface Trader
 {
-    TradeInfo buy(Intent intent);
-
-    TradeInfo sell(Intent intent);
+    List<NewOrderResponse> process(List<NewOrder> orders);
 }

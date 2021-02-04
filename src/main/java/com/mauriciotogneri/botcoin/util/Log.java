@@ -2,9 +2,8 @@ package com.mauriciotogneri.botcoin.util;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.mauriciotogneri.botcoin.operation.BuyOperation;
-import com.mauriciotogneri.botcoin.operation.SellOperation;
 import com.mauriciotogneri.botcoin.provider.Data;
 import com.mauriciotogneri.botcoin.wallet.Balance;
 
@@ -35,17 +34,14 @@ public class Log
         }
         else
         {
-            file.createNewFile();
+            if (!file.createNewFile())
+            {
+                throw new RuntimeException("Cannot create log file " + path);
+            }
         }
 
         FileWriter fileWriter = new FileWriter(file, true);
         writer = new BufferedWriter(fileWriter);
-    }
-
-    public void log(String data)
-    {
-        console(data);
-        file(data);
     }
 
     public void console(String data)
@@ -75,48 +71,15 @@ public class Log
         }
     }
 
-    public void buy(@NotNull Data data, @NotNull BuyOperation buyOperation)
+    public void json(@NotNull Data data, @NotNull JsonArray events)
     {
-        console("OPERATION: BUY\n");
-        console("AMOUNT:    " + buyOperation.amount);
-        console("PRICE:     " + buyOperation.price);
-        console("SPENT:     " + buyOperation.spent);
-        balance(buyOperation.balanceA, buyOperation.balanceB, buyOperation.total);
+        JsonObject json = new JsonObject();
+        json.add("data", data.json());
 
-        JsonObject buyJson = new JsonObject();
-        buyJson.add("amount", buyOperation.amount.json());
-        buyJson.add("price", buyOperation.price.json());
-        buyJson.add("spent", buyOperation.spent.json());
-        buyJson.add("balanceA", buyOperation.balanceA.json());
-        buyJson.add("balanceB", buyOperation.balanceB.json());
-        buyJson.add("total", buyOperation.total.json());
-
-        JsonObject json = data.json();
-        json.add("buy", buyJson);
-
-        file(gson.toJson(json));
-    }
-
-    public void sell(@NotNull Data data, @NotNull SellOperation sellOperation)
-    {
-        console("OPERATION: SELL\n");
-        console("AMOUNT:    " + sellOperation.amount);
-        console("PRICE:     " + sellOperation.price);
-        console("GAINED:    " + sellOperation.gained);
-        console("PROFIT:    " + sellOperation.profit);
-        balance(sellOperation.balanceA, sellOperation.balanceB, sellOperation.total);
-
-        JsonObject sellJson = new JsonObject();
-        sellJson.add("amount", sellOperation.amount.json());
-        sellJson.add("price", sellOperation.price.json());
-        sellJson.add("gained", sellOperation.gained.json());
-        sellJson.add("profit", sellOperation.profit.json());
-        sellJson.add("balanceA", sellOperation.balanceA.json());
-        sellJson.add("balanceB", sellOperation.balanceB.json());
-        sellJson.add("total", sellOperation.total.json());
-
-        JsonObject json = data.json();
-        json.add("sell", sellJson);
+        if (events.size() > 0)
+        {
+            json.add("events", events);
+        }
 
         file(gson.toJson(json));
     }

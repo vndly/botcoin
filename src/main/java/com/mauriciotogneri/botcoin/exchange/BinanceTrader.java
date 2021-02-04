@@ -1,35 +1,18 @@
 package com.mauriciotogneri.botcoin.exchange;
 
-import com.binance.api.client.domain.account.Trade;
-import com.mauriciotogneri.botcoin.strategy.Intent;
-import com.mauriciotogneri.botcoin.trader.TradeInfo;
+import com.binance.api.client.domain.account.NewOrder;
+import com.binance.api.client.domain.account.NewOrderResponse;
 import com.mauriciotogneri.botcoin.trader.Trader;
 
-import org.jetbrains.annotations.NotNull;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BinanceTrader implements Trader
 {
     @Override
-    public TradeInfo buy(@NotNull Intent intent)
+    public List<NewOrderResponse> process(List<NewOrder> orders)
     {
         // TODO: do the trading
-
-        Trade trade = new Trade();
-        trade.setPrice(String.valueOf(intent.price));
-        trade.setQty(String.valueOf(intent.quantity));
-
-        return new TradeInfo(trade);
-    }
-
-    @Override
-    public TradeInfo sell(@NotNull Intent intent)
-    {
-        // TODO: do the trading
-
-        Trade trade = new Trade();
-        trade.setPrice(String.valueOf(intent.price));
-        trade.setQty(String.valueOf(intent.quantity));
-
-        return new TradeInfo(trade);
+        return new ArrayList<>();
     }
 }
