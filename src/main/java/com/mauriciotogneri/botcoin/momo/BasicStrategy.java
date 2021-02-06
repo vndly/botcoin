@@ -53,7 +53,7 @@ public class BasicStrategy implements Strategy<Price>
                     OrderType.MARKET,
                     TimeInForce.GTC,
                     String.valueOf(buyAmount),
-                    String.valueOf(price.value)
+                    String.valueOf(price.value) // TODO: remove?
             ));
         }
         else if (sellAmount > 0)
@@ -63,8 +63,8 @@ public class BasicStrategy implements Strategy<Price>
                     OrderSide.SELL,
                     OrderType.MARKET,
                     TimeInForce.GTC,
-                    String.valueOf(buyAmount),
-                    String.valueOf(price.value)
+                    String.valueOf(sellAmount),
+                    String.valueOf(price.value) // TODO: remove?
             ));
         }
         else
@@ -108,7 +108,7 @@ public class BasicStrategy implements Strategy<Price>
         // TODO: check if filled
         double quantity = Double.parseDouble(response.getExecutedQty());
         double price = Double.parseDouble(response.getPrice());
-        double toSpend = quantity * price;
+        double toSpend = balanceA.formatAmount(quantity * price);
 
         balanceA.amount -= toSpend;
         balanceB.amount += quantity;
@@ -138,9 +138,9 @@ public class BasicStrategy implements Strategy<Price>
         // TODO: check if filled
         double quantity = Double.parseDouble(response.getExecutedQty());
         double price = Double.parseDouble(response.getPrice());
-        double originalCost = quantity * boughtPrice();
-        double toGain = quantity * price;
-        double profit = toGain - originalCost;
+        double toGain = balanceA.formatAmount(quantity * price);
+        double originalCost = balanceA.formatAmount(quantity * boughtPrice());
+        double profit = balanceA.formatAmount(toGain - originalCost);
 
         balanceA.amount += toGain;
         balanceB.amount -= quantity;
