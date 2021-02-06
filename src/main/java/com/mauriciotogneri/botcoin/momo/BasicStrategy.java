@@ -26,13 +26,12 @@ public class BasicStrategy implements Strategy<Price>
     private final BasicBuyStrategy buyStrategy;
     private final BasicSellStrategy sellStrategy;
 
-    public BasicStrategy(String symbol,
-                         Balance balanceA,
-                         Balance balanceB,
+    public BasicStrategy(@NotNull Balance balanceA,
+                         @NotNull Balance balanceB,
                          BasicBuyStrategy buyStrategy,
                          BasicSellStrategy sellStrategy)
     {
-        this.symbol = symbol;
+        this.symbol = String.format("%s%s", balanceB.currency.symbol, balanceA.currency.symbol);
         this.balanceA = balanceA;
         this.balanceB = balanceB;
         this.buyStrategy = buyStrategy;
