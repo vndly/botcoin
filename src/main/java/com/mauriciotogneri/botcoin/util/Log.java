@@ -67,8 +67,13 @@ public class Log
         }
     }
 
-    public void json(Object object)
+    public void jsonFile(Object object)
     {
         file(gson.toJson(object));
+    }
+
+    public void jsonConsole(Object object)
+    {
+        console(gson.toJson(object));
     }
 }

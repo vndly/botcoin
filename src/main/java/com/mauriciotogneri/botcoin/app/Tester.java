@@ -71,17 +71,17 @@ public class Tester
         double percentageSellMultiplier = 100;
         double sellAllLimit = 0.001f;
 
+        Log log = new Log("output/logs.json");
+
         DataProvider<Price> dataProvider = new FilePriceProvider("input/prices_BTCEUR_1m.csv");
 
         Balance balanceEUR = new Balance(Currency.EUR, 5000);
         Balance balanceBTC = new Balance(Currency.BTC, 0);
         BasicBuyStrategy buyStrategy = new BasicBuyStrategy(minPercentageDown, percentageBuyMultiplier, minEurToTrade, minBtcToTrade);
         BasicSellStrategy sellStrategy = new BasicSellStrategy(minPercentageUp, percentageSellMultiplier, sellAllLimit, minEurToTrade, minBtcToTrade);
-        Strategy<Price> strategy = new BasicStrategy(balanceEUR, balanceBTC, buyStrategy, sellStrategy);
+        Strategy<Price> strategy = new BasicStrategy(balanceEUR, balanceBTC, log, buyStrategy, sellStrategy);
 
         Trader trader = new FakeTrader();
-
-        Log log = new Log("output/logs.json");
 
         Botcoin<Price> botcoin = new Botcoin<>(dataProvider, strategy, trader, log);
         botcoin.start();
