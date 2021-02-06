@@ -8,7 +8,6 @@ import com.binance.api.client.domain.account.NewOrderResponse;
 import com.google.gson.JsonObject;
 import com.mauriciotogneri.botcoin.provider.Price;
 import com.mauriciotogneri.botcoin.strategy.Strategy;
-import com.mauriciotogneri.botcoin.util.Log;
 import com.mauriciotogneri.botcoin.wallet.Balance;
 
 import org.jetbrains.annotations.NotNull;
@@ -25,20 +24,17 @@ public class BasicStrategy implements Strategy<Price>
     private final String symbol;
     private final Balance balanceA;
     private final Balance balanceB;
-    private final Log log;
     private final BasicBuyStrategy buyStrategy;
     private final BasicSellStrategy sellStrategy;
 
     public BasicStrategy(@NotNull Balance balanceA,
                          @NotNull Balance balanceB,
-                         Log log,
                          BasicBuyStrategy buyStrategy,
                          BasicSellStrategy sellStrategy)
     {
         this.symbol = String.format("%s%s", balanceB.currency.symbol, balanceA.currency.symbol);
         this.balanceA = balanceA;
         this.balanceB = balanceB;
-        this.log = log;
         this.buyStrategy = buyStrategy;
         this.sellStrategy = sellStrategy;
     }
@@ -88,7 +84,6 @@ public class BasicStrategy implements Strategy<Price>
             NewOrder order = entry.getKey();
             NewOrderResponse response = entry.getValue();
             JsonObject event = process(order, response);
-            log.jsonConsole(event);
 
             result.add(event);
         }

@@ -35,8 +35,14 @@ public class Botcoin<T extends Data>
             List<NewOrder> orders = strategy.orders(data);
             Map<NewOrder, NewOrderResponse> responses = trader.process(orders);
             List<Object> events = strategy.update(responses);
+
             LogEntry logEntry = new LogEntry(data, events);
             log.jsonFile(logEntry);
+
+            if (logEntry.hasEvents())
+            {
+                log.jsonConsole(logEntry);
+            }
         }
     }
 }

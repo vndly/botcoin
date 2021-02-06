@@ -79,7 +79,7 @@ public class Tester
         Balance balanceBTC = new Balance(Currency.BTC, 0);
         BasicBuyStrategy buyStrategy = new BasicBuyStrategy(minPercentageDown, percentageBuyMultiplier, minEurToTrade, minBtcToTrade);
         BasicSellStrategy sellStrategy = new BasicSellStrategy(minPercentageUp, percentageSellMultiplier, sellAllLimit, minEurToTrade, minBtcToTrade);
-        Strategy<Price> strategy = new BasicStrategy(balanceEUR, balanceBTC, log, buyStrategy, sellStrategy);
+        Strategy<Price> strategy = new BasicStrategy(balanceEUR, balanceBTC, buyStrategy, sellStrategy);
 
         Trader trader = new FakeTrader();
 
