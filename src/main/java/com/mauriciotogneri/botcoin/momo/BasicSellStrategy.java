@@ -9,14 +9,16 @@ public class BasicSellStrategy
     private final double minPercentageUp;
     private final double percentageSellMultiplier;
     private final double sellAllLimit;
-    private final double minEurToGain;
+    private final double minTradeAmountA;
+    private final double minTradeAmountB;
 
-    public BasicSellStrategy(double minPercentageUp, double percentageSellMultiplier, double sellAllLimit, double minEurToGain)
+    public BasicSellStrategy(double minPercentageUp, double percentageSellMultiplier, double sellAllLimit, double minTradeAmountA, double minTradeAmountB)
     {
         this.minPercentageUp = minPercentageUp;
         this.percentageSellMultiplier = percentageSellMultiplier;
         this.sellAllLimit = sellAllLimit;
-        this.minEurToGain = minEurToGain;
+        this.minTradeAmountA = minTradeAmountA;
+        this.minTradeAmountB = minTradeAmountB;
     }
 
     public double sell(double price, @NotNull Balance balanceB, double boughtPrice)
@@ -29,22 +31,22 @@ public class BasicSellStrategy
 
             if (percentageUp >= minPercentageUp)
             {
-                double btcToSell;
+                double amountBToSell;
 
                 if (balanceB.amount <= sellAllLimit)
                 {
-                    btcToSell = balanceB.amount;
+                    amountBToSell = balanceB.amount;
                 }
                 else
                 {
-                    btcToSell = Math.min(balanceB.amount * percentageUp * percentageSellMultiplier, balanceB.amount);
+                    amountBToSell = Math.min(balanceB.amount * percentageUp * percentageSellMultiplier, balanceB.amount);
                 }
 
-                double eurToGain = btcToSell * price;
+                double amountAToGain = amountBToSell * price;
 
-                if ((eurToGain >= minEurToGain) && (btcToSell <= balanceB.amount))
+                if ((amountAToGain >= minTradeAmountA) && (amountBToSell <= balanceB.amount) && (amountBToSell >= minTradeAmountB))
                 {
-                    result = btcToSell;
+                    result = amountBToSell;
                 }
             }
         }

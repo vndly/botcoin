@@ -61,22 +61,22 @@ public class Tester
 
     private static void testFile() throws Exception
     {
-        double minPercentageDown = 0.01;
-        double percentageBuyMultiplier = 70;
         double minEurToTrade = 10;
         double minBtcToTrade = 0.0001;
+
+        double minPercentageDown = 0.01;
+        double percentageBuyMultiplier = 70;
 
         double minPercentageUp = 0.05;
         double percentageSellMultiplier = 100;
         double sellAllLimit = 0.001f;
-        double minEurToGain = 10;
 
         DataProvider<Price> dataProvider = new FilePriceProvider("input/prices_BTCEUR_1m.csv");
 
         Balance balanceEUR = new Balance(Currency.EUR, 5000);
         Balance balanceBTC = new Balance(Currency.BTC, 0);
         BasicBuyStrategy buyStrategy = new BasicBuyStrategy(minPercentageDown, percentageBuyMultiplier, minEurToTrade, minBtcToTrade);
-        BasicSellStrategy sellStrategy = new BasicSellStrategy(minPercentageUp, percentageSellMultiplier, sellAllLimit, minEurToGain);
+        BasicSellStrategy sellStrategy = new BasicSellStrategy(minPercentageUp, percentageSellMultiplier, sellAllLimit, minEurToTrade, minBtcToTrade);
         Strategy<Price> strategy = new BasicStrategy("BTCEUR", balanceEUR, balanceBTC, buyStrategy, sellStrategy);
 
         Trader trader = new FakeTrader();
