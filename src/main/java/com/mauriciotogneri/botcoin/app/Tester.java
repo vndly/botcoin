@@ -5,7 +5,6 @@ import com.binance.api.client.domain.account.Order;
 import com.binance.api.client.domain.account.request.OrderRequest;
 import com.google.gson.Gson;
 import com.mauriciotogneri.botcoin.exchange.BinanceApi;
-import com.mauriciotogneri.botcoin.exchange.BinanceTrader;
 import com.mauriciotogneri.botcoin.momo.BasicBuyStrategy;
 import com.mauriciotogneri.botcoin.momo.BasicSellStrategy;
 import com.mauriciotogneri.botcoin.momo.BasicStrategy;
@@ -13,6 +12,7 @@ import com.mauriciotogneri.botcoin.provider.DataProvider;
 import com.mauriciotogneri.botcoin.provider.FilePriceProvider;
 import com.mauriciotogneri.botcoin.provider.Price;
 import com.mauriciotogneri.botcoin.strategy.Strategy;
+import com.mauriciotogneri.botcoin.trader.FakeTrader;
 import com.mauriciotogneri.botcoin.trader.Trader;
 import com.mauriciotogneri.botcoin.util.Log;
 import com.mauriciotogneri.botcoin.wallet.Balance;
@@ -78,7 +78,7 @@ public class Tester
         BasicSellStrategy sellStrategy = new BasicSellStrategy(minPercentageUp, percentageSellMultiplier, sellAllLimit, minEurToGain);
         Strategy<Price> strategy = new BasicStrategy("BTCEUR", balanceEUR, balanceBTC, buyStrategy, sellStrategy);
 
-        Trader trader = new BinanceTrader();
+        Trader trader = new FakeTrader();
 
         Log log = new Log("output/logs.json");
 
