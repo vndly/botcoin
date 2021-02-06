@@ -2,6 +2,8 @@ package com.mauriciotogneri.botcoin.momo;
 
 import com.mauriciotogneri.botcoin.wallet.Balance;
 
+import org.jetbrains.annotations.NotNull;
+
 public class BasicSellStrategy
 {
     private final double minPercentageUp;
@@ -17,7 +19,7 @@ public class BasicSellStrategy
         this.minEurToGain = minEurToGain;
     }
 
-    public double sell(double price, Balance balanceB, double boughtPrice)
+    public double sell(double price, @NotNull Balance balanceB, double boughtPrice)
     {
         double result = 0;
 
@@ -27,22 +29,26 @@ public class BasicSellStrategy
 
             if (percentageUp >= minPercentageUp)
             {
-                double btcToSell = Math.min(balanceB.amount * percentageUp * percentageSellMultiplier, balanceB.amount);
+                double btcToSell;
 
                 if (balanceB.amount <= sellAllLimit)
                 {
                     btcToSell = balanceB.amount;
                 }
+                else
+                {
+                    btcToSell = Math.min(balanceB.amount * percentageUp * percentageSellMultiplier, balanceB.amount);
+                }
 
                 double eurToGain = btcToSell * price;
 
-                if ((eurToGain >= minEurToGain) && (balanceB.amount >= btcToSell))
+                if ((eurToGain >= minEurToGain) && (btcToSell <= balanceB.amount))
                 {
                     result = btcToSell;
                 }
             }
         }
 
-        return result;
+        return balanceB.formatAmount(result);
     }
 }
