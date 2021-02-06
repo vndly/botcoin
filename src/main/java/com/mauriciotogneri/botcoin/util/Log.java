@@ -2,8 +2,6 @@ package com.mauriciotogneri.botcoin.util;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.mauriciotogneri.botcoin.provider.Data;
-import com.mauriciotogneri.botcoin.wallet.Balance;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -69,22 +67,8 @@ public class Log
         }
     }
 
-    public void log(Object object)
+    public void json(Object object)
     {
         file(gson.toJson(object));
-    }
-
-    public void balance(@NotNull Balance balanceA, @NotNull Balance balanceB, @NotNull Balance total)
-    {
-        console("");
-        console("BALANCE:   " + balanceA);
-        console("BALANCE:   " + balanceB);
-        console("TOTAL:     " + total);
-        console("\n====================================\n");
-    }
-
-    public void price(@NotNull Data data)
-    {
-        file(gson.toJson(data.json()));
     }
 }

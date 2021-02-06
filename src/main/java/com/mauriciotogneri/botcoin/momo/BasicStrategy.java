@@ -83,8 +83,9 @@ public class BasicStrategy implements Strategy<Price>
         {
             NewOrder order = entry.getKey();
             NewOrderResponse response = entry.getValue();
+            JsonObject event = process(order, response);
 
-            result.add(process(order, response));
+            result.add(event);
         }
 
         return result;
@@ -118,15 +119,9 @@ public class BasicStrategy implements Strategy<Price>
         balanceB.amount += quantity;
         spent += toSpend;
 
-        //console("OPERATION: BUY\n");
-        //console("AMOUNT:    " + buyOperation.amount);
-        //console("PRICE:     " + buyOperation.price);
-        //console("SPENT:     " + buyOperation.spent);
-        //balance(buyOperation.balanceA, buyOperation.balanceB, buyOperation.total);
-
         JsonObject json = new JsonObject();
         json.addProperty("type", "buy");
-        json.add("amount", balanceB.of(quantity).json());
+        json.add("quantity", balanceB.of(quantity).json());
         json.add("price", balanceA.of(price).json());
         json.add("spent", balanceA.of(spent).json());
         json.add("balanceA", balanceA.json());
@@ -150,16 +145,9 @@ public class BasicStrategy implements Strategy<Price>
         balanceB.amount -= quantity;
         spent -= originalCost;
 
-        //console("OPERATION: SELL\n");
-        //console("AMOUNT:    " + sellOperation.amount);
-        //console("PRICE:     " + sellOperation.price);
-        //console("GAINED:    " + sellOperation.gained);
-        //console("PROFIT:    " + sellOperation.profit);
-        //balance(sellOperation.balanceA, sellOperation.balanceB, sellOperation.total);
-
         JsonObject json = new JsonObject();
         json.addProperty("type", "sell");
-        json.add("amount", balanceB.of(quantity).json());
+        json.add("quantity", balanceB.of(quantity).json());
         json.add("price", balanceA.of(price).json());
         json.add("gained", balanceA.of(toGain).json());
         json.add("profit", balanceA.of(profit).json());
