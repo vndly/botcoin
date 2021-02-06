@@ -9,13 +9,15 @@ public class BasicBuyStrategy
     private double allTimeHigh = 0;
     private final double minPercentageDown;
     private final double percentageBuyMultiplier;
-    private final double minEurToSpend;
+    private final double minTradeAmountA;
+    private final double minTradeAmountB;
 
-    public BasicBuyStrategy(double minPercentageDown, double percentageBuyMultiplier, double minEurToSpend)
+    public BasicBuyStrategy(double minPercentageDown, double percentageBuyMultiplier, double minTradeAmountA, double minTradeAmountB)
     {
         this.minPercentageDown = minPercentageDown;
         this.percentageBuyMultiplier = percentageBuyMultiplier;
-        this.minEurToSpend = minEurToSpend;
+        this.minTradeAmountA = minTradeAmountA;
+        this.minTradeAmountB = minTradeAmountB;
     }
 
     public double buy(double price, @NotNull Balance balanceA, @NotNull Balance balanceB, double boughtPrice)
@@ -48,11 +50,12 @@ public class BasicBuyStrategy
 
         if (percentageDown >= minPercentageDown)
         {
-            double eurToSpend = Math.min(balanceA.amount * percentageDown * percentageBuyMultiplier, balanceA.amount);
+            double amountAToSpend = Math.min(balanceA.amount * percentageDown * percentageBuyMultiplier, balanceA.amount);
+            double amountBToBuy = amountAToSpend / price;
 
-            if ((eurToSpend >= minEurToSpend) && (eurToSpend <= balanceA.amount))
+            if ((amountAToSpend >= minTradeAmountA) && (amountAToSpend <= balanceA.amount) && (amountBToBuy >= minTradeAmountB))
             {
-                result = eurToSpend / price;
+                result = amountBToBuy;
             }
         }
 

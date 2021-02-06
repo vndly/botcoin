@@ -63,7 +63,8 @@ public class Tester
     {
         double minPercentageDown = 0.01;
         double percentageBuyMultiplier = 70;
-        double minEurToSpend = 10;
+        double minEurToTrade = 10;
+        double minBtcToTrade = 0.0001;
 
         double minPercentageUp = 0.05;
         double percentageSellMultiplier = 100;
@@ -74,7 +75,7 @@ public class Tester
 
         Balance balanceEUR = new Balance(Currency.EUR, 5000);
         Balance balanceBTC = new Balance(Currency.BTC, 0);
-        BasicBuyStrategy buyStrategy = new BasicBuyStrategy(minPercentageDown, percentageBuyMultiplier, minEurToSpend);
+        BasicBuyStrategy buyStrategy = new BasicBuyStrategy(minPercentageDown, percentageBuyMultiplier, minEurToTrade, minBtcToTrade);
         BasicSellStrategy sellStrategy = new BasicSellStrategy(minPercentageUp, percentageSellMultiplier, sellAllLimit, minEurToGain);
         Strategy<Price> strategy = new BasicStrategy("BTCEUR", balanceEUR, balanceBTC, buyStrategy, sellStrategy);
 
