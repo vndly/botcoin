@@ -10,6 +10,7 @@ import com.mauriciotogneri.botcoin.trader.Trader;
 import com.mauriciotogneri.botcoin.util.Log;
 
 import java.util.List;
+import java.util.Map;
 
 public class Botcoin<T extends Data>
 {
@@ -32,7 +33,7 @@ public class Botcoin<T extends Data>
         {
             T data = dataProvider.data();
             List<NewOrder> orders = strategy.orders(data);
-            List<NewOrderResponse> responses = trader.process(orders);
+            Map<NewOrder, NewOrderResponse> responses = trader.process(orders);
             JsonArray json = strategy.update(responses);
             log.json(data, json);
         }

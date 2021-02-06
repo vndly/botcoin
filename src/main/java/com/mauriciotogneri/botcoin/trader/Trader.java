@@ -4,8 +4,9 @@ import com.binance.api.client.domain.account.NewOrder;
 import com.binance.api.client.domain.account.NewOrderResponse;
 
 import java.util.List;
+import java.util.Map;
 
 public interface Trader
 {
-    List<NewOrderResponse> process(List<NewOrder> orders);
+    Map<NewOrder, NewOrderResponse> process(List<NewOrder> orders);
 }

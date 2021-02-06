@@ -16,6 +16,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 public class BasicStrategy implements Strategy<Price>
 {
@@ -74,27 +76,30 @@ public class BasicStrategy implements Strategy<Price>
     }
 
     @Override
-    public JsonArray update(@NotNull List<NewOrderResponse> responses)
+    public JsonArray update(@NotNull Map<NewOrder, NewOrderResponse> orders)
     {
         JsonArray array = new JsonArray();
 
-        for (NewOrderResponse response : responses)
+        for (Entry<NewOrder, NewOrderResponse> entry : orders.entrySet())
         {
-            array.add(process(response));
+            NewOrder order = entry.getKey();
+            NewOrderResponse response = entry.getValue();
+
+            array.add(process(order, response));
         }
 
         return array;
     }
 
-    private JsonObject process(@NotNull NewOrderResponse response)
+    private JsonObject process(@NotNull NewOrder order, NewOrderResponse response)
     {
-        if (response.getSide() == OrderSide.BUY)
+        if (order.getSide() == OrderSide.BUY)
         {
-            return buy(response);
+            return buy(order, response);
         }
-        else if (response.getSide() == OrderSide.SELL)
+        else if (order.getSide() == OrderSide.SELL)
         {
-            return sell(response);
+            return sell(order, response);
         }
         else
         {
@@ -103,7 +108,7 @@ public class BasicStrategy implements Strategy<Price>
     }
 
     @NotNull
-    private JsonObject buy(@NotNull NewOrderResponse response)
+    private JsonObject buy(NewOrder order, @NotNull NewOrderResponse response)
     {
         // TODO: check if filled
         double quantity = Double.parseDouble(response.getExecutedQty());
@@ -133,7 +138,7 @@ public class BasicStrategy implements Strategy<Price>
     }
 
     @NotNull
-    private JsonObject sell(@NotNull NewOrderResponse response)
+    private JsonObject sell(NewOrder order, @NotNull NewOrderResponse response)
     {
         // TODO: check if filled
         double quantity = Double.parseDouble(response.getExecutedQty());

@@ -6,18 +6,19 @@ import com.binance.api.client.domain.account.NewOrderResponse;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 
 public class FakeTrader implements Trader
 {
     @Override
-    public List<NewOrderResponse> process(@NotNull List<NewOrder> orders)
+    public Map<NewOrder, NewOrderResponse> process(@NotNull List<NewOrder> orders)
     {
         Random random = new Random();
-        List<NewOrderResponse> responses = new ArrayList<>();
+        Map<NewOrder, NewOrderResponse> responses = new HashMap<>();
 
         for (NewOrder order : orders)
         {
@@ -40,7 +41,7 @@ public class FakeTrader implements Trader
             response.setClientOrderId(UUID.randomUUID().toString());
             response.setStatus(OrderStatus.FILLED);
 
-            responses.add(response);
+            responses.put(order, response);
         }
 
         return responses;

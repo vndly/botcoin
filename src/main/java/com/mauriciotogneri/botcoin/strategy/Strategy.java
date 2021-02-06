@@ -6,10 +6,11 @@ import com.google.gson.JsonArray;
 import com.mauriciotogneri.botcoin.provider.Data;
 
 import java.util.List;
+import java.util.Map;
 
 public interface Strategy<T extends Data>
 {
     List<NewOrder> orders(T data);
 
-    JsonArray update(List<NewOrderResponse> responses);
+    JsonArray update(Map<NewOrder, NewOrderResponse> orders);
 }

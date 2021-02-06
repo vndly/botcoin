@@ -7,8 +7,9 @@ import com.mauriciotogneri.botcoin.trader.Trader;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class BinanceTrader implements Trader
 {
@@ -20,13 +21,14 @@ public class BinanceTrader implements Trader
     }
 
     @Override
-    public List<NewOrderResponse> process(@NotNull List<NewOrder> orders)
+    public Map<NewOrder, NewOrderResponse> process(@NotNull List<NewOrder> orders)
     {
-        List<NewOrderResponse> responses = new ArrayList<>();
+        Map<NewOrder, NewOrderResponse> responses = new HashMap<>();
 
         for (NewOrder order : orders)
         {
             //responses.add(client.newOrder(order));
+            //responses.put(order, null);
         }
 
         return responses;
