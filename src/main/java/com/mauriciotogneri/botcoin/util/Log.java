@@ -2,8 +2,6 @@ package com.mauriciotogneri.botcoin.util;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import com.mauriciotogneri.botcoin.provider.Data;
 import com.mauriciotogneri.botcoin.wallet.Balance;
 
@@ -71,17 +69,9 @@ public class Log
         }
     }
 
-    public void json(@NotNull Data data, @NotNull JsonArray events)
+    public void log(Object object)
     {
-        JsonObject json = new JsonObject();
-        json.add("data", data.json());
-
-        if (events.size() > 0)
-        {
-            json.add("events", events);
-        }
-
-        file(gson.toJson(json));
+        file(gson.toJson(object));
     }
 
     public void balance(@NotNull Balance balanceA, @NotNull Balance balanceB, @NotNull Balance total)

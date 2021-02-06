@@ -5,7 +5,6 @@ import com.binance.api.client.domain.OrderType;
 import com.binance.api.client.domain.TimeInForce;
 import com.binance.api.client.domain.account.NewOrder;
 import com.binance.api.client.domain.account.NewOrderResponse;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.mauriciotogneri.botcoin.provider.Price;
 import com.mauriciotogneri.botcoin.strategy.Strategy;
@@ -76,19 +75,19 @@ public class BasicStrategy implements Strategy<Price>
     }
 
     @Override
-    public JsonArray update(@NotNull Map<NewOrder, NewOrderResponse> orders)
+    public List<Object> update(@NotNull Map<NewOrder, NewOrderResponse> orders)
     {
-        JsonArray array = new JsonArray();
+        List<Object> result = new ArrayList<>();
 
         for (Entry<NewOrder, NewOrderResponse> entry : orders.entrySet())
         {
             NewOrder order = entry.getKey();
             NewOrderResponse response = entry.getValue();
 
-            array.add(process(order, response));
+            result.add(process(order, response));
         }
 
-        return array;
+        return result;
     }
 
     private JsonObject process(@NotNull NewOrder order, NewOrderResponse response)
