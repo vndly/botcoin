@@ -26,7 +26,7 @@ public class BasicBuyStrategy
         {
             if (price < allTimeHigh)
             {
-                result = byFrom(price, allTimeHigh, balanceA);
+                result = byFrom(price, allTimeHigh, balanceA, balanceB);
             }
             else
             {
@@ -35,13 +35,13 @@ public class BasicBuyStrategy
         }
         else if (price < boughtPrice) // average down
         {
-            result = byFrom(price, boughtPrice, balanceA);
+            result = byFrom(price, boughtPrice, balanceA, balanceB);
         }
 
         return result;
     }
 
-    private double byFrom(double price, double limit, @NotNull Balance balanceA)
+    private double byFrom(double price, double limit, @NotNull Balance balanceA, @NotNull Balance balanceB)
     {
         double result = 0;
         double percentageDown = 1 - (price / limit);
@@ -50,12 +50,12 @@ public class BasicBuyStrategy
         {
             double eurToSpend = Math.min(balanceA.amount * percentageDown * percentageBuyMultiplier, balanceA.amount);
 
-            if ((eurToSpend > 0) && (eurToSpend >= minEurToSpend) && (eurToSpend <= balanceA.amount))
+            if ((eurToSpend >= minEurToSpend) && (eurToSpend <= balanceA.amount))
             {
                 result = eurToSpend / price;
             }
         }
 
-        return result;
+        return balanceB.formatAmount(result);
     }
 }

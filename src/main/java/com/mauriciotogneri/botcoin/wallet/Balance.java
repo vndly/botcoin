@@ -20,7 +20,12 @@ public class Balance
 
     public String format(double value)
     {
-        return String.format("%." + currency.decimals + "f %s", value, currency);
+        return String.format("%s %s", formatAmount(value), currency);
+    }
+
+    public double formatAmount(double value)
+    {
+        return Double.parseDouble(String.format("%." + currency.decimals + "f", value));
     }
 
     public JsonObject json()
