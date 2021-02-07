@@ -23,7 +23,6 @@ public class FakeTrader implements Trader
 
         for (NewOrder order : orders)
         {
-            BigDecimal cummulativeQuoteQty = new BigDecimal(order.getQuantity()).multiply(new BigDecimal(order.getPrice()));
 
             NewOrderResponse response = new NewOrderResponse();
             response.setType(order.getType());
@@ -33,7 +32,7 @@ public class FakeTrader implements Trader
             response.setPrice(order.getPrice());
             response.setOrigQty(order.getQuantity());
             response.setExecutedQty(order.getQuantity());
-            response.setCummulativeQuoteQty(cummulativeQuoteQty.toString());
+            response.setCummulativeQuoteQty(new BigDecimal(order.getQuantity()).multiply(new BigDecimal(order.getPrice())).toString());
 
             response.setTransactTime(System.currentTimeMillis());
             response.setOrderId((long) Math.abs(random.nextInt()));
