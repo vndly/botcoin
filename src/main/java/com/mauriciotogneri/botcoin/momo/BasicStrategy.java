@@ -57,8 +57,8 @@ public class BasicStrategy implements Strategy<Price>
                     OrderSide.BUY,
                     OrderType.MARKET,
                     TimeInForce.GTC,
-                    String.valueOf(buyAmount),
-                    String.valueOf(price.value) // TODO: remove?
+                    buyAmount.toString(),
+                    price.value.toString() // TODO: remove?
             ));
         }
         else if (sellAmount.compareTo(BigDecimal.ZERO) > 0)
@@ -68,8 +68,8 @@ public class BasicStrategy implements Strategy<Price>
                     OrderSide.SELL,
                     OrderType.MARKET,
                     TimeInForce.GTC,
-                    String.valueOf(sellAmount),
-                    String.valueOf(price.value) // TODO: remove?
+                    sellAmount.toString(),
+                    price.value.toString() // TODO: remove?
             ));
         }
         else
