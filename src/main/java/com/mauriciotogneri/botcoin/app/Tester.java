@@ -65,10 +65,10 @@ public class Tester
     private static void testFile() throws Exception
     {
         String minEurToTrade = "10";
-        String minBtcToTrade = "0.0001";
+        String minBtcToTrade = "0.0005";
 
         String minPercentageDown = "0.01";
-        String percentageBuyMultiplier = "70";
+        String percentageBuyMultiplier = "50";
 
         String minPercentageUp = "0.05";
         String percentageSellMultiplier = "100";
@@ -77,7 +77,7 @@ public class Tester
         //DataProvider<Price> dataProvider = new FilePriceProvider("input/prices_BTCEUR_1m.csv");
         DataProvider<Price> dataProvider = new BinancePriceProvider("BTCEUR", 10);
 
-        Balance balanceEUR = new Balance(Currency.EUR, "20");
+        Balance balanceEUR = new Balance(Currency.EUR, "50");
         Balance balanceBTC = new Balance(Currency.BTC, "0");
         BasicBuyStrategy buyStrategy = new BasicBuyStrategy(minPercentageDown, percentageBuyMultiplier, minEurToTrade, minBtcToTrade);
         BasicSellStrategy sellStrategy = new BasicSellStrategy(minPercentageUp, percentageSellMultiplier, sellAllLimit, minEurToTrade, minBtcToTrade);

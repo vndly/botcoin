@@ -5,8 +5,8 @@ public class Currency
     public final String symbol;
     public final int decimals;
 
-    public static final Currency EUR = new Currency("EUR", 2);
-    public static final Currency USD = new Currency("USD", 2);
+    public static final Currency EUR = new Currency("EUR", 8);
+    public static final Currency USD = new Currency("USD", 8);
 
     public static final Currency BTC = new Currency("BTC", 8);
     public static final Currency ETH = new Currency("ETH", 8);

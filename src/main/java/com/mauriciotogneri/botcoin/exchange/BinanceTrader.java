@@ -4,6 +4,7 @@ import com.binance.api.client.BinanceApiRestClient;
 import com.binance.api.client.domain.account.NewOrder;
 import com.binance.api.client.domain.account.NewOrderResponse;
 import com.mauriciotogneri.botcoin.trader.Trader;
+import com.mauriciotogneri.botcoin.util.Json;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -27,6 +28,8 @@ public class BinanceTrader implements Trader
 
         for (NewOrder order : orders)
         {
+            System.out.printf("Attempt to execute order: %s%n", Json.toJsonString(order));
+
             NewOrderResponse response = client.newOrder(order);
             responses.put(order, response);
         }
