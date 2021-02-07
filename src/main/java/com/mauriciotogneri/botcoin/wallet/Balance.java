@@ -1,7 +1,5 @@
 package com.mauriciotogneri.botcoin.wallet;
 
-import com.google.gson.JsonObject;
-
 public class Balance
 {
     public final Currency currency;
@@ -26,15 +24,6 @@ public class Balance
     public double formatAmount(double value)
     {
         return Double.parseDouble(String.format("%." + currency.decimals + "f", value));
-    }
-
-    public JsonObject json()
-    {
-        JsonObject json = new JsonObject();
-        json.addProperty("amount", Double.parseDouble(String.format("%." + currency.decimals + "f", amount)));
-        json.addProperty("currency", currency.symbol);
-
-        return json;
     }
 
     @Override

@@ -31,9 +31,7 @@ public class FakeTrader implements Trader
             response.setOrigQty(order.getQuantity());
             response.setExecutedQty(order.getQuantity());
             response.setCummulativeQuoteQty(
-                    String.valueOf(
-                            Double.parseDouble(order.getQuantity()) * Double.parseDouble(order.getPrice())
-                    )
+                    String.format("%.2f", Double.parseDouble(order.getQuantity()) * Double.parseDouble(order.getPrice()))
             );
 
             response.setTransactTime(System.currentTimeMillis());

@@ -1,6 +1,7 @@
 package com.mauriciotogneri.botcoin.momo;
 
 import com.binance.api.client.domain.OrderSide;
+import com.binance.api.client.domain.OrderStatus;
 import com.binance.api.client.domain.OrderType;
 import com.binance.api.client.domain.TimeInForce;
 import com.binance.api.client.domain.account.NewOrder;
@@ -8,6 +9,7 @@ import com.binance.api.client.domain.account.NewOrderResponse;
 import com.google.gson.JsonObject;
 import com.mauriciotogneri.botcoin.provider.Price;
 import com.mauriciotogneri.botcoin.strategy.Strategy;
+import com.mauriciotogneri.botcoin.util.Json;
 import com.mauriciotogneri.botcoin.wallet.Balance;
 
 import org.jetbrains.annotations.NotNull;
@@ -110,23 +112,30 @@ public class BasicStrategy implements Strategy<Price>
     @NotNull
     private JsonObject buy(NewOrder order, @NotNull NewOrderResponse response)
     {
-        // TODO: check if filled
-        double quantity = Double.parseDouble(response.getExecutedQty());
-        double price = Double.parseDouble(response.getPrice());
-        double toSpend = balanceA.formatAmount(quantity * price);
-
-        balanceA.amount -= toSpend;
-        balanceB.amount += quantity;
-        spent += toSpend;
-
         JsonObject json = new JsonObject();
-        json.addProperty("type", "buy");
-        json.add("quantity", balanceB.of(quantity).json());
-        json.add("price", balanceA.of(price).json());
-        json.add("spent", balanceA.of(spent).json());
-        json.add("balanceA", balanceA.json());
-        json.add("balanceB", balanceB.json());
-        json.add("total", totalBalance(price).json());
+        json.add("order", Json.toJsonObject(order));
+        json.add("response", Json.toJsonObject(response));
+
+        if (response.getStatus() == OrderStatus.FILLED)
+        {
+            double quantity = Double.parseDouble(response.getExecutedQty());
+            double price = Double.parseDouble(response.getPrice());
+            double toSpend = balanceA.formatAmount(quantity * price);
+
+            balanceA.amount -= toSpend;
+            balanceB.amount += quantity;
+            spent += toSpend;
+            
+            LogEvent logEvent = LogEvent.buy(
+                    balanceB.of(quantity),
+                    balanceA.of(price),
+                    balanceA.of(spent),
+                    balanceA,
+                    balanceB,
+                    totalBalance(price)
+            );
+            json.add("custom", Json.toJsonObject(logEvent));
+        }
 
         return json;
     }
@@ -134,26 +143,33 @@ public class BasicStrategy implements Strategy<Price>
     @NotNull
     private JsonObject sell(NewOrder order, @NotNull NewOrderResponse response)
     {
-        // TODO: check if filled
-        double quantity = Double.parseDouble(response.getExecutedQty());
-        double price = Double.parseDouble(response.getPrice());
-        double toGain = balanceA.formatAmount(quantity * price);
-        double originalCost = balanceA.formatAmount(quantity * boughtPrice());
-        double profit = balanceA.formatAmount(toGain - originalCost);
-
-        balanceA.amount += toGain;
-        balanceB.amount -= quantity;
-        spent -= originalCost;
-
         JsonObject json = new JsonObject();
-        json.addProperty("type", "sell");
-        json.add("quantity", balanceB.of(quantity).json());
-        json.add("price", balanceA.of(price).json());
-        json.add("gained", balanceA.of(toGain).json());
-        json.add("profit", balanceA.of(profit).json());
-        json.add("balanceA", balanceA.json());
-        json.add("balanceB", balanceB.json());
-        json.add("total", totalBalance(price).json());
+        json.add("order", Json.toJsonObject(order));
+        json.add("response", Json.toJsonObject(response));
+
+        if (response.getStatus() == OrderStatus.FILLED)
+        {
+            double quantity = Double.parseDouble(response.getExecutedQty());
+            double price = Double.parseDouble(response.getPrice());
+            double toGain = balanceA.formatAmount(quantity * price);
+            double originalCost = balanceA.formatAmount(quantity * boughtPrice());
+            double profit = balanceA.formatAmount(toGain - originalCost);
+
+            balanceA.amount += toGain;
+            balanceB.amount -= quantity;
+            spent -= originalCost;
+
+            LogEvent logEvent = LogEvent.sell(
+                    balanceB.of(quantity),
+                    balanceA.of(price),
+                    balanceA.of(toGain),
+                    balanceA.of(profit),
+                    balanceA,
+                    balanceB,
+                    totalBalance(price)
+            );
+            json.add("custom", Json.toJsonObject(logEvent));
+        }
 
         return json;
     }

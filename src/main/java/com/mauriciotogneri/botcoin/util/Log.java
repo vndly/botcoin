@@ -1,8 +1,5 @@
 package com.mauriciotogneri.botcoin.util;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedWriter;
@@ -16,7 +13,6 @@ public class Log
 {
     private boolean empty = true;
     private final BufferedWriter writer;
-    private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     public Log(@NotNull String path) throws IOException
     {
@@ -69,11 +65,11 @@ public class Log
 
     public void jsonFile(Object object)
     {
-        file(gson.toJson(object));
+        file(Json.toJsonString(object));
     }
 
     public void jsonConsole(Object object)
     {
-        console(gson.toJson(object));
+        console(Json.toJsonString(object));
     }
 }

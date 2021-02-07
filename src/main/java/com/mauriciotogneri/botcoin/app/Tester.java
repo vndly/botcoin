@@ -72,6 +72,7 @@ public class Tester
         double sellAllLimit = 0.001f;
 
         DataProvider<Price> dataProvider = new FilePriceProvider("input/prices_BTCEUR_1m.csv");
+        //DataProvider<Price> dataProvider = new BinancePriceProvider("BTCEUR", 10);
 
         Balance balanceEUR = new Balance(Currency.EUR, 5000);
         Balance balanceBTC = new Balance(Currency.BTC, 0);
