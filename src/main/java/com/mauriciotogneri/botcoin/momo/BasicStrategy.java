@@ -2,11 +2,10 @@ package com.mauriciotogneri.botcoin.momo;
 
 import com.binance.api.client.domain.OrderSide;
 import com.binance.api.client.domain.OrderStatus;
-import com.binance.api.client.domain.OrderType;
-import com.binance.api.client.domain.TimeInForce;
 import com.binance.api.client.domain.account.NewOrder;
 import com.binance.api.client.domain.account.NewOrderResponse;
 import com.google.gson.JsonObject;
+import com.mauriciotogneri.botcoin.exchange.Binance;
 import com.mauriciotogneri.botcoin.provider.Price;
 import com.mauriciotogneri.botcoin.strategy.Strategy;
 import com.mauriciotogneri.botcoin.util.Json;
@@ -52,25 +51,11 @@ public class BasicStrategy implements Strategy<Price>
 
         if (buyAmount.compareTo(BigDecimal.ZERO) > 0)
         {
-            return Collections.singletonList(new NewOrder(
-                    symbol,
-                    OrderSide.BUY,
-                    OrderType.MARKET,
-                    null,
-                    buyAmount.toString()//,
-                    //price.value.toString() // TODO: remove?
-            ));
+            return Collections.singletonList(Binance.buyMarketOrder(symbol, buyAmount));
         }
         else if (sellAmount.compareTo(BigDecimal.ZERO) > 0)
         {
-            return Collections.singletonList(new NewOrder(
-                    symbol,
-                    OrderSide.SELL,
-                    OrderType.MARKET,
-                    TimeInForce.GTC,
-                    sellAmount.toString()//,
-                    //price.value.toString() // TODO: remove?
-            ));
+            return Collections.singletonList(Binance.sellMarketOrder(symbol, sellAmount));
         }
         else
         {
@@ -121,8 +106,8 @@ public class BasicStrategy implements Strategy<Price>
         if (response.getStatus() == OrderStatus.FILLED)
         {
             BigDecimal quantity = new BigDecimal(response.getExecutedQty());
-            BigDecimal price = new BigDecimal(response.getPrice());
             BigDecimal toSpend = new BigDecimal(response.getCummulativeQuoteQty());
+            BigDecimal price = toSpend.divide(quantity, balanceA.currency.decimals, BigDecimal.ROUND_DOWN);
 
             balanceA.amount = balanceA.amount.subtract(toSpend);
             balanceB.amount = balanceB.amount.add(quantity);
@@ -156,8 +141,9 @@ public class BasicStrategy implements Strategy<Price>
         if (response.getStatus() == OrderStatus.FILLED)
         {
             BigDecimal quantity = new BigDecimal(response.getExecutedQty());
-            BigDecimal price = new BigDecimal(response.getPrice());
             BigDecimal toGain = new BigDecimal(response.getCummulativeQuoteQty());
+            BigDecimal price = toGain.divide(quantity, balanceA.currency.decimals, BigDecimal.ROUND_DOWN);
+
             BigDecimal originalCost = quantity.multiply(boughtPrice());
             BigDecimal profit = toGain.subtract(originalCost);
 
