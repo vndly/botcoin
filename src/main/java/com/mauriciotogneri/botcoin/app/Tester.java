@@ -4,7 +4,7 @@ import com.binance.api.client.BinanceApiRestClient;
 import com.mauriciotogneri.botcoin.exchange.Binance;
 import com.mauriciotogneri.botcoin.exchange.BinancePriceProvider;
 import com.mauriciotogneri.botcoin.exchange.BinanceTrader;
-import com.mauriciotogneri.botcoin.momo.BasicStrategy;
+import com.mauriciotogneri.botcoin.momo.basic.BasicStrategy;
 import com.mauriciotogneri.botcoin.provider.DataProvider;
 import com.mauriciotogneri.botcoin.provider.Price;
 import com.mauriciotogneri.botcoin.strategy.Strategy;

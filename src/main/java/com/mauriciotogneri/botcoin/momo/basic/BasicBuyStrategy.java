@@ -1,4 +1,4 @@
-package com.mauriciotogneri.botcoin.momo;
+package com.mauriciotogneri.botcoin.momo.basic;
 
 import com.mauriciotogneri.botcoin.wallet.Balance;
 
