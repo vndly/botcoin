@@ -34,6 +34,7 @@ public class BasicSellStrategy
 
         if ((price.compareTo(boughtPrice) > 0) && (boughtPrice.compareTo(BigDecimal.ZERO) > 0))
         {
+            System.out.printf("Trying to sell at: %s/%s%n", price, boughtPrice);
             BigDecimal percentageUp = price.divide(boughtPrice, 10, RoundingMode.DOWN).subtract(BigDecimal.ONE);
 
             if (percentageUp.compareTo(minPercentageUp) >= 0)
