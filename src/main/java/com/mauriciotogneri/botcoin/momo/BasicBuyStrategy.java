@@ -52,7 +52,7 @@ public class BasicBuyStrategy
             result = byFrom(price, boughtPrice, balanceA, balanceB);
         }
 
-        return result.setScale(6, RoundingMode.DOWN); // TODO: PARAMETRIZE
+        return result;
     }
 
     private BigDecimal byFrom(@NotNull BigDecimal price,
@@ -68,7 +68,9 @@ public class BasicBuyStrategy
             BigDecimal amountAToSpend = balanceA.amount.min(
                     balanceA.amount.multiply(percentageDown).multiply(percentageBuyMultiplier)
             );
-            BigDecimal amountBToBuy = amountAToSpend.divide(price, balanceB.currency.decimals, RoundingMode.DOWN);
+            BigDecimal amountBToBuy = amountAToSpend
+                    .divide(price, balanceB.currency.decimals, RoundingMode.DOWN)
+                    .setScale(balanceB.currency.step, RoundingMode.DOWN);
 
             if ((amountAToSpend.compareTo(minTradeAmountA) >= 0) &&
                     (amountAToSpend.compareTo(balanceA.amount) <= 0) &&

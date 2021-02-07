@@ -60,7 +60,7 @@ public class Tester
         System.out.println(Json.toJsonString(object));
     }
 
-    // 92.70059507 EUR
+    // 92.73587834 EUR
     // 0.00000029 BTC
     private static void testFile() throws Exception
     {
@@ -70,7 +70,7 @@ public class Tester
         String minPercentageDown = "0.01";
         String percentageBuyMultiplier = "50";
 
-        String minPercentageUp = "0.05";
+        String minPercentageUp = "0.02";
         String percentageSellMultiplier = "100";
         String sellAllLimit = "0.001";
 

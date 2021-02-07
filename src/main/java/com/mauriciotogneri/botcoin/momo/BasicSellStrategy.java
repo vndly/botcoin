@@ -42,12 +42,15 @@ public class BasicSellStrategy
 
                 if (balanceB.amount.compareTo(sellAllLimit) <= 0)
                 {
-                    amountBToSell = balanceB.amount;
+                    amountBToSell = balanceB.amount.setScale(balanceB.currency.step, RoundingMode.DOWN);
                 }
                 else
                 {
                     amountBToSell = balanceB.amount.min(
-                            balanceB.amount.multiply(percentageUp).multiply(percentageSellMultiplier)
+                            balanceB.amount
+                                    .multiply(percentageUp)
+                                    .multiply(percentageSellMultiplier)
+                                    .setScale(balanceB.currency.step, RoundingMode.DOWN)
                     );
                 }
 
@@ -62,6 +65,6 @@ public class BasicSellStrategy
             }
         }
 
-        return result.setScale(6, RoundingMode.DOWN); // TODO: PARAMETRIZE
+        return result.setScale(6, RoundingMode.DOWN);
     }
 }
