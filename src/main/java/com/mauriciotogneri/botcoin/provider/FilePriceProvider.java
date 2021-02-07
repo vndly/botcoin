@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +36,7 @@ public class FilePriceProvider implements DataProvider<Price>
             if (parts.length > 1)
             {
                 long timestamp = Long.parseLong(parts[0]);
-                double price = Double.parseDouble(parts[1]);
+                BigDecimal price = new BigDecimal(parts[1]);
                 list.add(new Price(timestamp, price));
             }
         }

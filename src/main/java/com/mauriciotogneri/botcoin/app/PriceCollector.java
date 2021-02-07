@@ -9,6 +9,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -39,7 +41,7 @@ public class PriceCollector
 
         while (true)
         {
-            PriceEntry[] entries = priceEntries(lastTimestamp);
+            List<PriceEntry> entries = priceEntries(lastTimestamp);
 
             for (PriceEntry entry : entries)
             {
@@ -50,9 +52,9 @@ public class PriceCollector
 
             bufferedWriter.flush();
 
-            count += entries.length;
+            count += entries.size();
 
-            if (((limit != 0) && (count >= limit)) || (entries.length == 0))
+            if (((limit != 0) && (count >= limit)) || (entries.isEmpty()))
             {
                 break;
             }
@@ -62,7 +64,7 @@ public class PriceCollector
     }
 
     @NotNull
-    private PriceEntry[] priceEntries(long lastTimestamp)
+    private List<PriceEntry> priceEntries(long lastTimestamp)
     {
         List<PriceEntry> result = new ArrayList<>();
         List<Candlestick> candlesticks = client.getCandlestickBars(pair, CandlestickInterval.valueOf(interval), null, null, lastTimestamp);
@@ -70,24 +72,24 @@ public class PriceCollector
         for (Candlestick candlestick : candlesticks)
         {
             long timestamp = candlestick.getCloseTime();
-            double high = Double.parseDouble(candlestick.getHigh());
-            double low = Double.parseDouble(candlestick.getLow());
-            double price = (high + low) / 2;
+            BigDecimal high = new BigDecimal(candlestick.getHigh());
+            BigDecimal low = new BigDecimal(candlestick.getLow());
+            BigDecimal price = (high.add(low)).divide(new BigDecimal(2), 2, RoundingMode.DOWN);
 
             result.add(new PriceEntry(timestamp, price));
         }
 
         Collections.reverse(result);
 
-        return result.toArray(new PriceEntry[result.size()]);
+        return result;
     }
 
     private static class PriceEntry
     {
         public final long timestamp;
-        public final double price;
+        public final BigDecimal price;
 
-        private PriceEntry(long timestamp, double price)
+        private PriceEntry(long timestamp, BigDecimal price)
         {
             this.timestamp = timestamp;
             this.price = price;

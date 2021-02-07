@@ -6,6 +6,7 @@ import com.binance.api.client.domain.account.NewOrderResponse;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +23,8 @@ public class FakeTrader implements Trader
 
         for (NewOrder order : orders)
         {
+            BigDecimal cummulativeQuoteQty = new BigDecimal(order.getQuantity()).multiply(new BigDecimal(order.getPrice()));
+
             NewOrderResponse response = new NewOrderResponse();
             response.setType(order.getType());
             response.setSide(order.getSide());
@@ -30,9 +33,7 @@ public class FakeTrader implements Trader
             response.setPrice(order.getPrice());
             response.setOrigQty(order.getQuantity());
             response.setExecutedQty(order.getQuantity());
-            response.setCummulativeQuoteQty(
-                    String.format("%.2f", Double.parseDouble(order.getQuantity()) * Double.parseDouble(order.getPrice()))
-            );
+            response.setCummulativeQuoteQty(cummulativeQuoteQty.toString());
 
             response.setTransactTime(System.currentTimeMillis());
             response.setOrderId((long) Math.abs(random.nextInt()));

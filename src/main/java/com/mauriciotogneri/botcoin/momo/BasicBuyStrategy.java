@@ -4,29 +4,38 @@ import com.mauriciotogneri.botcoin.wallet.Balance;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 public class BasicBuyStrategy
 {
-    private double allTimeHigh = 0;
-    private final double minPercentageDown;
-    private final double percentageBuyMultiplier;
-    private final double minTradeAmountA;
-    private final double minTradeAmountB;
+    private BigDecimal allTimeHigh = BigDecimal.ZERO;
+    private final BigDecimal minPercentageDown;
+    private final BigDecimal percentageBuyMultiplier;
+    private final BigDecimal minTradeAmountA;
+    private final BigDecimal minTradeAmountB;
 
-    public BasicBuyStrategy(double minPercentageDown, double percentageBuyMultiplier, double minTradeAmountA, double minTradeAmountB)
+    public BasicBuyStrategy(String minPercentageDown,
+                            String percentageBuyMultiplier,
+                            String minTradeAmountA,
+                            String minTradeAmountB)
     {
-        this.minPercentageDown = minPercentageDown;
-        this.percentageBuyMultiplier = percentageBuyMultiplier;
-        this.minTradeAmountA = minTradeAmountA;
-        this.minTradeAmountB = minTradeAmountB;
+        this.minPercentageDown = new BigDecimal(minPercentageDown);
+        this.percentageBuyMultiplier = new BigDecimal(percentageBuyMultiplier);
+        this.minTradeAmountA = new BigDecimal(minTradeAmountA);
+        this.minTradeAmountB = new BigDecimal(minTradeAmountB);
     }
 
-    public double buy(double price, @NotNull Balance balanceA, @NotNull Balance balanceB, double boughtPrice)
+    public BigDecimal buy(BigDecimal price,
+                          @NotNull Balance balanceA,
+                          @NotNull Balance balanceB,
+                          BigDecimal boughtPrice)
     {
-        double result = 0;
+        BigDecimal result = BigDecimal.ZERO;
 
-        if (balanceB.amount == 0) // first buy
+        if (balanceB.amount.compareTo(BigDecimal.ZERO) == 0) // first buy
         {
-            if (price < allTimeHigh)
+            if (price.compareTo(allTimeHigh) < 0)
             {
                 result = byFrom(price, allTimeHigh, balanceA, balanceB);
             }
@@ -35,7 +44,7 @@ public class BasicBuyStrategy
                 allTimeHigh = price;
             }
         }
-        else if (price < boughtPrice) // average down
+        else if (price.compareTo(boughtPrice) < 0) // average down
         {
             result = byFrom(price, boughtPrice, balanceA, balanceB);
         }
@@ -43,22 +52,29 @@ public class BasicBuyStrategy
         return result;
     }
 
-    private double byFrom(double price, double limit, @NotNull Balance balanceA, @NotNull Balance balanceB)
+    private BigDecimal byFrom(@NotNull BigDecimal price,
+                              BigDecimal limit,
+                              @NotNull Balance balanceA,
+                              @NotNull Balance balanceB)
     {
-        double result = 0;
-        double percentageDown = 1 - (price / limit);
+        BigDecimal result = BigDecimal.ZERO;
+        BigDecimal percentageDown = BigDecimal.ONE.subtract(price.divide(limit, 2, RoundingMode.DOWN));
 
-        if (percentageDown >= minPercentageDown)
+        if (percentageDown.compareTo(minPercentageDown) >= 0)
         {
-            double amountAToSpend = Math.min(balanceA.amount * percentageDown * percentageBuyMultiplier, balanceA.amount);
-            double amountBToBuy = amountAToSpend / price;
+            BigDecimal amountAToSpend = balanceA.amount.min(
+                    balanceA.amount.multiply(percentageDown).multiply(percentageBuyMultiplier)
+            );
+            BigDecimal amountBToBuy = amountAToSpend.divide(price, balanceB.currency.decimals, RoundingMode.DOWN);
 
-            if ((amountAToSpend >= minTradeAmountA) && (amountAToSpend <= balanceA.amount) && (amountBToBuy >= minTradeAmountB))
+            if ((amountAToSpend.compareTo(minTradeAmountA) >= 0) &&
+                    (amountAToSpend.compareTo(balanceA.amount) <= 0) &&
+                    (amountBToBuy.compareTo(minTradeAmountB) >= 0))
             {
                 result = amountBToBuy;
             }
         }
 
-        return balanceB.formatAmount(result);
+        return result;
     }
 }

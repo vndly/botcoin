@@ -5,11 +5,11 @@ import com.binance.api.client.domain.account.Order;
 import com.binance.api.client.domain.account.request.OrderRequest;
 import com.google.gson.Gson;
 import com.mauriciotogneri.botcoin.exchange.BinanceApi;
-import com.mauriciotogneri.botcoin.exchange.BinancePriceProvider;
 import com.mauriciotogneri.botcoin.momo.BasicBuyStrategy;
 import com.mauriciotogneri.botcoin.momo.BasicSellStrategy;
 import com.mauriciotogneri.botcoin.momo.BasicStrategy;
 import com.mauriciotogneri.botcoin.provider.DataProvider;
+import com.mauriciotogneri.botcoin.provider.FilePriceProvider;
 import com.mauriciotogneri.botcoin.provider.Price;
 import com.mauriciotogneri.botcoin.strategy.Strategy;
 import com.mauriciotogneri.botcoin.trader.FakeTrader;
@@ -63,21 +63,21 @@ public class Tester
 
     private static void testFile() throws Exception
     {
-        double minEurToTrade = 10;
-        double minBtcToTrade = 0.0001;
+        String minEurToTrade = "10";
+        String minBtcToTrade = "0.0001";
 
-        double minPercentageDown = 0.01;
-        double percentageBuyMultiplier = 70;
+        String minPercentageDown = "0.01";
+        String percentageBuyMultiplier = "70";
 
-        double minPercentageUp = 0.05;
-        double percentageSellMultiplier = 100;
-        double sellAllLimit = 0.001f;
+        String minPercentageUp = "0.05";
+        String percentageSellMultiplier = "100";
+        String sellAllLimit = "0.001";
 
-        //DataProvider<Price> dataProvider = new FilePriceProvider("input/prices_BTCEUR_1m.csv");
-        DataProvider<Price> dataProvider = new BinancePriceProvider("BTCEUR", 10);
+        DataProvider<Price> dataProvider = new FilePriceProvider("input/prices_BTCEUR_1m.csv");
+        //DataProvider<Price> dataProvider = new BinancePriceProvider("BTCEUR", 10);
 
-        Balance balanceEUR = new Balance(Currency.EUR, 20);
-        Balance balanceBTC = new Balance(Currency.BTC, 0);
+        Balance balanceEUR = new Balance(Currency.EUR, "20");
+        Balance balanceBTC = new Balance(Currency.BTC, "0");
         BasicBuyStrategy buyStrategy = new BasicBuyStrategy(minPercentageDown, percentageBuyMultiplier, minEurToTrade, minBtcToTrade);
         BasicSellStrategy sellStrategy = new BasicSellStrategy(minPercentageUp, percentageSellMultiplier, sellAllLimit, minEurToTrade, minBtcToTrade);
         Strategy<Price> strategy = new BasicStrategy(balanceEUR, balanceBTC, buyStrategy, sellStrategy);

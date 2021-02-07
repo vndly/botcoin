@@ -34,10 +34,4 @@ public class Currency
         this.symbol = symbol;
         this.decimals = decimals;
     }
-
-    @Override
-    public String toString()
-    {
-        return symbol;
-    }
 }

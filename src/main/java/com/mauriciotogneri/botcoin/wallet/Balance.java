@@ -1,34 +1,25 @@
 package com.mauriciotogneri.botcoin.wallet;
 
+import java.math.BigDecimal;
+
 public class Balance
 {
     public final Currency currency;
-    public double amount;
+    public BigDecimal amount;
 
-    public Balance(Currency currency, double amount)
+    public Balance(Currency currency, BigDecimal amount)
     {
         this.currency = currency;
         this.amount = amount;
     }
 
-    public Balance of(double value)
+    public Balance(Currency currency, String amount)
+    {
+        this(currency, new BigDecimal(amount));
+    }
+
+    public Balance of(BigDecimal value)
     {
         return new Balance(currency, value);
-    }
-
-    public String format(double value)
-    {
-        return String.format("%s %s", formatAmount(value), currency);
-    }
-
-    public double formatAmount(double value)
-    {
-        return Double.parseDouble(String.format("%." + currency.decimals + "f", value));
-    }
-
-    @Override
-    public String toString()
-    {
-        return format(amount);
     }
 }

@@ -5,6 +5,8 @@ import com.binance.api.client.domain.market.TickerPrice;
 import com.mauriciotogneri.botcoin.provider.DataProvider;
 import com.mauriciotogneri.botcoin.provider.Price;
 
+import java.math.BigDecimal;
+
 public class BinancePriceProvider implements DataProvider<Price>
 {
     private final String symbol;
@@ -32,7 +34,7 @@ public class BinancePriceProvider implements DataProvider<Price>
 
         return new Price(
                 System.currentTimeMillis(),
-                Double.parseDouble(tickerPrice.getPrice())
+                new BigDecimal(tickerPrice.getPrice())
         );
     }
 }

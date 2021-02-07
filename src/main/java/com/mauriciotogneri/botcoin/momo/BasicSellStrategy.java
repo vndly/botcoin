@@ -4,53 +4,64 @@ import com.mauriciotogneri.botcoin.wallet.Balance;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 public class BasicSellStrategy
 {
-    private final double minPercentageUp;
-    private final double percentageSellMultiplier;
-    private final double sellAllLimit;
-    private final double minTradeAmountA;
-    private final double minTradeAmountB;
+    private final BigDecimal minPercentageUp;
+    private final BigDecimal percentageSellMultiplier;
+    private final BigDecimal sellAllLimit;
+    private final BigDecimal minTradeAmountA;
+    private final BigDecimal minTradeAmountB;
 
-    public BasicSellStrategy(double minPercentageUp, double percentageSellMultiplier, double sellAllLimit, double minTradeAmountA, double minTradeAmountB)
+    public BasicSellStrategy(String minPercentageUp,
+                             String percentageSellMultiplier,
+                             String sellAllLimit,
+                             String minTradeAmountA,
+                             String minTradeAmountB)
     {
-        this.minPercentageUp = minPercentageUp;
-        this.percentageSellMultiplier = percentageSellMultiplier;
-        this.sellAllLimit = sellAllLimit;
-        this.minTradeAmountA = minTradeAmountA;
-        this.minTradeAmountB = minTradeAmountB;
+        this.minPercentageUp = new BigDecimal(minPercentageUp);
+        this.percentageSellMultiplier = new BigDecimal(percentageSellMultiplier);
+        this.sellAllLimit = new BigDecimal(sellAllLimit);
+        this.minTradeAmountA = new BigDecimal(minTradeAmountA);
+        this.minTradeAmountB = new BigDecimal(minTradeAmountB);
     }
 
-    public double sell(double price, @NotNull Balance balanceB, double boughtPrice)
+    public BigDecimal sell(@NotNull BigDecimal price, @NotNull Balance balanceB, BigDecimal boughtPrice)
     {
-        double result = 0;
+        BigDecimal result = BigDecimal.ZERO;
 
-        if ((price > boughtPrice) && (boughtPrice > 0))
+        if ((price.compareTo(boughtPrice) > 0) && (boughtPrice.compareTo(BigDecimal.ZERO) > 0))
         {
-            double percentageUp = (price / boughtPrice) - 1;
+            BigDecimal percentageUp = price.divide(boughtPrice, 2, RoundingMode.DOWN).subtract(BigDecimal.ONE);
 
-            if (percentageUp >= minPercentageUp)
+            if (percentageUp.compareTo(minPercentageUp) >= 0)
             {
-                double amountBToSell;
+                BigDecimal amountBToSell;
 
-                if (balanceB.amount <= sellAllLimit)
+                if (balanceB.amount.compareTo(sellAllLimit) <= 0)
                 {
                     amountBToSell = balanceB.amount;
                 }
                 else
                 {
-                    amountBToSell = Math.min(balanceB.amount * percentageUp * percentageSellMultiplier, balanceB.amount);
+                    amountBToSell = balanceB.amount.min(
+                            balanceB.amount.multiply(percentageUp).multiply(percentageSellMultiplier)
+                    );
                 }
 
-                double amountAToGain = amountBToSell * price;
+                BigDecimal amountAToGain = amountBToSell.multiply(price);
 
-                if ((amountAToGain >= minTradeAmountA) && (amountBToSell <= balanceB.amount) && (amountBToSell >= minTradeAmountB))
+                if ((amountAToGain.compareTo(minTradeAmountA) >= 0) &&
+                        (amountBToSell.compareTo(balanceB.amount) <= 0) &&
+                        (amountBToSell.compareTo(minTradeAmountB) >= 0))
                 {
                     result = amountBToSell;
                 }
             }
         }
 
-        return balanceB.formatAmount(result);
+        return result;
     }
 }

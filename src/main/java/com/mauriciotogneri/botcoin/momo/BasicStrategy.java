@@ -14,6 +14,8 @@ import com.mauriciotogneri.botcoin.wallet.Balance;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -22,7 +24,7 @@ import java.util.Map.Entry;
 
 public class BasicStrategy implements Strategy<Price>
 {
-    private double spent;
+    private BigDecimal spent = BigDecimal.ZERO;
     private final String symbol;
     private final Balance balanceA;
     private final Balance balanceB;
@@ -44,11 +46,11 @@ public class BasicStrategy implements Strategy<Price>
     @Override
     public List<NewOrder> orders(@NotNull Price price)
     {
-        double boughtPrice = boughtPrice();
-        double buyAmount = buyStrategy.buy(price.value, balanceA, balanceB, boughtPrice);
-        double sellAmount = sellStrategy.sell(price.value, balanceB, boughtPrice);
+        BigDecimal boughtPrice = boughtPrice();
+        BigDecimal buyAmount = buyStrategy.buy(price.value, balanceA, balanceB, boughtPrice);
+        BigDecimal sellAmount = sellStrategy.sell(price.value, balanceB, boughtPrice);
 
-        if (buyAmount > 0)
+        if (buyAmount.compareTo(BigDecimal.ZERO) > 0)
         {
             return Collections.singletonList(new NewOrder(
                     symbol,
@@ -59,7 +61,7 @@ public class BasicStrategy implements Strategy<Price>
                     String.valueOf(price.value) // TODO: remove?
             ));
         }
-        else if (sellAmount > 0)
+        else if (sellAmount.compareTo(BigDecimal.ZERO) > 0)
         {
             return Collections.singletonList(new NewOrder(
                     symbol,
@@ -118,14 +120,14 @@ public class BasicStrategy implements Strategy<Price>
 
         if (response.getStatus() == OrderStatus.FILLED)
         {
-            double quantity = Double.parseDouble(response.getExecutedQty());
-            double price = Double.parseDouble(response.getPrice());
-            double toSpend = balanceA.formatAmount(quantity * price);
+            BigDecimal quantity = new BigDecimal(response.getExecutedQty());
+            BigDecimal price = new BigDecimal(response.getPrice());
+            BigDecimal toSpend = quantity.multiply(price);
 
-            balanceA.amount -= toSpend;
-            balanceB.amount += quantity;
-            spent += toSpend;
-            
+            balanceA.amount = balanceA.amount.subtract(toSpend);
+            balanceB.amount = balanceB.amount.add(quantity);
+            spent = spent.add(toSpend);
+
             LogEvent logEvent = LogEvent.buy(
                     balanceB.of(quantity),
                     balanceA.of(price),
@@ -149,15 +151,15 @@ public class BasicStrategy implements Strategy<Price>
 
         if (response.getStatus() == OrderStatus.FILLED)
         {
-            double quantity = Double.parseDouble(response.getExecutedQty());
-            double price = Double.parseDouble(response.getPrice());
-            double toGain = balanceA.formatAmount(quantity * price);
-            double originalCost = balanceA.formatAmount(quantity * boughtPrice());
-            double profit = balanceA.formatAmount(toGain - originalCost);
+            BigDecimal quantity = new BigDecimal(response.getExecutedQty());
+            BigDecimal price = new BigDecimal(response.getPrice());
+            BigDecimal toGain = quantity.multiply(price);
+            BigDecimal originalCost = quantity.multiply(boughtPrice());
+            BigDecimal profit = toGain.subtract(originalCost);
 
-            balanceA.amount += toGain;
-            balanceB.amount -= quantity;
-            spent -= originalCost;
+            balanceA.amount = balanceA.amount.add(toGain);
+            balanceB.amount = balanceB.amount.subtract(quantity);
+            spent = spent.subtract(originalCost);
 
             LogEvent logEvent = LogEvent.sell(
                     balanceB.of(quantity),
@@ -174,13 +176,15 @@ public class BasicStrategy implements Strategy<Price>
         return json;
     }
 
-    public double boughtPrice()
+    private BigDecimal boughtPrice()
     {
-        return (balanceB.amount > 0) ? (spent / balanceB.amount) : 0;
+        return (balanceB.amount.compareTo(BigDecimal.ZERO) > 0) ?
+                spent.divide(balanceB.amount, balanceA.currency.decimals, RoundingMode.DOWN) :
+                BigDecimal.ZERO;
     }
 
-    public Balance totalBalance(double price)
+    private Balance totalBalance(BigDecimal price)
     {
-        return balanceA.of(balanceA.amount + (balanceB.amount * price));
+        return balanceA.of(balanceA.amount.add(balanceB.amount.multiply(price)));
     }
 }
