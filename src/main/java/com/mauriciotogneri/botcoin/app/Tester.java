@@ -3,7 +3,6 @@ package com.mauriciotogneri.botcoin.app;
 import com.binance.api.client.BinanceApiRestClient;
 import com.binance.api.client.domain.account.Order;
 import com.binance.api.client.domain.account.request.OrderRequest;
-import com.google.gson.Gson;
 import com.mauriciotogneri.botcoin.exchange.BinanceApi;
 import com.mauriciotogneri.botcoin.momo.BasicBuyStrategy;
 import com.mauriciotogneri.botcoin.momo.BasicSellStrategy;
@@ -14,6 +13,7 @@ import com.mauriciotogneri.botcoin.provider.Price;
 import com.mauriciotogneri.botcoin.strategy.Strategy;
 import com.mauriciotogneri.botcoin.trader.FakeTrader;
 import com.mauriciotogneri.botcoin.trader.Trader;
+import com.mauriciotogneri.botcoin.util.Json;
 import com.mauriciotogneri.botcoin.util.Log;
 import com.mauriciotogneri.botcoin.wallet.Balance;
 import com.mauriciotogneri.botcoin.wallet.Currency;
@@ -58,7 +58,7 @@ public class Tester
 
     private static void print(Object object)
     {
-        System.out.println(new Gson().newBuilder().setPrettyPrinting().create().toJson(object));
+        System.out.println(Json.toJsonString(object));
     }
 
     private static void testFile() throws Exception
