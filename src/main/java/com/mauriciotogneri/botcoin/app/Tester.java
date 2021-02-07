@@ -31,6 +31,8 @@ public class Tester
     {
         BinanceApiRestClient client = BinanceApi.client();
 
+        //Account account = client.getAccount();
+
         //List<Trade> trades = client.getMyTrades("BTCEUR");
         //print(trades);
 
