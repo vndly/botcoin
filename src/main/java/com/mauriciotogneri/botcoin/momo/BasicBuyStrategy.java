@@ -58,7 +58,7 @@ public class BasicBuyStrategy
                               @NotNull Balance balanceB)
     {
         BigDecimal result = BigDecimal.ZERO;
-        BigDecimal percentageDown = BigDecimal.ONE.subtract(price.divide(limit, 2, RoundingMode.DOWN));
+        BigDecimal percentageDown = BigDecimal.ONE.subtract(price.divide(limit, 10, RoundingMode.DOWN));
 
         if (percentageDown.compareTo(minPercentageDown) >= 0)
         {
