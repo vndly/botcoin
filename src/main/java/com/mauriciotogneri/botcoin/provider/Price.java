@@ -1,8 +1,6 @@
 package com.mauriciotogneri.botcoin.provider;
 
-import com.google.gson.JsonObject;
-
-public class Price implements Data
+public class Price
 {
     public final long timestamp;
     public final double value;
@@ -11,15 +9,5 @@ public class Price implements Data
     {
         this.timestamp = timestamp;
         this.value = value;
-    }
-
-    @Override
-    public JsonObject json()
-    {
-        JsonObject json = new JsonObject();
-        json.addProperty("timestamp", timestamp);
-        json.addProperty("price", value);
-
-        return json;
     }
 }

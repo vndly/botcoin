@@ -12,7 +12,7 @@ public class Json
     {
         return gson.toJsonTree(object);
     }
-    
+
     public static String toJsonString(Object object)
     {
         return gson.toJson(object);

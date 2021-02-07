@@ -1,6 +1,6 @@
 package com.mauriciotogneri.botcoin.provider;
 
-public interface DataProvider<T extends Data>
+public interface DataProvider<T>
 {
     boolean hasData();
 

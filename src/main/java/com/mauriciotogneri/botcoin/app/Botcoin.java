@@ -2,7 +2,6 @@ package com.mauriciotogneri.botcoin.app;
 
 import com.binance.api.client.domain.account.NewOrder;
 import com.binance.api.client.domain.account.NewOrderResponse;
-import com.mauriciotogneri.botcoin.provider.Data;
 import com.mauriciotogneri.botcoin.provider.DataProvider;
 import com.mauriciotogneri.botcoin.strategy.Strategy;
 import com.mauriciotogneri.botcoin.trader.Trader;
@@ -12,7 +11,7 @@ import com.mauriciotogneri.botcoin.util.LogEntry;
 import java.util.List;
 import java.util.Map;
 
-public class Botcoin<T extends Data>
+public class Botcoin<T>
 {
     private final DataProvider<T> dataProvider;
     private final Strategy<T> strategy;
