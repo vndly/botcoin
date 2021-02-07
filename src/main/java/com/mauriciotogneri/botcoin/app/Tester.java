@@ -4,8 +4,6 @@ import com.binance.api.client.BinanceApiRestClient;
 import com.mauriciotogneri.botcoin.exchange.Binance;
 import com.mauriciotogneri.botcoin.exchange.BinancePriceProvider;
 import com.mauriciotogneri.botcoin.exchange.BinanceTrader;
-import com.mauriciotogneri.botcoin.momo.BasicBuyStrategy;
-import com.mauriciotogneri.botcoin.momo.BasicSellStrategy;
 import com.mauriciotogneri.botcoin.momo.BasicStrategy;
 import com.mauriciotogneri.botcoin.provider.DataProvider;
 import com.mauriciotogneri.botcoin.provider.Price;
@@ -79,9 +77,15 @@ public class Tester
 
         Balance balanceEUR = new Balance(Currency.EUR, "50");
         Balance balanceBTC = new Balance(Currency.BTC, "0");
-        BasicBuyStrategy buyStrategy = new BasicBuyStrategy(minPercentageDown, percentageBuyMultiplier, minEurToTrade, minBtcToTrade);
-        BasicSellStrategy sellStrategy = new BasicSellStrategy(minPercentageUp, percentageSellMultiplier, sellAllLimit, minEurToTrade, minBtcToTrade);
-        Strategy<Price> strategy = new BasicStrategy(balanceEUR, balanceBTC, buyStrategy, sellStrategy);
+        Strategy<Price> strategy = new BasicStrategy(balanceEUR,
+                                                     balanceBTC,
+                                                     minPercentageDown,
+                                                     percentageBuyMultiplier,
+                                                     minPercentageUp,
+                                                     percentageSellMultiplier,
+                                                     sellAllLimit,
+                                                     minEurToTrade,
+                                                     minBtcToTrade);
 
         //Trader trader = new FakeTrader();
         Trader trader = new BinanceTrader();

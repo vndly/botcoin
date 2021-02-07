@@ -32,14 +32,19 @@ public class BasicStrategy implements Strategy<Price>
 
     public BasicStrategy(@NotNull Balance balanceA,
                          @NotNull Balance balanceB,
-                         BasicBuyStrategy buyStrategy,
-                         BasicSellStrategy sellStrategy)
+                         String minPercentageDown,
+                         String percentageBuyMultiplier,
+                         String minPercentageUp,
+                         String percentageSellMultiplier,
+                         String sellAllLimit,
+                         String minTradeAmountA,
+                         String minTradeAmountB)
     {
         this.symbol = String.format("%s%s", balanceB.currency.symbol, balanceA.currency.symbol);
         this.balanceA = balanceA;
         this.balanceB = balanceB;
-        this.buyStrategy = buyStrategy;
-        this.sellStrategy = sellStrategy;
+        this.buyStrategy = new BasicBuyStrategy(minPercentageDown, percentageBuyMultiplier, minTradeAmountA, minTradeAmountB);
+        this.sellStrategy = new BasicSellStrategy(minPercentageUp, percentageSellMultiplier, sellAllLimit, minTradeAmountA, minTradeAmountB);
     }
 
     @Override
