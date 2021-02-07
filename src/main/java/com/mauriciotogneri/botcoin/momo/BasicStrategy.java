@@ -122,7 +122,7 @@ public class BasicStrategy implements Strategy<Price>
         {
             BigDecimal quantity = new BigDecimal(response.getExecutedQty());
             BigDecimal price = new BigDecimal(response.getPrice());
-            BigDecimal toSpend = quantity.multiply(price);
+            BigDecimal toSpend = new BigDecimal(response.getCummulativeQuoteQty());
 
             balanceA.amount = balanceA.amount.subtract(toSpend);
             balanceB.amount = balanceB.amount.add(quantity);
@@ -137,6 +137,10 @@ public class BasicStrategy implements Strategy<Price>
                     totalBalance(price)
             );
             json.add("custom", Json.toJsonObject(logEvent));
+        }
+        else
+        {
+            json.addProperty("custom", "error");
         }
 
         return json;
@@ -153,7 +157,7 @@ public class BasicStrategy implements Strategy<Price>
         {
             BigDecimal quantity = new BigDecimal(response.getExecutedQty());
             BigDecimal price = new BigDecimal(response.getPrice());
-            BigDecimal toGain = quantity.multiply(price);
+            BigDecimal toGain = new BigDecimal(response.getCummulativeQuoteQty());
             BigDecimal originalCost = quantity.multiply(boughtPrice());
             BigDecimal profit = toGain.subtract(originalCost);
 
@@ -171,6 +175,10 @@ public class BasicStrategy implements Strategy<Price>
                     totalBalance(price)
             );
             json.add("custom", Json.toJsonObject(logEvent));
+        }
+        else
+        {
+            json.addProperty("custom", "error");
         }
 
         return json;
