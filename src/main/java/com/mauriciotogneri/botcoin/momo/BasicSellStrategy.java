@@ -62,6 +62,6 @@ public class BasicSellStrategy
             }
         }
 
-        return result;
+        return result.setScale(6, RoundingMode.DOWN); // TODO: PARAMETRIZE
     }
 }

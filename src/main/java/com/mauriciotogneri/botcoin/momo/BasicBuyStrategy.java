@@ -52,7 +52,7 @@ public class BasicBuyStrategy
             result = byFrom(price, boughtPrice, balanceA, balanceB);
         }
 
-        return result;
+        return result.setScale(6, RoundingMode.DOWN); // TODO: PARAMETRIZE
     }
 
     private BigDecimal byFrom(@NotNull BigDecimal price,
