@@ -35,7 +35,7 @@ public class FakeTrader implements Trader
             );
 
             response.setTransactTime(System.currentTimeMillis());
-            response.setOrderId(random.nextLong());
+            response.setOrderId((long) Math.abs(random.nextInt()));
             response.setClientOrderId(UUID.randomUUID().toString());
             response.setStatus(OrderStatus.FILLED);
 
