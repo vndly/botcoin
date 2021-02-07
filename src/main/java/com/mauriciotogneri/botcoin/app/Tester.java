@@ -4,14 +4,14 @@ import com.binance.api.client.BinanceApiRestClient;
 import com.binance.api.client.domain.account.Order;
 import com.binance.api.client.domain.account.request.OrderRequest;
 import com.mauriciotogneri.botcoin.exchange.BinanceApi;
+import com.mauriciotogneri.botcoin.exchange.BinancePriceProvider;
+import com.mauriciotogneri.botcoin.exchange.BinanceTrader;
 import com.mauriciotogneri.botcoin.momo.BasicBuyStrategy;
 import com.mauriciotogneri.botcoin.momo.BasicSellStrategy;
 import com.mauriciotogneri.botcoin.momo.BasicStrategy;
 import com.mauriciotogneri.botcoin.provider.DataProvider;
-import com.mauriciotogneri.botcoin.provider.FilePriceProvider;
 import com.mauriciotogneri.botcoin.provider.Price;
 import com.mauriciotogneri.botcoin.strategy.Strategy;
-import com.mauriciotogneri.botcoin.trader.FakeTrader;
 import com.mauriciotogneri.botcoin.trader.Trader;
 import com.mauriciotogneri.botcoin.util.Json;
 import com.mauriciotogneri.botcoin.util.Log;
@@ -61,6 +61,8 @@ public class Tester
         System.out.println(Json.toJsonString(object));
     }
 
+    // 92.68719619 EUR
+    // 0.00000079 BTC
     private static void testFile() throws Exception
     {
         String minEurToTrade = "10";
@@ -73,8 +75,8 @@ public class Tester
         String percentageSellMultiplier = "100";
         String sellAllLimit = "0.001";
 
-        DataProvider<Price> dataProvider = new FilePriceProvider("input/prices_BTCEUR_1m.csv");
-        //DataProvider<Price> dataProvider = new BinancePriceProvider("BTCEUR", 10);
+        //DataProvider<Price> dataProvider = new FilePriceProvider("input/prices_BTCEUR_1m.csv");
+        DataProvider<Price> dataProvider = new BinancePriceProvider("BTCEUR", 10);
 
         Balance balanceEUR = new Balance(Currency.EUR, "20");
         Balance balanceBTC = new Balance(Currency.BTC, "0");
@@ -82,7 +84,8 @@ public class Tester
         BasicSellStrategy sellStrategy = new BasicSellStrategy(minPercentageUp, percentageSellMultiplier, sellAllLimit, minEurToTrade, minBtcToTrade);
         Strategy<Price> strategy = new BasicStrategy(balanceEUR, balanceBTC, buyStrategy, sellStrategy);
 
-        Trader trader = new FakeTrader();
+        //Trader trader = new FakeTrader();
+        Trader trader = new BinanceTrader();
 
         Log log = new Log("output/logs.json");
 

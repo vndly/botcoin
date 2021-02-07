@@ -27,8 +27,8 @@ public class BinanceTrader implements Trader
 
         for (NewOrder order : orders)
         {
-            //responses.add(client.newOrder(order));
-            //responses.put(order, null);
+            NewOrderResponse response = client.newOrder(order);
+            responses.put(order, response);
         }
 
         return responses;
