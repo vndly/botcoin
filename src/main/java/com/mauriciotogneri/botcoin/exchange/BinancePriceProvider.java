@@ -17,7 +17,7 @@ public class BinancePriceProvider implements DataProvider<Price>
     {
         this.symbol = symbol;
         this.frequency = frequency;
-        this.client = BinanceApi.client();
+        this.client = Binance.apiClient();
     }
 
     @Override

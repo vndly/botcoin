@@ -17,7 +17,7 @@ public class BinanceTrader implements Trader
 
     public BinanceTrader()
     {
-        this.client = BinanceApi.client();
+        this.client = Binance.apiClient();
     }
 
     @Override

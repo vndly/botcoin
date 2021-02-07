@@ -1,9 +1,11 @@
 package com.mauriciotogneri.botcoin.app;
 
 import com.binance.api.client.BinanceApiRestClient;
+import com.binance.api.client.domain.account.NewOrder;
+import com.binance.api.client.domain.account.NewOrderResponse;
 import com.binance.api.client.domain.account.Order;
 import com.binance.api.client.domain.account.request.OrderRequest;
-import com.mauriciotogneri.botcoin.exchange.BinanceApi;
+import com.mauriciotogneri.botcoin.exchange.Binance;
 import com.mauriciotogneri.botcoin.exchange.BinancePriceProvider;
 import com.mauriciotogneri.botcoin.exchange.BinanceTrader;
 import com.mauriciotogneri.botcoin.momo.BasicBuyStrategy;
@@ -18,18 +20,20 @@ import com.mauriciotogneri.botcoin.util.Log;
 import com.mauriciotogneri.botcoin.wallet.Balance;
 import com.mauriciotogneri.botcoin.wallet.Currency;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class Tester
 {
     public static void main(String[] args) throws Exception
     {
-        testFile();
+        //testFile();
+        //testApi();
     }
 
     private static void testApi()
     {
-        BinanceApiRestClient client = BinanceApi.client();
+        BinanceApiRestClient client = Binance.apiClient();
 
         //Account account = client.getAccount();
 
@@ -39,15 +43,18 @@ public class Tester
         //CancelOrderResponse cancelOrderResponse = client.cancelOrder(new CancelOrderRequest("BTCEUR", 307513170L));
         //print(cancelOrderResponse);
 
-        /*NewOrderResponse newOrderResponse = client.newOrder(new NewOrder(
+        /*NewOrder order = new NewOrder(
                 "BTCEUR",
-                OrderSide.SELL,
-                OrderType.LIMIT,
-                TimeInForce.GTC,
-                "0.002000", // min 0.0001 BTC
+                OrderSide.BUY,
+                OrderType.MARKET,
+                null,
+                "0.0001", // min 0.0005 BTC
                 "31050.00"
-        ));
-        print(newOrderResponse);*/
+        );*/
+        NewOrder order = Binance.sellMarketOrder("BTCEUR", new BigDecimal("0.0005"));
+
+        NewOrderResponse newOrderResponse = client.newOrder(order);
+        print(newOrderResponse);
 
         //Order orderStatus = client.getOrderStatus(new OrderStatusRequest("BTCEUR", 307540435L));
         //print(orderStatus);
@@ -61,8 +68,8 @@ public class Tester
         System.out.println(Json.toJsonString(object));
     }
 
-    // 92.68719619 EUR
-    // 0.00000079 BTC
+    // 92.70059507 EUR
+    // 0.00000029 BTC
     private static void testFile() throws Exception
     {
         String minEurToTrade = "10";

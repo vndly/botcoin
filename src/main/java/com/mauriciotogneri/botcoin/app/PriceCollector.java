@@ -3,7 +3,7 @@ package com.mauriciotogneri.botcoin.app;
 import com.binance.api.client.BinanceApiRestClient;
 import com.binance.api.client.domain.market.Candlestick;
 import com.binance.api.client.domain.market.CandlestickInterval;
-import com.mauriciotogneri.botcoin.exchange.BinanceApi;
+import com.mauriciotogneri.botcoin.exchange.Binance;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -29,7 +29,7 @@ public class PriceCollector
         this.interval = interval;
         this.limit = limit;
         this.output = output;
-        this.client = BinanceApi.client();
+        this.client = Binance.apiClient();
     }
 
     public void start() throws Exception

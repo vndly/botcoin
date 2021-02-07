@@ -56,7 +56,7 @@ public class BasicStrategy implements Strategy<Price>
                     symbol,
                     OrderSide.BUY,
                     OrderType.MARKET,
-                    TimeInForce.GTC,
+                    null,
                     buyAmount.toString()//,
                     //price.value.toString() // TODO: remove?
             ));
