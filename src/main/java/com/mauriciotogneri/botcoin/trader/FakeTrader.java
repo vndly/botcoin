@@ -23,7 +23,6 @@ public class FakeTrader implements Trader
 
         for (NewOrder order : orders)
         {
-
             NewOrderResponse response = new NewOrderResponse();
             response.setType(order.getType());
             response.setSide(order.getSide());
