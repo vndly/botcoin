@@ -1,10 +1,6 @@
 package com.mauriciotogneri.botcoin.app;
 
 import com.binance.api.client.BinanceApiRestClient;
-import com.binance.api.client.domain.account.NewOrder;
-import com.binance.api.client.domain.account.NewOrderResponse;
-import com.binance.api.client.domain.account.Order;
-import com.binance.api.client.domain.account.request.OrderRequest;
 import com.mauriciotogneri.botcoin.exchange.Binance;
 import com.mauriciotogneri.botcoin.exchange.BinancePriceProvider;
 import com.mauriciotogneri.botcoin.exchange.BinanceTrader;
@@ -19,9 +15,6 @@ import com.mauriciotogneri.botcoin.util.Json;
 import com.mauriciotogneri.botcoin.util.Log;
 import com.mauriciotogneri.botcoin.wallet.Balance;
 import com.mauriciotogneri.botcoin.wallet.Currency;
-
-import java.math.BigDecimal;
-import java.util.List;
 
 public class Tester
 {
@@ -51,16 +44,15 @@ public class Tester
                 "0.0001", // min 0.0005 BTC
                 "31050.00"
         );*/
-        NewOrder order = Binance.sellMarketOrder("BTCEUR", new BigDecimal("0.0005"));
-
-        NewOrderResponse newOrderResponse = client.newOrder(order);
-        print(newOrderResponse);
+        //NewOrder order = Binance.sellMarketOrder("BTCEUR", new BigDecimal("0.0005"));
+        //NewOrderResponse newOrderResponse = client.newOrder(order);
+        //print(newOrderResponse);
 
         //Order orderStatus = client.getOrderStatus(new OrderStatusRequest("BTCEUR", 307540435L));
         //print(orderStatus);
 
-        List<Order> openOrders = client.getOpenOrders(new OrderRequest("BTCEUR"));
-        print(openOrders);
+        //List<Order> openOrders = client.getOpenOrders(new OrderRequest("BTCEUR"));
+        //print(openOrders);
     }
 
     private static void print(Object object)

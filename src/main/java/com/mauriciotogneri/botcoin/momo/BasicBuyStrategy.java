@@ -37,15 +37,18 @@ public class BasicBuyStrategy
         {
             if (price.compareTo(allTimeHigh) < 0)
             {
+                System.out.println("First buy");
                 result = byFrom(price, allTimeHigh, balanceA, balanceB);
             }
             else
             {
                 allTimeHigh = price;
+                System.out.printf("New all time high: %s%n", allTimeHigh);
             }
         }
         else if (price.compareTo(boughtPrice) < 0) // average down
         {
+            System.out.println("Average down");
             result = byFrom(price, boughtPrice, balanceA, balanceB);
         }
 
