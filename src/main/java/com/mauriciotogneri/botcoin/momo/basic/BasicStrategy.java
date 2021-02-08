@@ -113,7 +113,7 @@ public class BasicStrategy implements Strategy<Price>
         {
             BigDecimal quantity = new BigDecimal(response.getExecutedQty());
             BigDecimal toSpend = new BigDecimal(response.getCummulativeQuoteQty());
-            BigDecimal price = toSpend.divide(quantity, balanceA.currency.decimals, BigDecimal.ROUND_DOWN);
+            BigDecimal price = toSpend.divide(quantity, balanceA.currency.decimals, RoundingMode.DOWN);
 
             balanceA.amount = balanceA.amount.subtract(toSpend);
             balanceB.amount = balanceB.amount.add(quantity);
@@ -148,7 +148,7 @@ public class BasicStrategy implements Strategy<Price>
         {
             BigDecimal quantity = new BigDecimal(response.getExecutedQty());
             BigDecimal toGain = new BigDecimal(response.getCummulativeQuoteQty());
-            BigDecimal price = toGain.divide(quantity, balanceA.currency.decimals, BigDecimal.ROUND_DOWN);
+            BigDecimal price = toGain.divide(quantity, balanceA.currency.decimals, RoundingMode.DOWN);
 
             BigDecimal originalCost = quantity.multiply(boughtPrice());
             BigDecimal profit = toGain.subtract(originalCost);
