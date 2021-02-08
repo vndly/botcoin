@@ -18,8 +18,8 @@ public class Tester
 {
     public static void main(String[] args) throws Exception
     {
-        testFile();
-        //testApi();
+        //testFile();
+        testApi();
     }
 
     private static void testApi()
@@ -59,7 +59,8 @@ public class Tester
     }
 
     // 92.73587834 EUR
-    // 0.00000029 BTC
+    // 93.61401233 EUR
+    // 0.00000016 BTC
     private static void testFile() throws Exception
     {
         String minEurToTrade = "10";
