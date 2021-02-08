@@ -18,8 +18,8 @@ public class Tester
 {
     public static void main(String[] args) throws Exception
     {
-        //testFile();
-        testApi();
+        runBot();
+        //testApi();
     }
 
     private static void testApi()
@@ -61,7 +61,7 @@ public class Tester
 
     // 93.61401233 EUR
     // 0.00000016 BTC
-    private static void testFile() throws Exception
+    private static void runBot() throws Exception
     {
         String minEurToTrade = "10";
         String minBtcToTrade = "0.0005";
@@ -77,7 +77,7 @@ public class Tester
         DataProvider<Price> dataProvider = new BinancePriceProvider("BTCEUR", 10);
 
         Balance balanceEUR = new Balance(Currency.EUR, "93.61401233");
-        Balance balanceBTC = new Balance(Currency.BTC, "0.00000016");
+        Balance balanceBTC = new Balance(Currency.BTC, "0");
         Strategy<Price> strategy = new BasicStrategy(balanceEUR,
                                                      balanceBTC,
                                                      minPercentageDown,
