@@ -59,7 +59,6 @@ public class Tester
         System.out.println(Json.toJsonString(object));
     }
 
-    // 92.73587834 EUR
     // 93.61401233 EUR
     // 0.00000016 BTC
     private static void testFile() throws Exception
@@ -77,8 +76,8 @@ public class Tester
         //DataProvider<Price> dataProvider = new FilePriceProvider("input/prices_BTCEUR_1m.csv");
         DataProvider<Price> dataProvider = new BinancePriceProvider("BTCEUR", 10);
 
-        Balance balanceEUR = new Balance(Currency.EUR, "50");
-        Balance balanceBTC = new Balance(Currency.BTC, "0");
+        Balance balanceEUR = new Balance(Currency.EUR, "93.61401233");
+        Balance balanceBTC = new Balance(Currency.BTC, "0.00000016");
         Strategy<Price> strategy = new BasicStrategy(balanceEUR,
                                                      balanceBTC,
                                                      minPercentageDown,
