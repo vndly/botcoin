@@ -1,4 +1,4 @@
-package com.mauriciotogneri.botcoin.mellau.basic;
+package com.mauriciotogneri.botcoin.mellau.candle;
 
 import com.binance.api.client.domain.OrderSide;
 import com.binance.api.client.domain.OrderStatus;
@@ -8,7 +8,6 @@ import com.binance.api.client.domain.market.Candlestick;
 import com.google.gson.JsonObject;
 import com.mauriciotogneri.botcoin.config.ConfigConst;
 import com.mauriciotogneri.botcoin.exchange.Binance;
-import com.mauriciotogneri.botcoin.mellau.basic.dto.LastPricesAverageDTO;
 import com.mauriciotogneri.botcoin.momo.LogEvent;
 import com.mauriciotogneri.botcoin.strategy.Strategy;
 import com.mauriciotogneri.botcoin.util.Json;
@@ -23,14 +22,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-public class CrossStrategy implements Strategy<List<Candlestick>> {
+public class CandleStrategy implements Strategy<List<Candlestick>> {
     private BigDecimal spent = BigDecimal.ZERO;
     private final String symbol;
     private final Balance balanceA;
     private final Balance balanceB;
 
-    public CrossStrategy(@NotNull Balance balanceA,
-                         @NotNull Balance balanceB) {
+    public CandleStrategy(@NotNull Balance balanceA,
+                          @NotNull Balance balanceB) {
         this.symbol = String.format("%s%s", balanceB.currency.symbol, balanceA.currency.symbol);
         this.balanceA = balanceA;
         this.balanceB = balanceB;
@@ -38,22 +37,38 @@ public class CrossStrategy implements Strategy<List<Candlestick>> {
 
     @Override
     public List<NewOrder> orders(@NotNull List<Candlestick> price) {
-        // TODO: need to finish
-        BigDecimal lastPrice = new BigDecimal(price.get(price.size() - 1).getClose());
-        LastPricesAverageDTO lastPricesAverageDTO = new LastPricesAverageDTO();
-        lastPricesAverageDTO.getAverages(price);
-        boolean shortIsUp = 0 < lastPricesAverageDTO.avgShort.compareTo(lastPricesAverageDTO.avgLong);
+        Candlestick lastCandlestick = price.get(price.size() - 1);
+        boolean haveBalanceA = balanceA.amount.compareTo(BigDecimal.ZERO) > ConfigConst.MIN_EUR_TO_TRADE;
+        boolean haveBalanceB = balanceB.amount.compareTo(BigDecimal.ZERO) > ConfigConst.MIN_BTC_TO_TRADE;
 
-        LastPricesAverageDTO oldPricesAverageDTO = new LastPricesAverageDTO();
-        oldPricesAverageDTO.getAverages(price);
-        boolean shortWasUp = 0 < oldPricesAverageDTO.avgShort.compareTo(oldPricesAverageDTO.avgLong);
+        boolean possibleSell = 0 > spent.compareTo(BigDecimal.valueOf(Integer.parseInt(lastCandlestick.getClose()) * 1.0025));
 
-        if (!shortWasUp && shortIsUp && balanceA.amount.compareTo(BigDecimal.ZERO) > ConfigConst.MIN_EUR_TO_TRADE){
-            return Collections.singletonList(Binance.buyMarketOrder(symbol, balanceA.amount.multiply(lastPrice)));
-        } else if (shortWasUp && !shortIsUp && balanceB.amount.compareTo(BigDecimal.ZERO) > ConfigConst.MIN_BTC_TO_TRADE){
-            // TODO: only sell if price > than paid price * 1.001 or pice is 50%
-            return Collections.singletonList(Binance.sellMarketOrder(symbol, balanceB.amount.divide(lastPrice, balanceA.currency.decimals, RoundingMode.DOWN)));
-            // TODO: Save bought price
+        boolean haveBigVolume = Integer.parseInt(lastCandlestick.getVolume()) > 350; // 500 for ETH
+        boolean haveMassiveVolume = Integer.parseInt(lastCandlestick.getVolume()) > 600; // 1000 for ETH
+        boolean isRedCandle = (Integer.parseInt(lastCandlestick.getClose()) * 1.0025) < Integer.parseInt(lastCandlestick.getOpen());
+        boolean isRedLowPrice = (Integer.parseInt(lastCandlestick.getLow()) * 1.0025) < Integer.parseInt(lastCandlestick.getClose());
+        boolean isRedBigCandle = (Integer.parseInt(lastCandlestick.getClose()) * 1.006) < Integer.parseInt(lastCandlestick.getOpen());
+        boolean isRedBigLowPrice = (Integer.parseInt(lastCandlestick.getLow()) * 1.006) < Integer.parseInt(lastCandlestick.getClose());
+
+        // Checks that last 4 ticks didn't pump a 2% or more
+        boolean comeFromPick = Integer.parseInt(price.get(price.size() - 4).getOpen()) < (Integer.parseInt(lastCandlestick.getOpen()) * 0.98);
+
+        if (haveBalanceA && !comeFromPick && (haveBigVolume && isRedCandle && isRedLowPrice || (haveMassiveVolume && (isRedBigCandle || isRedBigLowPrice)))) {
+            // Available to buy
+            return Collections.singletonList(
+                    Binance.buyMarketOrder(
+                            symbol,
+                            balanceA.amount.multiply(new BigDecimal(lastCandlestick.getClose()))));
+
+        } else if (haveBalanceB && possibleSell) {
+            // Available to sell
+
+            return Collections.singletonList(
+                    Binance.sellMarketOrder(
+                            symbol,
+                            balanceB.amount.divide(new BigDecimal(lastCandlestick.getClose()),
+                                    balanceA.currency.decimals,
+                                    RoundingMode.DOWN)));
         }
 
         return new ArrayList<>();
