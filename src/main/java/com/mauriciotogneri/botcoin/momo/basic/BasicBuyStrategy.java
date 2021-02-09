@@ -69,8 +69,8 @@ public class BasicBuyStrategy
                     balanceA.amount.multiply(percentageDown).multiply(percentageBuyMultiplier)
             );
             BigDecimal amountBToBuy = amountAToSpend
-                    .divide(price, balanceB.currency.decimals, RoundingMode.DOWN)
-                    .setScale(balanceB.currency.step, RoundingMode.DOWN);
+                    .divide(price, balanceB.asset.decimals, RoundingMode.DOWN)
+                    .setScale(balanceB.asset.step, RoundingMode.DOWN);
 
             if ((amountAToSpend.compareTo(minTradeAmountA) >= 0) &&
                     (amountAToSpend.compareTo(balanceA.amount) <= 0) &&

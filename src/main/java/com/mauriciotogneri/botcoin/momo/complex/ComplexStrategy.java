@@ -4,6 +4,7 @@ import com.binance.api.client.BinanceApiCallback;
 import com.binance.api.client.domain.account.NewOrder;
 import com.binance.api.client.domain.event.OrderTradeUpdateEvent;
 import com.mauriciotogneri.botcoin.exchange.Binance;
+import com.mauriciotogneri.botcoin.market.Symbol;
 import com.mauriciotogneri.botcoin.provider.Price;
 import com.mauriciotogneri.botcoin.strategy.Strategy;
 import com.mauriciotogneri.botcoin.trader.OrderSent;
@@ -16,14 +17,15 @@ import java.util.List;
 
 public class ComplexStrategy implements Strategy<Price>, BinanceApiCallback<OrderTradeUpdateEvent>
 {
-    private final String symbol;
+    private final Symbol symbol;
     private final Balance balanceA;
     private final Balance balanceB;
 
-    public ComplexStrategy(@NotNull Balance balanceA,
+    public ComplexStrategy(@NotNull Symbol symbol,
+                           @NotNull Balance balanceA,
                            @NotNull Balance balanceB)
     {
-        this.symbol = String.format("%s%s", balanceB.currency.name, balanceA.currency.name);
+        this.symbol = symbol;
         this.balanceA = balanceA;
         this.balanceB = balanceB;
 

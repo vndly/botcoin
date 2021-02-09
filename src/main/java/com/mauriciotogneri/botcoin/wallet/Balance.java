@@ -4,22 +4,22 @@ import java.math.BigDecimal;
 
 public class Balance
 {
-    public final Currency currency;
+    public final Asset asset;
     public BigDecimal amount;
 
-    public Balance(Currency currency, BigDecimal amount)
+    public Balance(Asset asset, BigDecimal amount)
     {
-        this.currency = currency;
+        this.asset = asset;
         this.amount = amount;
     }
 
-    public Balance(Currency currency, String amount)
+    public Balance(Asset asset, String amount)
     {
-        this(currency, new BigDecimal(amount));
+        this(asset, new BigDecimal(amount));
     }
 
     public Balance of(BigDecimal value)
     {
-        return new Balance(currency, value);
+        return new Balance(asset, value);
     }
 }

@@ -34,7 +34,7 @@ public class BinancePriceProvider implements DataProvider<Price>
         try
         {
             Thread.sleep(frequency * 1000L);
-            TickerPrice tickerPrice = client.getPrice(symbol.toString());
+            TickerPrice tickerPrice = client.getPrice(symbol.name);
 
             lastPrice = new Price(
                     System.currentTimeMillis(),

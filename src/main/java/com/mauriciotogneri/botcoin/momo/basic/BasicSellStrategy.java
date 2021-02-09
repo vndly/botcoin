@@ -43,7 +43,7 @@ public class BasicSellStrategy
 
                 if (balanceB.amount.compareTo(sellAllLimit) <= 0)
                 {
-                    amountBToSell = balanceB.amount.setScale(balanceB.currency.step, RoundingMode.DOWN);
+                    amountBToSell = balanceB.amount.setScale(balanceB.asset.step, RoundingMode.DOWN);
                 }
                 else
                 {
@@ -51,7 +51,7 @@ public class BasicSellStrategy
                             balanceB.amount
                                     .multiply(percentageUp)
                                     .multiply(percentageSellMultiplier)
-                                    .setScale(balanceB.currency.step, RoundingMode.DOWN)
+                                    .setScale(balanceB.asset.step, RoundingMode.DOWN)
                     );
                 }
 

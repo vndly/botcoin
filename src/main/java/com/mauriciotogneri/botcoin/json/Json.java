@@ -3,9 +3,6 @@ package com.mauriciotogneri.botcoin.json;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonPrimitive;
-import com.google.gson.JsonSerializer;
-import com.mauriciotogneri.botcoin.wallet.Currency;
 
 public class Json
 {
@@ -25,11 +22,14 @@ public class Json
     {
         if (gson == null)
         {
-            gson = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(Currency.class, serializer).create();
+            gson = new GsonBuilder()
+                    .setPrettyPrinting()
+                    //.registerTypeAdapter(Asset.class, serializer)
+                    .create();
         }
 
         return gson;
     }
 
-    private static final JsonSerializer<Currency> serializer = (currency, typeOfSrc, context) -> new JsonPrimitive(currency.name);
+    //private static final JsonSerializer<Asset> serializer = (currency, typeOfSrc, context) -> new JsonPrimitive(currency);
 }

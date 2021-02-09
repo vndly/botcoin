@@ -39,28 +39,31 @@ public class Botcoin
     private static List<Market<?>> markets()
     {
         List<Market<?>> markets = new ArrayList<>();
-        markets.add(market(new Symbol(Currency.ETH, Currency.BTC)));
+        markets.add(market(Currency.ETH, Currency.BTC));
 
         return markets;
     }
 
     @NotNull
-    private static Market<Price> market(@NotNull Symbol symbol)
+    private static Market<Price> market(Currency currencyA, Currency currencyB)
     {
         ExchangeInfo exchangeInfo = Binance.apiClient().getExchangeInfo();
-        SymbolInfo symbolInfo = exchangeInfo.getSymbolInfo(symbol.toString());
+
+        Symbol symbol = new Symbol(currencyA, currencyB, exchangeInfo);
+
+        SymbolInfo symbolInfo = exchangeInfo.getSymbolInfo(symbol.name);
         SymbolFilter filter = symbolInfo.getSymbolFilter(FilterType.LOT_SIZE);
         BigDecimal minQuantity = new BigDecimal(filter.getMinQty());
 
         DataProvider<Price> dataProvider = new BinancePriceProvider(symbol, 10);
 
-        BigDecimal balanceAssetA = Binance.balance(symbol.currencyA);
-        Balance balanceA = new Balance(symbol.currencyA, balanceAssetA);
+        BigDecimal balanceAssetA = Binance.balance(symbol.assetA);
+        Balance balanceA = new Balance(symbol.assetA, balanceAssetA);
 
-        BigDecimal balanceAssetB = Binance.balance(symbol.currencyB);
-        Balance balanceB = new Balance(symbol.currencyB, balanceAssetB);
+        BigDecimal balanceAssetB = Binance.balance(symbol.assetB);
+        Balance balanceB = new Balance(symbol.assetB, balanceAssetB);
 
-        Strategy<Price> strategy = new ComplexStrategy(balanceA, balanceB);
+        Strategy<Price> strategy = new ComplexStrategy(symbol, balanceA, balanceB);
 
         Trader trader = new BinanceTrader();
 
