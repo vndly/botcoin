@@ -30,8 +30,8 @@ public class Botcoin
     {
         for (Market<?> market : markets())
         {
-            Thread thread = new Thread(market);
-            thread.start();
+            //Thread thread = new Thread(market);
+            //thread.start();
         }
     }
 
@@ -57,19 +57,19 @@ public class Botcoin
 
         DataProvider<Price> dataProvider = new BinancePriceProvider(symbol, 10);
 
-        BigDecimal balanceAssetA = Binance.balance(symbol.assetA);
+        BigDecimal balanceAssetA = Binance.balance(currencyA);
         Balance balanceA = new Balance(symbol.assetA, balanceAssetA);
 
-        BigDecimal balanceAssetB = Binance.balance(symbol.assetB);
+        BigDecimal balanceAssetB = Binance.balance(currencyB);
         Balance balanceB = new Balance(symbol.assetB, balanceAssetB);
 
-        Strategy<Price> strategy = new ComplexStrategy(symbol, balanceA, balanceB);
+        Strategy<Price> strategy = new ComplexStrategy(symbol, balanceA, balanceB, minQuantity);
 
         Trader trader = new BinanceTrader();
 
-        Log log = new Log(String.format("output/logs_%s.json", symbol));
+        Log log = new Log(String.format("output/logs_%s.json", symbol.name));
 
-        return null; // new Market<>(dataProvider, strategy, trader, log);
+        return new Market<>(dataProvider, strategy, trader, log);
     }
 
     /*private static void runBot() throws Exception
