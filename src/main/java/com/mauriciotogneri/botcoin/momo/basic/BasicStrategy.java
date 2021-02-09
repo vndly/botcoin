@@ -113,10 +113,10 @@ public class BasicStrategy implements Strategy<Price>
         {
             BigDecimal quantity = new BigDecimal(response.getExecutedQty());
             BigDecimal toSpend = new BigDecimal(response.getCummulativeQuoteQty());
-            BigDecimal price = toSpend.divide(quantity, balanceA.currency.decimals, BigDecimal.ROUND_DOWN);
+            BigDecimal price = toSpend.divide(quantity, balanceA.currency.decimals, RoundingMode.DOWN);
 
             balanceA.amount = balanceA.amount.subtract(toSpend);
-            balanceB.amount = balanceB.amount.add(quantity);
+            balanceB.amount = Binance.balance(balanceB.currency.symbol);
             spent = spent.add(toSpend);
 
             LogEvent logEvent = LogEvent.buy(
@@ -148,12 +148,12 @@ public class BasicStrategy implements Strategy<Price>
         {
             BigDecimal quantity = new BigDecimal(response.getExecutedQty());
             BigDecimal toGain = new BigDecimal(response.getCummulativeQuoteQty());
-            BigDecimal price = toGain.divide(quantity, balanceA.currency.decimals, BigDecimal.ROUND_DOWN);
+            BigDecimal price = toGain.divide(quantity, balanceA.currency.decimals, RoundingMode.DOWN);
 
             BigDecimal originalCost = quantity.multiply(boughtPrice());
             BigDecimal profit = toGain.subtract(originalCost);
 
-            balanceA.amount = balanceA.amount.add(toGain);
+            balanceA.amount = Binance.balance(balanceA.currency.symbol);
             balanceB.amount = balanceB.amount.subtract(quantity);
             spent = spent.subtract(originalCost);
 
