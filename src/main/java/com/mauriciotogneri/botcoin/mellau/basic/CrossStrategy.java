@@ -52,7 +52,7 @@ public class CrossStrategy implements Strategy<RequestDataDTO> {
         oldPricesAverageDTO.getAverages(candlestickBars);
         boolean shortWasUp = 0 < oldPricesAverageDTO.avgShort.compareTo(oldPricesAverageDTO.avgLong);
 
-        boolean possibleSell = 0 > boughtPrice().compareTo(lastPrice.multiply(new BigDecimal(1.005)));
+        boolean possibleSell = 0 > boughtPrice().compareTo(lastPrice.multiply(new BigDecimal("1.005")));
 
         if (!shortWasUp && shortIsUp && balanceA.amount.compareTo(BigDecimal.ZERO) > ConfigConst.MIN_EUR_TO_TRADE){
             oldLimit = new BigDecimal(0);
@@ -80,6 +80,7 @@ public class CrossStrategy implements Strategy<RequestDataDTO> {
 
             result.add(event);
         }
+        // TODO: get id from open limit id
 
         return result;
     }

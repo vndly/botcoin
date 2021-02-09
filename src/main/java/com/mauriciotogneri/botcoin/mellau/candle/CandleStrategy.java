@@ -46,20 +46,21 @@ public class CandleStrategy implements Strategy<RequestDataDTO> {
         boolean haveBalanceA = balanceA.amount.compareTo(BigDecimal.ZERO) > ConfigConst.MIN_EUR_TO_TRADE;
         boolean haveBalanceB = balanceB.amount.compareTo(BigDecimal.ZERO) > ConfigConst.MIN_BTC_TO_TRADE;
 
-        boolean possibleSell = 0 > boughtPrice().compareTo(BigDecimal.valueOf(Integer.parseInt(price.getPrice()) * 1.005));
+        //boolean possibleSell = 0 > boughtPrice().compareTo(BigDecimal.valueOf(Double.parseDouble(price.getPrice()) * 1.005));
+        boolean possibleSell = 0 > boughtPrice().compareTo(new BigDecimal(price.getPrice()).multiply(new BigDecimal("1.005")));
 
         // Check witch kind of candle is it
-        boolean haveBigVolume = Integer.parseInt(lastCandlestick.getVolume()) > 250; // 500 for ETH
-        boolean haveMassiveVolume = Integer.parseInt(lastCandlestick.getVolume()) > 450; // 1000 for ETH
-        boolean isRedCandle = (Integer.parseInt(lastCandlestick.getClose()) * 1.004) < Integer.parseInt(lastCandlestick.getOpen());
-        boolean isRedLowPrice = (Integer.parseInt(lastCandlestick.getLow()) * 1.003) < Integer.parseInt(lastCandlestick.getClose());
-        boolean isRedBigCandle = (Integer.parseInt(lastCandlestick.getClose()) * 1.008) < Integer.parseInt(lastCandlestick.getOpen());
-        boolean isRedBigLowPrice = (Integer.parseInt(lastCandlestick.getLow()) * 1.006) < Integer.parseInt(lastCandlestick.getClose());
+        boolean haveBigVolume = Double.parseDouble(lastCandlestick.getVolume()) > 250; // 500 for ETH
+        boolean haveMassiveVolume = Double.parseDouble(lastCandlestick.getVolume()) > 450; // 1000 for ETH
+        boolean isRedCandle = (Double.parseDouble(lastCandlestick.getClose()) * 1.004) < Double.parseDouble(lastCandlestick.getOpen());
+        boolean isRedLowPrice = (Double.parseDouble(lastCandlestick.getLow()) * 1.003) < Double.parseDouble(lastCandlestick.getClose());
+        boolean isRedBigCandle = (Double.parseDouble(lastCandlestick.getClose()) * 1.008) < Double.parseDouble(lastCandlestick.getOpen());
+        boolean isRedBigLowPrice = (Double.parseDouble(lastCandlestick.getLow()) * 1.006) < Double.parseDouble(lastCandlestick.getClose());
 
-        boolean actualPriceNearCloseCandle = Integer.parseInt(price.getPrice()) < Integer.parseInt(lastCandlestick.getClose()) * 1.001;
+        boolean actualPriceNearCloseCandle = Double.parseDouble(price.getPrice()) < Double.parseDouble(lastCandlestick.getClose()) * 1.001;
 
         // Checks that last 4 ticks didn't pump a 2% or more
-        boolean comeFromPick = Integer.parseInt(candlestickBars.get(candlestickBars.size() - 4).getOpen()) < (Integer.parseInt(lastCandlestick.getOpen()) * 0.98);
+        boolean comeFromPick = Double.parseDouble(candlestickBars.get(candlestickBars.size() - 4).getOpen()) < (Double.parseDouble(lastCandlestick.getOpen()) * 0.98);
 
         if (haveBalanceA && actualPriceNearCloseCandle && !comeFromPick && (haveBigVolume && isRedCandle && isRedLowPrice || (haveMassiveVolume && (isRedBigCandle || isRedBigLowPrice)))) {
             // Available to buy

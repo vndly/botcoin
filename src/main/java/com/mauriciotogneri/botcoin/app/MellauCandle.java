@@ -13,7 +13,7 @@ import com.mauriciotogneri.botcoin.wallet.Balance;
 import com.mauriciotogneri.botcoin.wallet.Currency;
 
 
-public class Mellau {
+public class MellauCandle {
     public static void main(String[] args) throws Exception {
         DataProvider<RequestDataDTO> dataProvider = new BinanceCandlePriceProvider("BTCBUSD", 10);
 

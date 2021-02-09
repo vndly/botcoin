@@ -10,6 +10,8 @@ import com.binance.api.client.domain.TimeInForce;
 import com.binance.api.client.domain.account.Account;
 import com.binance.api.client.domain.account.AssetBalance;
 import com.binance.api.client.domain.account.NewOrder;
+import com.binance.api.client.domain.account.request.CancelOrderRequest;
+import com.binance.api.client.domain.account.request.CancelOrderResponse;
 import com.binance.api.client.domain.event.OrderTradeUpdateEvent;
 import com.binance.api.client.domain.event.UserDataUpdateEvent.UserDataUpdateEventType;
 
@@ -77,6 +79,11 @@ public class Binance
     @NotNull
     public static NewOrder limitSell(String symbol, String quantity, String price) {
         return new NewOrder(symbol, OrderSide.SELL, OrderType.LIMIT, TimeInForce.GTC, quantity, price);
+    }
+
+    @NotNull
+    public static CancelOrderResponse cancelOrder(String symbol, Long orderId) {
+        return apiClient().cancelOrder(new CancelOrderRequest(symbol, orderId));
     }
 
     @NotNull
