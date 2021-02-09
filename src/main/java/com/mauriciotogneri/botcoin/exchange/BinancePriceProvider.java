@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 
 public class BinancePriceProvider implements DataProvider<Price>
 {
+    private Price lastPrice;
     private final String symbol;
     private final int frequency;
     private final BinanceApiRestClient client;
@@ -27,14 +28,26 @@ public class BinancePriceProvider implements DataProvider<Price>
     }
 
     @Override
-    public Price data() throws Exception
+    public Price data()
     {
-        Thread.sleep(frequency * 1000L);
-        TickerPrice tickerPrice = client.getPrice(symbol);
+        try
+        {
+            Thread.sleep(frequency * 1000L);
+            TickerPrice tickerPrice = client.getPrice(symbol);
 
-        return new Price(
-                System.currentTimeMillis(),
-                new BigDecimal(tickerPrice.getPrice())
-        );
+            lastPrice = new Price(
+                    System.currentTimeMillis(),
+                    new BigDecimal(tickerPrice.getPrice())
+            );
+
+            return lastPrice;
+        }
+        catch (Exception e)
+        {
+            return new Price(
+                    System.currentTimeMillis(),
+                    lastPrice.value
+            );
+        }
     }
 }

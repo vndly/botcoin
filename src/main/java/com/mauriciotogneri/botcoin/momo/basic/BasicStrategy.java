@@ -123,6 +123,7 @@ public class BasicStrategy implements Strategy<Price>
                     balanceB.of(quantity),
                     balanceA.of(price),
                     balanceA.of(spent),
+                    balanceA.of(boughtPrice()),
                     balanceA,
                     balanceB,
                     totalBalance(price)
@@ -162,6 +163,7 @@ public class BasicStrategy implements Strategy<Price>
                     balanceA.of(price),
                     balanceA.of(toGain),
                     balanceA.of(profit),
+                    balanceA.of(boughtPrice()),
                     balanceA,
                     balanceB,
                     totalBalance(price)

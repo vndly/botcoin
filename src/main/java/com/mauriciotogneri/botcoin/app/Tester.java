@@ -59,8 +59,6 @@ public class Tester
         System.out.println(Json.toJsonString(object));
     }
 
-    // 93.61401233 EUR
-    // 0.00000016 BTC
     private static void runBot() throws Exception
     {
         String minEurToTrade = "10";
@@ -76,7 +74,7 @@ public class Tester
         //DataProvider<Price> dataProvider = new FilePriceProvider("input/prices_BTCEUR_1m.csv");
         DataProvider<Price> dataProvider = new BinancePriceProvider("BTCEUR", 10);
 
-        Balance balanceEUR = new Balance(Currency.EUR, "93.61401233");
+        Balance balanceEUR = new Balance(Currency.EUR, "94.45477852");
         Balance balanceBTC = new Balance(Currency.BTC, "0");
         Strategy<Price> strategy = new BasicStrategy(balanceEUR,
                                                      balanceBTC,
