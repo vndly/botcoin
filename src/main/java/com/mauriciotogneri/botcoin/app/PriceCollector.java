@@ -45,7 +45,7 @@ public class PriceCollector
 
             for (PriceEntry entry : entries)
             {
-                String line = String.format("%s;%.2f\n", entry.timestamp, entry.price);
+                String line = String.format("%s;%.8f\n", entry.timestamp, entry.price);
                 bufferedWriter.write(line);
                 lastTimestamp = entry.timestamp - 1;
             }
@@ -56,6 +56,7 @@ public class PriceCollector
 
             if (((limit != 0) && (count >= limit)) || (entries.isEmpty()))
             {
+                System.out.println();
                 break;
             }
 
@@ -74,7 +75,7 @@ public class PriceCollector
             long timestamp = candlestick.getCloseTime();
             BigDecimal high = new BigDecimal(candlestick.getHigh());
             BigDecimal low = new BigDecimal(candlestick.getLow());
-            BigDecimal price = (high.add(low)).divide(new BigDecimal(2), 2, RoundingMode.DOWN);
+            BigDecimal price = (high.add(low)).divide(new BigDecimal(2), 8, RoundingMode.DOWN);
 
             result.add(new PriceEntry(timestamp, price));
         }
@@ -98,9 +99,9 @@ public class PriceCollector
 
     public static void main(String[] args) throws Exception
     {
-        String pair = "LINKEUR";
+        String pair = "ETHBTC";
         String interval = "ONE_MINUTE";
-        Integer limit = 2000;
+        Integer limit = 20000000;
         String fileName = String.format("input/prices_%s_%s.csv", pair, interval);
 
         PriceCollector priceCollector = new PriceCollector(pair, interval, limit, fileName);

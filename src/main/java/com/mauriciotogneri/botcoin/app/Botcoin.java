@@ -5,13 +5,13 @@ import com.binance.api.client.domain.general.FilterType;
 import com.binance.api.client.domain.general.SymbolFilter;
 import com.binance.api.client.domain.general.SymbolInfo;
 import com.mauriciotogneri.botcoin.exchange.Binance;
-import com.mauriciotogneri.botcoin.exchange.BinancePriceProvider;
 import com.mauriciotogneri.botcoin.exchange.BinanceTrader;
 import com.mauriciotogneri.botcoin.log.Log;
 import com.mauriciotogneri.botcoin.market.Market;
 import com.mauriciotogneri.botcoin.market.Symbol;
 import com.mauriciotogneri.botcoin.momo.complex.ComplexStrategy;
 import com.mauriciotogneri.botcoin.provider.DataProvider;
+import com.mauriciotogneri.botcoin.provider.FilePriceProvider;
 import com.mauriciotogneri.botcoin.provider.Price;
 import com.mauriciotogneri.botcoin.strategy.Strategy;
 import com.mauriciotogneri.botcoin.trader.Trader;
@@ -55,7 +55,8 @@ public class Botcoin
         SymbolFilter filter = symbolInfo.getSymbolFilter(FilterType.LOT_SIZE);
         BigDecimal minQuantity = new BigDecimal(filter.getMinQty());
 
-        DataProvider<Price> dataProvider = new BinancePriceProvider(symbol, 10);
+        //DataProvider<Price> dataProvider = new BinancePriceProvider(symbol, 10);
+        DataProvider<Price> dataProvider = new FilePriceProvider("input/prices_ETHBTC_ONE_MINUTE.csv");
 
         BigDecimal balanceAssetA = Binance.balance(currencyA);
         Balance balanceA = new Balance(symbol.assetA, balanceAssetA);
