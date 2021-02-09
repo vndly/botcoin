@@ -23,5 +23,5 @@ public enum Currency
     BSV,
     EOS,
     XMR,
-    XEM;
+    XEM
 }

@@ -78,7 +78,6 @@ public class BasicStrategy implements Strategy<Price>
         for (OrderSent orderSent : sent)
         {
             JsonObject event = process(orderSent.order, orderSent.response);
-
             result.add(event);
         }
 
