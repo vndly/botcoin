@@ -10,7 +10,6 @@ import com.mauriciotogneri.botcoin.config.ConfigConst;
 import com.mauriciotogneri.botcoin.exchange.Binance;
 import com.mauriciotogneri.botcoin.mellau.LogEvent;
 import com.mauriciotogneri.botcoin.mellau.basic.dto.LastPricesAverageDTO;
-import com.mauriciotogneri.botcoin.provider.Price;
 import com.mauriciotogneri.botcoin.strategy.Strategy;
 import com.mauriciotogneri.botcoin.util.Json;
 import com.mauriciotogneri.botcoin.wallet.Balance;
@@ -41,55 +40,45 @@ public class CrossStrategy implements Strategy<List<Candlestick>>
 
     @Override
     public List<NewOrder> orders(@NotNull List<Candlestick> price) {
-        // TODO: use info
-        //  private Long openTime;
-        //  private String open;
-        //  private String high;
-        //  private String low;
-        //  private String close;
-        //  private String volume;
-        //  private Long closeTime;
-        //  private String quoteAssetVolume;
-        //  private Long numberOfTrades;
-        //  private String takerBuyBaseAssetVolume;
-        //  private String takerBuyQuoteAssetVolume;
+        Candlestick lastCandlestick = price.get(price.size() - 1);
+        boolean haveBalanceA = balanceA.amount.compareTo(BigDecimal.ZERO) > ConfigConst.MIN_EUR_TO_TRADE;
+        boolean haveBalanceB = balanceB.amount.compareTo(BigDecimal.ZERO) > ConfigConst.MIN_BTC_TO_TRADE;
 
-        // TODO: example:
-        //  if there is a lot of volume + numberOfTrades and price is going down is a signal will go down.
-        //  IF close is equal than high or really close means is going up if close is lower equal low or really close means is going down
+        boolean possibleSell = 0 > spent.compareTo(new BigDecimal(Integer.parseInt(lastCandlestick.getClose()) * 1.0025));
 
+        boolean haveBigVolume = Integer.parseInt(lastCandlestick.getVolume()) > 350; // 500 for ETH
+        boolean haveMassiveVolume = Integer.parseInt(lastCandlestick.getVolume()) > 600; // 1000 for ETH
+        boolean isRedCandle = (Integer.parseInt(lastCandlestick.getClose()) * 1.0025) < Integer.parseInt(lastCandlestick.getOpen());
+        boolean isRedLowPrice = (Integer.parseInt(lastCandlestick.getLow()) * 1.0025) < Integer.parseInt(lastCandlestick.getClose());
+        boolean isRedBigCandle = (Integer.parseInt(lastCandlestick.getClose()) * 1.006) < Integer.parseInt(lastCandlestick.getOpen());
+        boolean isRedBigLowPrice = (Integer.parseInt(lastCandlestick.getLow()) * 1.006) < Integer.parseInt(lastCandlestick.getClose());
+
+        // Checks that last 4 ticks didn't pump a 2% or more
+        boolean comeFromPick = Integer.parseInt(price.get(price.size() - 4).getOpen()) < (Integer.parseInt(lastCandlestick.getOpen()) * 0.98);
+
+        if (haveBalanceA && !comeFromPick && (haveBigVolume && isRedCandle && isRedLowPrice || (haveMassiveVolume && (isRedBigCandle || isRedBigLowPrice)))) {
+            // Available to buy
+            return Collections.singletonList(
+                    Binance.buyMarketOrder(
+                            symbol,
+                            balanceA.amount.multiply(new BigDecimal(lastCandlestick.getClose()))));
+
+        } else if (haveBalanceB && possibleSell){
+            // Available to sell
+
+            return Collections.singletonList(
+                    Binance.sellMarketOrder(
+                            symbol,
+                            balanceB.amount.divide(new BigDecimal(lastCandlestick.getClose()),
+                            balanceA.currency.decimals,
+                            RoundingMode.DOWN)));
+        }
 
         /**
-         *
-         * What is a hihgt volume? 150/200 is really big
-         * what is a gight going down?  0.4% is remarcable
-         *  Theory1:
-         *  when there is a big red candle, where low is lower than close by 0.3% or more and there is massive volume, then it will go up next tick
-         *
-         * take in care that if the going dow is really big and not that much volume is good as avarage going dow and avarage volume
-         * the same aplies to hihgt volume and not so much going down
-         *
-         *  Aproach, bigger is the bolume and % of going down more clear is it that there will be a going up, so more you buy
-         *
-         * Atention, there is need to create a secure point to make sure to don't sell when loosing
-         *
-         * --------------------------This is the way--------------------------
-         * Wait for the big candles (volume 250+ arround 450+ is nice and - 0.6% down)
-         * i'v seen a 1% going down and volume 460
-         * i'v seen a 2% going down and volume 1100 and then going up a 1%
-         * Important to notice, closing price have to be arround the half between open and low!!         *
-         * making sure that will go up
-         *
-         *
-         *
-         *
-         *
-         * What to maybe do: get last candle and then as soon as you decide to buy next candle take last price and if it's hihgt enough sell
-         *
-         * It's is possible that you have to wait the hight volume after the buy?
+         * This is the cross Strategy
          *
          */
-        BigDecimal lastPrice = new BigDecimal(price.get(price.size() - 1).getClose());
+        /*BigDecimal lastPrice = new BigDecimal(price.get(price.size() - 1).getClose());
         LastPricesAverageDTO lastPricesAverageDTO = new LastPricesAverageDTO();
         lastPricesAverageDTO.getAverages(price);
         boolean shortIsUp = 0 < lastPricesAverageDTO.avgShort.compareTo(lastPricesAverageDTO.avgLong);
@@ -104,11 +93,8 @@ public class CrossStrategy implements Strategy<List<Candlestick>>
             // TODO: only sell if price > than paid price * 1.001 or pice is 50%
             return Collections.singletonList(Binance.sellMarketOrder(symbol, balanceB.amount.divide(lastPrice, balanceA.currency.decimals, RoundingMode.DOWN)));
             // TODO: Save bought price
-        }
+        }*/
 
-
-
-        if (price.get(price.size() - 1).getVolume() )
         return new ArrayList<>();
     }
 
