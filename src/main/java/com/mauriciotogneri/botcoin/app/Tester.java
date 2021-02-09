@@ -74,7 +74,7 @@ public class Tester
         //DataProvider<Price> dataProvider = new FilePriceProvider("input/prices_BTCEUR_1m.csv");
         DataProvider<Price> dataProvider = new BinancePriceProvider("BTCEUR", 10);
 
-        Balance balanceEUR = new Balance(Currency.EUR, "94.45477852");
+        Balance balanceEUR = new Balance(Currency.EUR, "92.68403224");
         Balance balanceBTC = new Balance(Currency.BTC, "0");
         Strategy<Price> strategy = new BasicStrategy(balanceEUR,
                                                      balanceBTC,
