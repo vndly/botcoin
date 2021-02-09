@@ -44,6 +44,8 @@ public class BinancePriceProvider implements DataProvider<Price>
         }
         catch (Exception e)
         {
+            e.printStackTrace();
+
             return new Price(
                     System.currentTimeMillis(),
                     lastPrice.value
