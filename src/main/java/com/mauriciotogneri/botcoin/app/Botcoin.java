@@ -85,7 +85,7 @@ public class Botcoin
         String percentageSellMultiplier = "100";
         String sellAllLimit = "0.001";
 
-        //DataProvider<Price> dataProvider = new FilePriceProvider("input/prices_BTCEUR_1m.csv");
+        //DataProvider<Price> dataProvider = new FilePriceProvider("input/prices_BTCEUR_ONE_MINUTE.csv");
         DataProvider<Price> dataProvider = new BinancePriceProvider("BTCEUR", 10);
 
         Balance balanceEUR = new Balance(Currency.EUR, "94.42730924");
