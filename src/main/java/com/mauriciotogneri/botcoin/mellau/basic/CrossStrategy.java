@@ -2,10 +2,10 @@ package com.mauriciotogneri.botcoin.mellau.basic;
 
 import com.binance.api.client.domain.OrderSide;
 import com.binance.api.client.domain.OrderStatus;
+import com.binance.api.client.domain.TimeInForce;
 import com.binance.api.client.domain.account.NewOrder;
 import com.binance.api.client.domain.account.NewOrderResponse;
 import com.binance.api.client.domain.market.Candlestick;
-import com.binance.api.client.domain.market.TickerPrice;
 import com.google.gson.JsonObject;
 import com.mauriciotogneri.botcoin.config.ConfigConst;
 import com.mauriciotogneri.botcoin.exchange.Binance;
@@ -27,6 +27,7 @@ import java.util.Map.Entry;
 
 public class CrossStrategy implements Strategy<RequestDataDTO> {
     private BigDecimal spent = BigDecimal.ZERO;
+    private BigDecimal oldLimit = BigDecimal.ZERO;
     private final String symbol;
     private final Balance balanceA;
     private final Balance balanceB;
@@ -54,8 +55,14 @@ public class CrossStrategy implements Strategy<RequestDataDTO> {
         boolean possibleSell = 0 > boughtPrice().compareTo(lastPrice.multiply(new BigDecimal(1.005)));
 
         if (!shortWasUp && shortIsUp && balanceA.amount.compareTo(BigDecimal.ZERO) > ConfigConst.MIN_EUR_TO_TRADE){
+            oldLimit = new BigDecimal(0);
             return Collections.singletonList(Binance.buyMarketOrder(symbol, balanceA.amount.multiply(lastPrice)));
         } else if (shortWasUp && possibleSell && !shortIsUp && balanceB.amount.compareTo(BigDecimal.ZERO) > ConfigConst.MIN_BTC_TO_TRADE){
+            BigDecimal newLimit = lastPrice.multiply(new BigDecimal("0.999"));
+            if (0 < newLimit.compareTo(oldLimit)) {
+                // TODO: delete old limitSell
+                return Collections.singletonList(Binance.limitSell(symbol, balanceB.amount.divide(lastPrice, balanceA.currency.decimals, RoundingMode.DOWN).toString(), newLimit.toString()));
+            }
             return Collections.singletonList(Binance.sellMarketOrder(symbol, balanceB.amount.divide(lastPrice, balanceA.currency.decimals, RoundingMode.DOWN)));
         }
 

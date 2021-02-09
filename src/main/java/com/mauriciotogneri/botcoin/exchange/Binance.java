@@ -6,6 +6,7 @@ import com.binance.api.client.BinanceApiRestClient;
 import com.binance.api.client.BinanceApiWebSocketClient;
 import com.binance.api.client.domain.OrderSide;
 import com.binance.api.client.domain.OrderType;
+import com.binance.api.client.domain.TimeInForce;
 import com.binance.api.client.domain.account.Account;
 import com.binance.api.client.domain.account.AssetBalance;
 import com.binance.api.client.domain.account.NewOrder;
@@ -71,6 +72,11 @@ public class Binance
                 null,
                 quantity.toString()
         );
+    }
+
+    @NotNull
+    public static NewOrder limitSell(String symbol, String quantity, String price) {
+        return new NewOrder(symbol, OrderSide.SELL, OrderType.LIMIT, TimeInForce.GTC, quantity, price);
     }
 
     @NotNull
