@@ -3,12 +3,14 @@ package com.mauriciotogneri.botcoin.exchange;
 import com.binance.api.client.BinanceApiRestClient;
 import com.binance.api.client.domain.market.Candlestick;
 import com.binance.api.client.domain.market.CandlestickInterval;
+import com.binance.api.client.domain.market.TickerPrice;
 import com.mauriciotogneri.botcoin.config.ConfigConst;
+import com.mauriciotogneri.botcoin.mellau.candle.dto.RequestDataDTO;
 import com.mauriciotogneri.botcoin.provider.DataProvider;
 
 import java.util.List;
 
-public class BinanceCandlePriceProvider implements DataProvider<List<Candlestick>>
+public class BinanceCandlePriceProvider implements DataProvider<RequestDataDTO>
 {
     private final String symbol;
     private final int frequency;
@@ -28,12 +30,17 @@ public class BinanceCandlePriceProvider implements DataProvider<List<Candlestick
     }
 
     @Override
-    public List<Candlestick> data() throws Exception
+    public RequestDataDTO data() throws Exception
     {
-        Thread.sleep(frequency * 1000L);
         Long now = System.currentTimeMillis();
-        Long xMinAgo = System.currentTimeMillis() - (ConfigConst.NUMBER_FOR_LONG_AVERAGE * 60000);
-        List<Candlestick> tickerPrice = client.getCandlestickBars(symbol, CandlestickInterval.ONE_MINUTE, ConfigConst.NUMBER_FOR_LONG_AVERAGE, xMinAgo, now);
-        return tickerPrice;
+        Long xMinAgo = now - (ConfigConst.NUMBER_OF_CANDLES_TO_LOOK_BACK * 60000);
+        List<Candlestick> candlestickBars = client.getCandlestickBars(symbol, CandlestickInterval.ONE_MINUTE, ConfigConst.NUMBER_FOR_LONG_AVERAGE, xMinAgo, now);
+        TickerPrice tickerPrice = client.getPrice(symbol);
+
+        RequestDataDTO requestedData = new RequestDataDTO();
+        requestedData.setTickerPrice(tickerPrice);
+        requestedData.setCandlestickBars(candlestickBars);
+
+        return requestedData;
     }
 }

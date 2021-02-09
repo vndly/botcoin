@@ -5,10 +5,12 @@ import com.binance.api.client.domain.OrderStatus;
 import com.binance.api.client.domain.account.NewOrder;
 import com.binance.api.client.domain.account.NewOrderResponse;
 import com.binance.api.client.domain.market.Candlestick;
+import com.binance.api.client.domain.market.TickerPrice;
 import com.google.gson.JsonObject;
 import com.mauriciotogneri.botcoin.config.ConfigConst;
 import com.mauriciotogneri.botcoin.exchange.Binance;
 import com.mauriciotogneri.botcoin.mellau.basic.dto.LastPricesAverageDTO;
+import com.mauriciotogneri.botcoin.mellau.candle.dto.RequestDataDTO;
 import com.mauriciotogneri.botcoin.momo.LogEvent;
 import com.mauriciotogneri.botcoin.strategy.Strategy;
 import com.mauriciotogneri.botcoin.util.Json;
@@ -23,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-public class CrossStrategy implements Strategy<List<Candlestick>> {
+public class CrossStrategy implements Strategy<RequestDataDTO> {
     private BigDecimal spent = BigDecimal.ZERO;
     private final String symbol;
     private final Balance balanceA;
@@ -37,23 +39,24 @@ public class CrossStrategy implements Strategy<List<Candlestick>> {
     }
 
     @Override
-    public List<NewOrder> orders(@NotNull List<Candlestick> price) {
-        // TODO: need to finish
-        BigDecimal lastPrice = new BigDecimal(price.get(price.size() - 1).getClose());
+    public List<NewOrder> orders(@NotNull RequestDataDTO requestDataDTO) {
+        List<Candlestick> candlestickBars = requestDataDTO.candlestickBars;
+
+        BigDecimal lastPrice = new BigDecimal(requestDataDTO.tickerPrice.getPrice());
         LastPricesAverageDTO lastPricesAverageDTO = new LastPricesAverageDTO();
-        lastPricesAverageDTO.getAverages(price);
+        lastPricesAverageDTO.getAverages(candlestickBars);
         boolean shortIsUp = 0 < lastPricesAverageDTO.avgShort.compareTo(lastPricesAverageDTO.avgLong);
 
         LastPricesAverageDTO oldPricesAverageDTO = new LastPricesAverageDTO();
-        oldPricesAverageDTO.getAverages(price);
+        oldPricesAverageDTO.getAverages(candlestickBars);
         boolean shortWasUp = 0 < oldPricesAverageDTO.avgShort.compareTo(oldPricesAverageDTO.avgLong);
+
+        boolean possibleSell = 0 > boughtPrice().compareTo(lastPrice.multiply(new BigDecimal(1.005)));
 
         if (!shortWasUp && shortIsUp && balanceA.amount.compareTo(BigDecimal.ZERO) > ConfigConst.MIN_EUR_TO_TRADE){
             return Collections.singletonList(Binance.buyMarketOrder(symbol, balanceA.amount.multiply(lastPrice)));
-        } else if (shortWasUp && !shortIsUp && balanceB.amount.compareTo(BigDecimal.ZERO) > ConfigConst.MIN_BTC_TO_TRADE){
-            // TODO: only sell if price > than paid price * 1.001 or pice is 50%
+        } else if (shortWasUp && possibleSell && !shortIsUp && balanceB.amount.compareTo(BigDecimal.ZERO) > ConfigConst.MIN_BTC_TO_TRADE){
             return Collections.singletonList(Binance.sellMarketOrder(symbol, balanceB.amount.divide(lastPrice, balanceA.currency.decimals, RoundingMode.DOWN)));
-            // TODO: Save bought price
         }
 
         return new ArrayList<>();
