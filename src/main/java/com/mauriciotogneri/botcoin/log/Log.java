@@ -8,7 +8,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.nio.channels.FileChannel;
 
 public class Log
@@ -16,26 +15,35 @@ public class Log
     private boolean empty = true;
     private final BufferedWriter writer;
 
-    public Log(@NotNull String path) throws IOException
+    public Log(@NotNull String path)
     {
-        File file = new File(path);
+        try
+        {
+            File file = new File(path);
 
-        if (file.exists())
-        {
-            FileChannel fileChannel = new FileOutputStream(file, true).getChannel();
-            fileChannel.truncate(0);
-            fileChannel.close();
-        }
-        else
-        {
-            if (!file.createNewFile())
+            if (file.exists())
             {
-                throw new RuntimeException("Cannot create log file " + path);
+                FileChannel fileChannel = new FileOutputStream(file, true).getChannel();
+                fileChannel.truncate(0);
+                fileChannel.close();
             }
-        }
+            else
+            {
+                if (!file.createNewFile())
+                {
+                    throw new RuntimeException("Cannot create log file " + path);
+                }
+            }
 
-        FileWriter fileWriter = new FileWriter(file, true);
-        writer = new BufferedWriter(fileWriter);
+            FileWriter fileWriter = new FileWriter(file, true);
+            writer = new BufferedWriter(fileWriter);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+
+            throw new RuntimeException("Cannot create log file " + path);
+        }
     }
 
     public void console(String data)

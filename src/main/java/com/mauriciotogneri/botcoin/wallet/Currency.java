@@ -2,15 +2,15 @@ package com.mauriciotogneri.botcoin.wallet;
 
 public class Currency
 {
-    public final String symbol;
+    public final String name;
     public final int decimals;
-    public final int step; // TODO: should be defined at a symbol level
+    public final int step;
 
     public static final Currency EUR = new Currency("EUR", 8, 8);
     public static final Currency USD = new Currency("USD", 8, 8);
 
-    public static final Currency BTC = new Currency("BTC", 8, 6);
-    public static final Currency ETH = new Currency("ETH", 8, 5);
+    public static final Currency BTC = new Currency("BTC", 8, 8);
+    public static final Currency ETH = new Currency("ETH", 8, 8);
     public static final Currency USDT = new Currency("USDT", 8, 8);
     public static final Currency XRP = new Currency("XRP", 8, 8);
     public static final Currency DOT = new Currency("DOT", 8, 8);
@@ -30,10 +30,15 @@ public class Currency
     public static final Currency XMR = new Currency("XMR", 8, 8);
     public static final Currency XEM = new Currency("XEM", 8, 8);
 
-    public Currency(String symbol, int decimals, int step)
+    public Currency(String name, int decimals, int step)
     {
-        this.symbol = symbol;
+        this.name = name;
         this.decimals = decimals;
         this.step = step;
+    }
+
+    public Currency with(int decimals, int step)
+    {
+        return new Currency(name, decimals, step);
     }
 }

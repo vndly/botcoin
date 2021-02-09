@@ -31,5 +31,5 @@ public class Json
         return gson;
     }
 
-    private static final JsonSerializer<Currency> serializer = (currency, typeOfSrc, context) -> new JsonPrimitive(currency.symbol);
+    private static final JsonSerializer<Currency> serializer = (currency, typeOfSrc, context) -> new JsonPrimitive(currency.name);
 }

@@ -2,6 +2,7 @@ package com.mauriciotogneri.botcoin.exchange;
 
 import com.binance.api.client.BinanceApiRestClient;
 import com.binance.api.client.domain.market.TickerPrice;
+import com.mauriciotogneri.botcoin.market.Symbol;
 import com.mauriciotogneri.botcoin.provider.DataProvider;
 import com.mauriciotogneri.botcoin.provider.Price;
 
@@ -10,11 +11,11 @@ import java.math.BigDecimal;
 public class BinancePriceProvider implements DataProvider<Price>
 {
     private Price lastPrice;
-    private final String symbol;
+    private final Symbol symbol;
     private final int frequency;
     private final BinanceApiRestClient client;
 
-    public BinancePriceProvider(String symbol, int frequency)
+    public BinancePriceProvider(Symbol symbol, int frequency)
     {
         this.symbol = symbol;
         this.frequency = frequency;
@@ -33,7 +34,7 @@ public class BinancePriceProvider implements DataProvider<Price>
         try
         {
             Thread.sleep(frequency * 1000L);
-            TickerPrice tickerPrice = client.getPrice(symbol);
+            TickerPrice tickerPrice = client.getPrice(symbol.toString());
 
             lastPrice = new Price(
                     System.currentTimeMillis(),

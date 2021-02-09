@@ -23,7 +23,7 @@ public class ComplexStrategy implements Strategy<Price>, BinanceApiCallback<Orde
     public ComplexStrategy(@NotNull Balance balanceA,
                            @NotNull Balance balanceB)
     {
-        this.symbol = String.format("%s%s", balanceB.currency.symbol, balanceA.currency.symbol);
+        this.symbol = String.format("%s%s", balanceB.currency.name, balanceA.currency.name);
         this.balanceA = balanceA;
         this.balanceB = balanceB;
 
