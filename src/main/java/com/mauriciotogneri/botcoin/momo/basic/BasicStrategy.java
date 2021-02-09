@@ -10,7 +10,7 @@ import com.mauriciotogneri.botcoin.momo.LogEvent;
 import com.mauriciotogneri.botcoin.provider.Price;
 import com.mauriciotogneri.botcoin.strategy.Strategy;
 import com.mauriciotogneri.botcoin.trader.OrderSent;
-import com.mauriciotogneri.botcoin.util.Json;
+import com.mauriciotogneri.botcoin.json.Json;
 import com.mauriciotogneri.botcoin.wallet.Balance;
 
 import org.jetbrains.annotations.NotNull;

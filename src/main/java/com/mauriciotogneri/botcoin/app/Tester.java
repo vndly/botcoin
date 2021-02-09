@@ -9,8 +9,8 @@ import com.mauriciotogneri.botcoin.provider.DataProvider;
 import com.mauriciotogneri.botcoin.provider.Price;
 import com.mauriciotogneri.botcoin.strategy.Strategy;
 import com.mauriciotogneri.botcoin.trader.Trader;
-import com.mauriciotogneri.botcoin.util.Json;
-import com.mauriciotogneri.botcoin.util.Log;
+import com.mauriciotogneri.botcoin.json.Json;
+import com.mauriciotogneri.botcoin.log.Log;
 import com.mauriciotogneri.botcoin.wallet.Balance;
 import com.mauriciotogneri.botcoin.wallet.Currency;
 

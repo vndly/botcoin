@@ -5,8 +5,8 @@ import com.mauriciotogneri.botcoin.provider.DataProvider;
 import com.mauriciotogneri.botcoin.strategy.Strategy;
 import com.mauriciotogneri.botcoin.trader.OrderSent;
 import com.mauriciotogneri.botcoin.trader.Trader;
-import com.mauriciotogneri.botcoin.util.Log;
-import com.mauriciotogneri.botcoin.util.LogEntry;
+import com.mauriciotogneri.botcoin.log.Log;
+import com.mauriciotogneri.botcoin.log.LogEntry;
 
 import java.util.List;
 

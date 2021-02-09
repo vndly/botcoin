@@ -1,4 +1,6 @@
-package com.mauriciotogneri.botcoin.util;
+package com.mauriciotogneri.botcoin.log;
+
+import com.mauriciotogneri.botcoin.json.Json;
 
 import org.jetbrains.annotations.NotNull;
 

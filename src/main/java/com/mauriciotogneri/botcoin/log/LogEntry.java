@@ -1,7 +1,8 @@
-package com.mauriciotogneri.botcoin.util;
+package com.mauriciotogneri.botcoin.log;
 
 import com.google.gson.JsonObject;
 import com.mauriciotogneri.botcoin.trader.OrderSent;
+import com.mauriciotogneri.botcoin.json.Json;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

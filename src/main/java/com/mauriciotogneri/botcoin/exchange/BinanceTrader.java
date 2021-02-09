@@ -5,7 +5,7 @@ import com.binance.api.client.domain.account.NewOrder;
 import com.binance.api.client.domain.account.NewOrderResponse;
 import com.mauriciotogneri.botcoin.trader.OrderSent;
 import com.mauriciotogneri.botcoin.trader.Trader;
-import com.mauriciotogneri.botcoin.util.Json;
+import com.mauriciotogneri.botcoin.json.Json;
 
 import org.jetbrains.annotations.NotNull;
 

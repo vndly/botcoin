@@ -1,4 +1,4 @@
-package com.mauriciotogneri.botcoin.util;
+package com.mauriciotogneri.botcoin.json;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
