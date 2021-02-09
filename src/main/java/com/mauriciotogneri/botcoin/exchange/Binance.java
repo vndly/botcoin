@@ -4,11 +4,8 @@ import com.binance.api.client.BinanceApiCallback;
 import com.binance.api.client.BinanceApiClientFactory;
 import com.binance.api.client.BinanceApiRestClient;
 import com.binance.api.client.BinanceApiWebSocketClient;
-import com.binance.api.client.domain.OrderSide;
-import com.binance.api.client.domain.OrderType;
 import com.binance.api.client.domain.account.Account;
 import com.binance.api.client.domain.account.AssetBalance;
-import com.binance.api.client.domain.account.NewOrder;
 import com.binance.api.client.domain.event.OrderTradeUpdateEvent;
 import com.binance.api.client.domain.event.UserDataUpdateEvent.UserDataUpdateEventType;
 
@@ -47,30 +44,6 @@ public class Binance
                 callback.onResponse(orderTradeUpdateEvent);
             }
         });
-    }
-
-    @NotNull
-    public static NewOrder buyMarketOrder(String symbol, @NotNull BigDecimal quantity)
-    {
-        return marketOrder(OrderSide.BUY, symbol, quantity);
-    }
-
-    @NotNull
-    public static NewOrder sellMarketOrder(String symbol, @NotNull BigDecimal quantity)
-    {
-        return marketOrder(OrderSide.SELL, symbol, quantity);
-    }
-
-    @NotNull
-    public static NewOrder marketOrder(OrderSide orderSide, String symbol, @NotNull BigDecimal quantity)
-    {
-        return new NewOrder(
-                symbol,
-                orderSide,
-                OrderType.MARKET,
-                null,
-                quantity.toString()
-        );
     }
 
     @NotNull

@@ -9,6 +9,7 @@ import com.mauriciotogneri.botcoin.exchange.Binance;
 import com.mauriciotogneri.botcoin.momo.LogEvent;
 import com.mauriciotogneri.botcoin.provider.Price;
 import com.mauriciotogneri.botcoin.strategy.Strategy;
+import com.mauriciotogneri.botcoin.trader.OrderSent;
 import com.mauriciotogneri.botcoin.util.Json;
 import com.mauriciotogneri.botcoin.wallet.Balance;
 
@@ -19,8 +20,6 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 public class BasicStrategy implements Strategy<Price>
 {
@@ -57,11 +56,11 @@ public class BasicStrategy implements Strategy<Price>
 
         if (buyAmount.compareTo(BigDecimal.ZERO) > 0)
         {
-            return Collections.singletonList(Binance.buyMarketOrder(symbol, buyAmount));
+            return Collections.singletonList(NewOrder.marketBuy(symbol, buyAmount.toString()));
         }
         else if (sellAmount.compareTo(BigDecimal.ZERO) > 0)
         {
-            return Collections.singletonList(Binance.sellMarketOrder(symbol, sellAmount));
+            return Collections.singletonList(NewOrder.marketSell(symbol, sellAmount.toString()));
         }
         else
         {
@@ -70,15 +69,13 @@ public class BasicStrategy implements Strategy<Price>
     }
 
     @Override
-    public List<Object> update(@NotNull Map<NewOrder, NewOrderResponse> orders)
+    public List<Object> update(@NotNull List<OrderSent> sent)
     {
         List<Object> result = new ArrayList<>();
 
-        for (Entry<NewOrder, NewOrderResponse> entry : orders.entrySet())
+        for (OrderSent orderSent : sent)
         {
-            NewOrder order = entry.getKey();
-            NewOrderResponse response = entry.getValue();
-            JsonObject event = process(order, response);
+            JsonObject event = process(orderSent.order, orderSent.response);
 
             result.add(event);
         }
@@ -105,6 +102,7 @@ public class BasicStrategy implements Strategy<Price>
     @NotNull
     private JsonObject buy(NewOrder order, @NotNull NewOrderResponse response)
     {
+        // TODO: refactor
         JsonObject json = new JsonObject();
         json.add("order", Json.toJsonObject(order));
         json.add("response", Json.toJsonObject(response));

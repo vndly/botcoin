@@ -1,15 +1,14 @@
 package com.mauriciotogneri.botcoin.app;
 
 import com.binance.api.client.domain.account.NewOrder;
-import com.binance.api.client.domain.account.NewOrderResponse;
 import com.mauriciotogneri.botcoin.provider.DataProvider;
 import com.mauriciotogneri.botcoin.strategy.Strategy;
+import com.mauriciotogneri.botcoin.trader.OrderSent;
 import com.mauriciotogneri.botcoin.trader.Trader;
 import com.mauriciotogneri.botcoin.util.Log;
 import com.mauriciotogneri.botcoin.util.LogEntry;
 
 import java.util.List;
-import java.util.Map;
 
 public class Botcoin<T>
 {
@@ -26,16 +25,16 @@ public class Botcoin<T>
         this.log = log;
     }
 
-    public void start() throws Exception
+    public void start()
     {
         while (dataProvider.hasData())
         {
             T data = dataProvider.data();
             List<NewOrder> orders = strategy.orders(data);
-            Map<NewOrder, NewOrderResponse> responses = trader.process(orders);
-            List<Object> events = strategy.update(responses);
+            List<OrderSent> sent = trader.process(orders);
+            List<Object> events = strategy.update(sent);
 
-            LogEntry logEntry = new LogEntry(data, events);
+            LogEntry logEntry = new LogEntry(data, sent, events);
             log.jsonFile(logEntry);
 
             if (logEntry.hasEvents())

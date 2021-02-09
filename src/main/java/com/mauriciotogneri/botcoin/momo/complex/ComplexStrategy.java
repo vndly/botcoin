@@ -2,18 +2,17 @@ package com.mauriciotogneri.botcoin.momo.complex;
 
 import com.binance.api.client.BinanceApiCallback;
 import com.binance.api.client.domain.account.NewOrder;
-import com.binance.api.client.domain.account.NewOrderResponse;
 import com.binance.api.client.domain.event.OrderTradeUpdateEvent;
 import com.mauriciotogneri.botcoin.exchange.Binance;
 import com.mauriciotogneri.botcoin.provider.Price;
 import com.mauriciotogneri.botcoin.strategy.Strategy;
+import com.mauriciotogneri.botcoin.trader.OrderSent;
 import com.mauriciotogneri.botcoin.wallet.Balance;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class ComplexStrategy implements Strategy<Price>, BinanceApiCallback<OrderTradeUpdateEvent>
 {
@@ -43,7 +42,7 @@ public class ComplexStrategy implements Strategy<Price>, BinanceApiCallback<Orde
     }
 
     @Override
-    public List<Object> update(@NotNull Map<NewOrder, NewOrderResponse> orders)
+    public List<Object> update(@NotNull List<OrderSent> sent)
     {
         return new ArrayList<>();
     }
