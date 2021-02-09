@@ -41,7 +41,7 @@ public class ComplexStrategy implements Strategy<Price>
         this.balanceA = balanceA;
         this.balanceB = balanceB;
         this.minQuantity = minQuantity;
-        this.buyStrategy = new ComplexBuyStrategy();
+        this.buyStrategy = new ComplexBuyStrategy(new BigDecimal("2"));
         this.sellStrategy = new ComplexSellStrategy();
     }
 
@@ -50,7 +50,7 @@ public class ComplexStrategy implements Strategy<Price>
     {
         if (state == State.BUYING)
         {
-            BigDecimal amount = buyStrategy.amount();
+            BigDecimal amount = buyStrategy.amount(price.value, balanceB);
 
             if (amount.compareTo(minQuantity) > 0)
             {
@@ -105,6 +105,8 @@ public class ComplexStrategy implements Strategy<Price>
     {
         if (response.getStatus() == OrderStatus.FILLED)
         {
+            state = State.SELLING;
+
             BigDecimal quantity = new BigDecimal(response.getExecutedQty());
             BigDecimal toSpend = new BigDecimal(response.getCummulativeQuoteQty());
             BigDecimal price = toSpend.divide(quantity, balanceA.asset.decimals, RoundingMode.DOWN);
@@ -134,6 +136,9 @@ public class ComplexStrategy implements Strategy<Price>
     {
         if (response.getStatus() == OrderStatus.FILLED)
         {
+            state = State.BUYING;
+            buyStrategy.reset();
+
             BigDecimal quantity = new BigDecimal(response.getExecutedQty());
             BigDecimal toGain = new BigDecimal(response.getCummulativeQuoteQty());
             BigDecimal price = toGain.divide(quantity, balanceA.asset.decimals, RoundingMode.DOWN);
