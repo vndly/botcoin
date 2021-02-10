@@ -14,6 +14,8 @@ import java.util.UUID;
 
 public class FakeTrader implements Trader
 {
+    public static BigDecimal LAST_PRICE;
+
     @Override
     public List<OrderSent> process(@NotNull List<NewOrder> orders)
     {
@@ -30,7 +32,7 @@ public class FakeTrader implements Trader
             response.setPrice(order.getPrice());
             response.setOrigQty(order.getQuantity());
             response.setExecutedQty(order.getQuantity());
-            response.setCummulativeQuoteQty(new BigDecimal(order.getQuantity()).multiply(new BigDecimal(order.getPrice())).toString());
+            response.setCummulativeQuoteQty(new BigDecimal(order.getQuantity()).multiply(LAST_PRICE).toString());
 
             response.setTransactTime(System.currentTimeMillis());
             response.setOrderId((long) Math.abs(random.nextInt()));

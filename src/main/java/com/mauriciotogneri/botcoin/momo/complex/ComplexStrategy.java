@@ -112,15 +112,15 @@ public class ComplexStrategy implements Strategy<Price>
             BigDecimal toSpend = new BigDecimal(response.getCummulativeQuoteQty());
             BigDecimal price = toSpend.divide(quantity, balanceA.asset.decimals, RoundingMode.DOWN);
 
-            balanceA.amount = balanceA.amount.subtract(toSpend);
-            balanceB.amount = Binance.balance(balanceB.asset.currency);
+            balanceA.amount = balanceA.amount.add(quantity); //Binance.balance(balanceA.asset.currency);
+            balanceB.amount = balanceB.amount.subtract(toSpend);
             spent = spent.add(toSpend);
 
             return LogEvent.buy(
-                    balanceB.of(quantity),
-                    balanceA.of(price),
-                    balanceA.of(spent),
-                    balanceA.of(boughtPrice()),
+                    balanceA.of(quantity),
+                    balanceB.of(price),
+                    balanceB.of(spent),
+                    balanceB.of(boughtPrice()),
                     balanceA,
                     balanceB,
                     totalBalance(price)
@@ -170,8 +170,8 @@ public class ComplexStrategy implements Strategy<Price>
 
     private BigDecimal boughtPrice()
     {
-        return (balanceB.amount.compareTo(BigDecimal.ZERO) > 0) ?
-                spent.divide(balanceB.amount, balanceA.asset.decimals, RoundingMode.DOWN) :
+        return (balanceA.amount.compareTo(BigDecimal.ZERO) > 0) ?
+                spent.divide(balanceA.amount, balanceB.asset.decimals, RoundingMode.DOWN) :
                 BigDecimal.ZERO;
     }
 

@@ -1,6 +1,7 @@
 package com.mauriciotogneri.botcoin.momo.complex;
 
 import com.mauriciotogneri.botcoin.log.Log;
+import com.mauriciotogneri.botcoin.trader.FakeTrader;
 import com.mauriciotogneri.botcoin.wallet.Balance;
 
 import org.jetbrains.annotations.NotNull;
@@ -49,6 +50,7 @@ public class ComplexBuyStrategy
 
                 if (amountToBuy.compareTo(minQuantity) >= 0)
                 {
+                    FakeTrader.LAST_PRICE = price;
                     result = amountToBuy;
                 }
             }
