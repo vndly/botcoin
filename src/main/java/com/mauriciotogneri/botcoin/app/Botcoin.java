@@ -30,8 +30,8 @@ public class Botcoin
     {
         for (Market<?> market : markets())
         {
-            //Thread thread = new Thread(market);
-            //thread.start();
+            Thread thread = new Thread(market);
+            thread.start();
         }
     }
 

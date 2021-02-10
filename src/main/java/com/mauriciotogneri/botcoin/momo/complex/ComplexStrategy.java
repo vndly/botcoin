@@ -51,7 +51,7 @@ public class ComplexStrategy implements Strategy<Price>
     {
         if (state == State.BUYING)
         {
-            BigDecimal amount = buyStrategy.amount(price.value, balanceB);
+            BigDecimal amount = buyStrategy.amount(price.value, balanceA, balanceB);
 
             if (amount.compareTo(minQuantity) > 0)
             {

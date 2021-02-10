@@ -25,6 +25,7 @@ public class ComplexBuyStrategy
     }
 
     public BigDecimal amount(@NotNull BigDecimal price,
+                             @NotNull Balance balanceA,
                              @NotNull Balance balanceB)
     {
         BigDecimal result = BigDecimal.ZERO;
@@ -37,15 +38,18 @@ public class ComplexBuyStrategy
         else if (price.compareTo(allTimeHigh) < 0)
         {
             BigDecimal percentageDown = BigDecimal.ONE.subtract(price.divide(allTimeHigh, 10, RoundingMode.DOWN));
-            Log.console("Trying to buy at: %s/%s (+%s%%)", price, allTimeHigh, percentageDown.multiply(new BigDecimal("100")).setScale(0, RoundingMode.DOWN).toString());
 
             if (percentageDown.compareTo(MIN_PERCENTAGE_DOWN) >= 0)
             {
-                BigDecimal amountBToBuy = balanceB.amount.setScale(balanceB.asset.step, RoundingMode.DOWN);
+                Log.console("Trying to buy at:  %s/%s (+%s%%)", price, allTimeHigh, percentageDown.multiply(new BigDecimal("100")).setScale(2, RoundingMode.DOWN).toString());
 
-                if (amountBToBuy.compareTo(minQuantity) >= 0)
+                BigDecimal multiplier = percentageDown.multiply(new BigDecimal("10"));
+                BigDecimal amountToSpend = balanceB.amount.min(balanceB.amount.multiply(multiplier));
+                BigDecimal amountToBuy = amountToSpend.divide(price, balanceA.asset.step, RoundingMode.DOWN);
+
+                if (amountToBuy.compareTo(minQuantity) >= 0)
                 {
-                    result = amountBToBuy;
+                    result = amountToBuy;
                 }
             }
         }
