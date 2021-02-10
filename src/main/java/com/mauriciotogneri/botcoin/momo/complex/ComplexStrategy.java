@@ -4,7 +4,6 @@ import com.binance.api.client.domain.OrderSide;
 import com.binance.api.client.domain.OrderStatus;
 import com.binance.api.client.domain.account.NewOrder;
 import com.binance.api.client.domain.account.NewOrderResponse;
-import com.mauriciotogneri.botcoin.exchange.Binance;
 import com.mauriciotogneri.botcoin.market.Symbol;
 import com.mauriciotogneri.botcoin.momo.LogEvent;
 import com.mauriciotogneri.botcoin.provider.Price;
@@ -30,7 +29,7 @@ public class ComplexStrategy implements Strategy<Price>
     private final ComplexBuyStrategy buyStrategy;
     private final ComplexSellStrategy sellStrategy;
 
-    private BigDecimal spent = BigDecimal.ZERO;
+    private BigDecimal boughtPrice = BigDecimal.ZERO;
     private State state = State.BUYING;
 
     public ComplexStrategy(Symbol symbol,
@@ -60,7 +59,7 @@ public class ComplexStrategy implements Strategy<Price>
         }
         else if (state == State.SELLING)
         {
-            BigDecimal amount = sellStrategy.amount(price.value, boughtPrice(), balanceA);
+            BigDecimal amount = sellStrategy.amount(price.value, boughtPrice, balanceA);
 
             if (amount.compareTo(minQuantity) > 0)
             {
@@ -112,15 +111,15 @@ public class ComplexStrategy implements Strategy<Price>
             BigDecimal toSpend = new BigDecimal(response.getCummulativeQuoteQty());
             BigDecimal price = toSpend.divide(quantity, balanceA.asset.decimals, RoundingMode.DOWN);
 
-            balanceA.amount = balanceA.amount.add(quantity); //Binance.balance(balanceA.asset.currency);
+            balanceA.amount = balanceA.amount.add(quantity); // TODO Binance.balance(balanceA.asset.currency);
             balanceB.amount = balanceB.amount.subtract(toSpend);
-            spent = spent.add(toSpend);
+            boughtPrice = price;
 
             return LogEvent.buy(
                     balanceA.of(quantity),
                     balanceB.of(price),
-                    balanceB.of(spent),
-                    balanceB.of(boughtPrice()),
+                    balanceB.of(toSpend),
+                    balanceB.of(boughtPrice),
                     balanceA,
                     balanceB,
                     totalBalance(price)
@@ -144,19 +143,18 @@ public class ComplexStrategy implements Strategy<Price>
             BigDecimal toGain = new BigDecimal(response.getCummulativeQuoteQty());
             BigDecimal price = toGain.divide(quantity, balanceA.asset.decimals, RoundingMode.DOWN);
 
-            BigDecimal originalCost = quantity.multiply(boughtPrice());
+            BigDecimal originalCost = quantity.multiply(boughtPrice);
             BigDecimal profit = toGain.subtract(originalCost);
 
-            balanceA.amount = Binance.balance(balanceA.asset.currency);
-            balanceB.amount = balanceB.amount.subtract(quantity);
-            spent = spent.subtract(originalCost);
+            balanceA.amount = balanceA.amount.subtract(quantity);
+            balanceB.amount = balanceB.amount.add(toGain); // TODO Binance.balance(balanceB.asset.currency);
 
             return LogEvent.sell(
-                    balanceB.of(quantity),
-                    balanceA.of(price),
-                    balanceA.of(toGain),
-                    balanceA.of(profit),
-                    balanceA.of(boughtPrice()),
+                    balanceA.of(quantity),
+                    balanceB.of(price),
+                    balanceB.of(toGain),
+                    balanceB.of(profit),
+                    balanceB.of(boughtPrice),
                     balanceA,
                     balanceB,
                     totalBalance(price)
@@ -168,16 +166,9 @@ public class ComplexStrategy implements Strategy<Price>
         }
     }
 
-    private BigDecimal boughtPrice()
-    {
-        return (balanceA.amount.compareTo(BigDecimal.ZERO) > 0) ?
-                spent.divide(balanceA.amount, balanceB.asset.decimals, RoundingMode.DOWN) :
-                BigDecimal.ZERO;
-    }
-
     private Balance totalBalance(BigDecimal price)
     {
-        return balanceA.of(balanceA.amount.add(balanceB.amount.multiply(price)));
+        return balanceB.of(balanceB.amount.add(balanceB.amount.multiply(price)));
     }
 
     private enum State
