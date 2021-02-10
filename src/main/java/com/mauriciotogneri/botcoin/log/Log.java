@@ -46,9 +46,10 @@ public class Log
         }
     }
 
-    public void console(String data)
+    public static void console(String var1, Object... var2)
     {
-        System.out.println(data);
+        System.out.printf(var1, var2);
+        System.out.println();
     }
 
     public void file(String data)

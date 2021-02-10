@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+// TODO: create file status_A_B.json with the latest state of the strategy
 public class ComplexStrategy implements Strategy<Price>
 {
     private final Symbol symbol;
@@ -41,8 +42,8 @@ public class ComplexStrategy implements Strategy<Price>
         this.balanceA = balanceA;
         this.balanceB = balanceB;
         this.minQuantity = minQuantity;
-        this.buyStrategy = new ComplexBuyStrategy(new BigDecimal("2"));
-        this.sellStrategy = new ComplexSellStrategy();
+        this.buyStrategy = new ComplexBuyStrategy(minQuantity);
+        this.sellStrategy = new ComplexSellStrategy(minQuantity);
     }
 
     @Override
@@ -59,7 +60,7 @@ public class ComplexStrategy implements Strategy<Price>
         }
         else if (state == State.SELLING)
         {
-            BigDecimal amount = sellStrategy.amount();
+            BigDecimal amount = sellStrategy.amount(price.value, boughtPrice(), balanceA);
 
             if (amount.compareTo(minQuantity) > 0)
             {

@@ -1,5 +1,6 @@
 package com.mauriciotogneri.botcoin.momo.basic;
 
+import com.mauriciotogneri.botcoin.log.Log;
 import com.mauriciotogneri.botcoin.wallet.Balance;
 
 import org.jetbrains.annotations.NotNull;
@@ -37,18 +38,18 @@ public class BasicBuyStrategy
         {
             if (price.compareTo(allTimeHigh) < 0)
             {
-                System.out.printf("Trying first buy: %s/%s%n", price, allTimeHigh);
+                Log.console("Trying first buy: %s/%s", price, allTimeHigh);
                 result = byFrom(price, allTimeHigh, balanceA, balanceB);
             }
             else
             {
                 allTimeHigh = price;
-                System.out.printf("New all time high: %s%n", allTimeHigh);
+                Log.console("New all time high: %s", allTimeHigh);
             }
         }
         else if (price.compareTo(boughtPrice) < 0) // average down
         {
-            System.out.printf("Trying Average down: %s/%s%n", price, boughtPrice);
+            Log.console("Trying Average down: %s/%s", price, boughtPrice);
             result = byFrom(price, boughtPrice, balanceA, balanceB);
         }
 

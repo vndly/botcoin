@@ -4,6 +4,7 @@ import com.binance.api.client.BinanceApiRestClient;
 import com.binance.api.client.domain.account.Account;
 import com.mauriciotogneri.botcoin.exchange.Binance;
 import com.mauriciotogneri.botcoin.json.Json;
+import com.mauriciotogneri.botcoin.log.Log;
 
 public class BinanceAPI
 {
@@ -41,6 +42,6 @@ public class BinanceAPI
 
     private static void print(Object object)
     {
-        System.out.println(Json.toJsonString(object));
+        Log.console(Json.toJsonString(object));
     }
 }

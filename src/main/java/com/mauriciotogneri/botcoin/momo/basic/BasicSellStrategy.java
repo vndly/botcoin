@@ -1,5 +1,6 @@
 package com.mauriciotogneri.botcoin.momo.basic;
 
+import com.mauriciotogneri.botcoin.log.Log;
 import com.mauriciotogneri.botcoin.wallet.Balance;
 
 import org.jetbrains.annotations.NotNull;
@@ -34,7 +35,7 @@ public class BasicSellStrategy
 
         if ((price.compareTo(boughtPrice) > 0) && (boughtPrice.compareTo(BigDecimal.ZERO) > 0))
         {
-            System.out.printf("Trying to sell at: %s/%s%n", price, boughtPrice);
+            Log.console("Trying to sell at: %s/%s", price, boughtPrice);
             BigDecimal percentageUp = price.divide(boughtPrice, 10, RoundingMode.DOWN).subtract(BigDecimal.ONE);
 
             if (percentageUp.compareTo(minPercentageUp) >= 0)

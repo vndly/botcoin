@@ -56,7 +56,6 @@ public class PriceCollector
 
             if (((limit != 0) && (count >= limit)) || (entries.isEmpty()))
             {
-                System.out.println();
                 break;
             }
 
@@ -99,7 +98,7 @@ public class PriceCollector
 
     public static void main(String[] args) throws Exception
     {
-        String pair = "ETHBTC";
+        String pair = "ADABTC";
         String interval = "ONE_MINUTE";
         Integer limit = 20000000;
         String fileName = String.format("input/prices_%s_%s.csv", pair, interval);

@@ -40,6 +40,8 @@ public class Botcoin
     {
         List<Market<?>> markets = new ArrayList<>();
         markets.add(market(Currency.ETH, Currency.BTC));
+        //markets.add(market(Currency.LTC, Currency.BTC));
+        //markets.add(market(Currency.ADA, Currency.BTC));
 
         return markets;
     }
@@ -56,7 +58,7 @@ public class Botcoin
         BigDecimal minQuantity = new BigDecimal(filter.getMinQty());
 
         //DataProvider<Price> dataProvider = new BinancePriceProvider(symbol, 10);
-        DataProvider<Price> dataProvider = new FilePriceProvider("input/prices_ETHBTC_ONE_MINUTE.csv");
+        DataProvider<Price> dataProvider = new FilePriceProvider(String.format("input/prices_%s%s_ONE_MINUTE.csv", currencyA.name(), currencyB.name()));
 
         BigDecimal balanceAssetA = Binance.balance(currencyA);
         Balance balanceA = new Balance(symbol.assetA, balanceAssetA);

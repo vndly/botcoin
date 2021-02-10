@@ -3,9 +3,10 @@ package com.mauriciotogneri.botcoin.exchange;
 import com.binance.api.client.BinanceApiRestClient;
 import com.binance.api.client.domain.account.NewOrder;
 import com.binance.api.client.domain.account.NewOrderResponse;
+import com.mauriciotogneri.botcoin.json.Json;
+import com.mauriciotogneri.botcoin.log.Log;
 import com.mauriciotogneri.botcoin.trader.OrderSent;
 import com.mauriciotogneri.botcoin.trader.Trader;
-import com.mauriciotogneri.botcoin.json.Json;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -28,7 +29,7 @@ public class BinanceTrader implements Trader
 
         for (NewOrder order : orders)
         {
-            System.out.printf("Attempt to execute order: %s%n", Json.toJsonString(order));
+            Log.console("Attempt to execute order: %s", Json.toJsonString(order));
 
             NewOrderResponse response = client.newOrder(order);
             sent.add(new OrderSent(order, response));
