@@ -3,6 +3,9 @@ package com.mauriciotogneri.botcoin.json;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializer;
+import com.mauriciotogneri.botcoin.wallet.Asset;
 
 public class Json
 {
@@ -24,12 +27,12 @@ public class Json
         {
             gson = new GsonBuilder()
                     .setPrettyPrinting()
-                    //.registerTypeAdapter(Asset.class, serializer)
+                    .registerTypeAdapter(Asset.class, serializer)
                     .create();
         }
 
         return gson;
     }
 
-    //private static final JsonSerializer<Asset> serializer = (currency, typeOfSrc, context) -> new JsonPrimitive(currency);
+    private static final JsonSerializer<Asset> serializer = (asset, typeOfSrc, context) -> new JsonPrimitive(asset.currency.name());
 }

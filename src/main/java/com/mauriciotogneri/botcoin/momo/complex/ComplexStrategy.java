@@ -4,6 +4,7 @@ import com.binance.api.client.domain.OrderSide;
 import com.binance.api.client.domain.OrderStatus;
 import com.binance.api.client.domain.account.NewOrder;
 import com.binance.api.client.domain.account.NewOrderResponse;
+import com.mauriciotogneri.botcoin.exchange.Binance;
 import com.mauriciotogneri.botcoin.market.Symbol;
 import com.mauriciotogneri.botcoin.momo.LogEvent;
 import com.mauriciotogneri.botcoin.provider.Price;
@@ -111,7 +112,7 @@ public class ComplexStrategy implements Strategy<Price>
             BigDecimal toSpend = new BigDecimal(response.getCummulativeQuoteQty());
             BigDecimal price = toSpend.divide(quantity, balanceA.asset.decimals, RoundingMode.DOWN);
 
-            balanceA.amount = balanceA.amount.add(quantity); // TODO Binance.balance(balanceA.asset.currency);
+            balanceA.amount = Binance.balance(balanceA.asset.currency); // TODO balanceA.amount.add(quantity);
             balanceB.amount = balanceB.amount.subtract(toSpend);
             boughtPrice = price;
 
@@ -147,7 +148,7 @@ public class ComplexStrategy implements Strategy<Price>
             BigDecimal profit = toGain.subtract(originalCost);
 
             balanceA.amount = balanceA.amount.subtract(quantity);
-            balanceB.amount = balanceB.amount.add(toGain); // TODO Binance.balance(balanceB.asset.currency);
+            balanceB.amount = Binance.balance(balanceB.asset.currency); // TODO balanceB.amount.add(toGain);
 
             return LogEvent.sell(
                     balanceA.of(quantity),

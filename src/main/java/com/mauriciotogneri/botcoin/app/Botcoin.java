@@ -5,15 +5,15 @@ import com.binance.api.client.domain.general.FilterType;
 import com.binance.api.client.domain.general.SymbolFilter;
 import com.binance.api.client.domain.general.SymbolInfo;
 import com.mauriciotogneri.botcoin.exchange.Binance;
+import com.mauriciotogneri.botcoin.exchange.BinancePriceProvider;
+import com.mauriciotogneri.botcoin.exchange.BinanceTrader;
 import com.mauriciotogneri.botcoin.log.Log;
 import com.mauriciotogneri.botcoin.market.Market;
 import com.mauriciotogneri.botcoin.market.Symbol;
 import com.mauriciotogneri.botcoin.momo.complex.ComplexStrategy;
 import com.mauriciotogneri.botcoin.provider.DataProvider;
-import com.mauriciotogneri.botcoin.provider.FilePriceProvider;
 import com.mauriciotogneri.botcoin.provider.Price;
 import com.mauriciotogneri.botcoin.strategy.Strategy;
-import com.mauriciotogneri.botcoin.trader.FakeTrader;
 import com.mauriciotogneri.botcoin.trader.Trader;
 import com.mauriciotogneri.botcoin.wallet.Balance;
 import com.mauriciotogneri.botcoin.wallet.Currency;
@@ -47,6 +47,9 @@ public class Botcoin
     }
 
     @NotNull
+    // 0.03756188 EUR
+    // 0.00250156 BTC
+    // 0.00098100 ETH
     private static Market<Price> market(Currency currencyA, Currency currencyB)
     {
         ExchangeInfo exchangeInfo = Binance.apiClient().getExchangeInfo();
@@ -57,8 +60,8 @@ public class Botcoin
         SymbolFilter filter = symbolInfo.getSymbolFilter(FilterType.LOT_SIZE);
         BigDecimal minQuantity = new BigDecimal(filter.getMinQty());
 
-        //DataProvider<Price> dataProvider = new BinancePriceProvider(symbol, 10);
-        DataProvider<Price> dataProvider = new FilePriceProvider(String.format("input/prices_%s%s_ONE_MINUTE.csv", currencyA.name(), currencyB.name()));
+        DataProvider<Price> dataProvider = new BinancePriceProvider(symbol, 10);
+        //DataProvider<Price> dataProvider = new FilePriceProvider(String.format("input/prices_%s%s_ONE_MINUTE.csv", currencyA.name(), currencyB.name()));
 
         BigDecimal balanceAssetA = Binance.balance(currencyA);
         Balance balanceA = new Balance(symbol.assetA, balanceAssetA);
@@ -68,7 +71,8 @@ public class Botcoin
 
         Strategy<Price> strategy = new ComplexStrategy(symbol, balanceA, balanceB, minQuantity);
 
-        Trader trader = new FakeTrader();
+        Trader trader = new BinanceTrader();
+        //Trader trader = new FakeTrader();
 
         Log log = new Log(String.format("output/logs_%s.json", symbol.name));
 
