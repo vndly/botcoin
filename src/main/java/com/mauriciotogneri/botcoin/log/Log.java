@@ -48,8 +48,7 @@ public class Log
 
     public static void console(String var1, Object... var2)
     {
-        System.out.printf(var1, var2);
-        System.out.println();
+        System.out.printf(var1 + "%n", var2);
     }
 
     public void file(String data)

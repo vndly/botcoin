@@ -33,7 +33,7 @@ public class Symbol
 
     private int stepSize(String value)
     {
-        int result = 1;
+        int result = 0;
 
         BigDecimal stepSize = new BigDecimal(value);
         BigDecimal current = new BigDecimal(String.valueOf(1 / Math.pow(10, result)));
