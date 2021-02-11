@@ -1,6 +1,7 @@
 package com.mauriciotogneri.botcoin.momo.complex;
 
 import com.mauriciotogneri.botcoin.log.Log;
+import com.mauriciotogneri.botcoin.market.Symbol;
 import com.mauriciotogneri.botcoin.trader.FakeTrader;
 import com.mauriciotogneri.botcoin.wallet.Balance;
 
@@ -25,7 +26,8 @@ public class ComplexBuyStrategy
         allTimeHigh = BigDecimal.ZERO;
     }
 
-    public BigDecimal amount(@NotNull BigDecimal price,
+    public BigDecimal amount(Symbol symbol,
+                             @NotNull BigDecimal price,
                              @NotNull Balance balanceA,
                              @NotNull Balance balanceB)
     {
@@ -34,7 +36,7 @@ public class ComplexBuyStrategy
         if (price.compareTo(allTimeHigh) >= 0)
         {
             allTimeHigh = price;
-            Log.console("New all time high: %s", allTimeHigh);
+            Log.console("[%s] New all time high: %s", symbol.name, allTimeHigh);
         }
         else if (price.compareTo(allTimeHigh) < 0)
         {
@@ -42,7 +44,7 @@ public class ComplexBuyStrategy
 
             if (percentageDown.compareTo(MIN_PERCENTAGE_DOWN) >= 0)
             {
-                Log.console("Trying to buy at:  %s/%s (-%s%%)", price, allTimeHigh, percentageDown.multiply(new BigDecimal("100")).setScale(2, RoundingMode.DOWN).toString());
+                Log.console("[%s] Trying to buy at:  %s/%s (-%s%%)", symbol.name, price, allTimeHigh, percentageDown.multiply(new BigDecimal("100")).setScale(2, RoundingMode.DOWN).toString());
 
                 BigDecimal multiplier = percentageDown.multiply(new BigDecimal("10"));
                 BigDecimal amountToSpend = balanceB.amount.min(balanceB.amount.multiply(multiplier));

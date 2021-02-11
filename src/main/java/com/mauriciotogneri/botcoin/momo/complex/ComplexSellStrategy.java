@@ -1,6 +1,7 @@
 package com.mauriciotogneri.botcoin.momo.complex;
 
 import com.mauriciotogneri.botcoin.log.Log;
+import com.mauriciotogneri.botcoin.market.Symbol;
 import com.mauriciotogneri.botcoin.trader.FakeTrader;
 import com.mauriciotogneri.botcoin.wallet.Balance;
 
@@ -19,7 +20,8 @@ public class ComplexSellStrategy
         this.minQuantity = minQuantity;
     }
 
-    public BigDecimal amount(@NotNull BigDecimal price,
+    public BigDecimal amount(Symbol symbol,
+                             @NotNull BigDecimal price,
                              BigDecimal boughtPrice,
                              Balance balanceA)
     {
@@ -28,7 +30,7 @@ public class ComplexSellStrategy
         if ((price.compareTo(boughtPrice) > 0) && (boughtPrice.compareTo(BigDecimal.ZERO) > 0))
         {
             BigDecimal percentageUp = price.divide(boughtPrice, 10, RoundingMode.DOWN).subtract(BigDecimal.ONE);
-            Log.console("Trying to sell at: %s/%s (+%s%%)", price, boughtPrice, percentageUp.multiply(new BigDecimal("100")).setScale(2, RoundingMode.DOWN).toString());
+            Log.console("[%s] Trying to sell at: %s/%s (+%s%%)", symbol.name, price, boughtPrice, percentageUp.multiply(new BigDecimal("100")).setScale(2, RoundingMode.DOWN).toString());
 
             if (percentageUp.compareTo(MIN_PERCENTAGE_UP) >= 0)
             {
