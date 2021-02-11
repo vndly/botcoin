@@ -41,8 +41,8 @@ public class Botcoin
     {
         List<Market<?>> markets = new ArrayList<>();
         markets.add(market(Currency.ETH, Currency.BTC));
-        //markets.add(market(Currency.LTC, Currency.BTC));
-        //markets.add(market(Currency.ADA, Currency.BTC));
+        markets.add(market(Currency.LTC, Currency.BTC));
+        markets.add(market(Currency.ADA, Currency.BTC));
 
         return markets;
     }
