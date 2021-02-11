@@ -1,5 +1,6 @@
 package com.mauriciotogneri.botcoin.app;
 
+import com.binance.api.client.domain.account.Account;
 import com.binance.api.client.domain.general.ExchangeInfo;
 import com.binance.api.client.domain.general.FilterType;
 import com.binance.api.client.domain.general.SymbolFilter;
@@ -63,10 +64,12 @@ public class Botcoin
         DataProvider<Price> dataProvider = new BinancePriceProvider(symbol, 10);
         //DataProvider<Price> dataProvider = new FilePriceProvider(String.format("input/prices_%s%s_ONE_MINUTE.csv", currencyA.name(), currencyB.name()));
 
-        BigDecimal balanceAssetA = Binance.balance(currencyA);
+        Account account = Binance.account();
+
+        BigDecimal balanceAssetA = Binance.balance(account, currencyA);
         Balance balanceA = new Balance(symbol.assetA, balanceAssetA);
 
-        BigDecimal balanceAssetB = Binance.balance(currencyB);
+        BigDecimal balanceAssetB = Binance.balance(account,currencyB);
         Balance balanceB = new Balance(symbol.assetB, balanceAssetB);
 
         Strategy<Price> strategy = new ComplexStrategy(symbol, balanceA, balanceB, minQuantity);

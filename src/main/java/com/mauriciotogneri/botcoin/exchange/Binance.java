@@ -8,6 +8,7 @@ import com.binance.api.client.domain.account.Account;
 import com.binance.api.client.domain.account.AssetBalance;
 import com.binance.api.client.domain.event.OrderTradeUpdateEvent;
 import com.binance.api.client.domain.event.UserDataUpdateEvent.UserDataUpdateEventType;
+import com.mauriciotogneri.botcoin.wallet.Balance;
 import com.mauriciotogneri.botcoin.wallet.Currency;
 
 import org.jetbrains.annotations.NotNull;
@@ -48,9 +49,20 @@ public class Binance
     }
 
     @NotNull
-    public static BigDecimal balance(@NotNull Currency currency)
+    public static Account account()
     {
-        Account account = apiClient().getAccount();
+        return apiClient().getAccount();
+    }
+
+    @NotNull
+    public static BigDecimal balance(@NotNull Account account, @NotNull Balance balance)
+    {
+        return balance(account, balance.asset.currency);
+    }
+
+    @NotNull
+    public static BigDecimal balance(@NotNull Account account, @NotNull Currency currency)
+    {
         AssetBalance assetBalance = account.getAssetBalance(currency.name());
 
         return new BigDecimal(assetBalance.getFree());

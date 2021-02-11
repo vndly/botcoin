@@ -115,7 +115,7 @@ public class BasicStrategy implements Strategy<Price>
             BigDecimal price = toSpend.divide(quantity, balanceA.asset.decimals, RoundingMode.DOWN);
 
             balanceA.amount = balanceA.amount.subtract(toSpend);
-            balanceB.amount = Binance.balance(balanceB.asset.currency);
+            balanceB.amount = Binance.balance(Binance.account(), balanceB);
             spent = spent.add(toSpend);
 
             LogEvent logEvent = LogEvent.buy(
@@ -153,7 +153,7 @@ public class BasicStrategy implements Strategy<Price>
             BigDecimal originalCost = quantity.multiply(boughtPrice());
             BigDecimal profit = toGain.subtract(originalCost);
 
-            balanceA.amount = Binance.balance(balanceA.asset.currency);
+            balanceA.amount = Binance.balance(Binance.account(), balanceA);
             balanceB.amount = balanceB.amount.subtract(quantity);
             spent = spent.subtract(originalCost);
 

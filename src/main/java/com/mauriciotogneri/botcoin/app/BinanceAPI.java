@@ -13,7 +13,7 @@ public class BinanceAPI
     {
         BinanceApiRestClient client = Binance.apiClient();
 
-        //Account account = client.getAccount();
+        //Account account = Binance.account();
         //Log.jsonConsole(account);
 
         List<Trade> trades = client.getMyTrades("ETHBTC");
