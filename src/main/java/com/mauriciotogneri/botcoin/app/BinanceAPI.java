@@ -1,10 +1,11 @@
 package com.mauriciotogneri.botcoin.app;
 
 import com.binance.api.client.BinanceApiRestClient;
-import com.binance.api.client.domain.account.Account;
+import com.binance.api.client.domain.account.Trade;
 import com.mauriciotogneri.botcoin.exchange.Binance;
-import com.mauriciotogneri.botcoin.json.Json;
 import com.mauriciotogneri.botcoin.log.Log;
+
+import java.util.List;
 
 public class BinanceAPI
 {
@@ -12,14 +13,14 @@ public class BinanceAPI
     {
         BinanceApiRestClient client = Binance.apiClient();
 
-        Account account = client.getAccount();
-        print(account);
+        //Account account = client.getAccount();
+        //Log.jsonConsole(account);
 
-        //List<Trade> trades = client.getMyTrades("BTCEUR");
-        //print(trades);
+        List<Trade> trades = client.getMyTrades("ETHBTC");
+        Log.jsonConsole(trades);
 
         //CancelOrderResponse cancelOrderResponse = client.cancelOrder(new CancelOrderRequest("BTCEUR", 307513170L));
-        //print(cancelOrderResponse);
+        //Log.jsonConsole(cancelOrderResponse);
 
         /*NewOrder order = new NewOrder(
                 "BTCEUR",
@@ -31,17 +32,12 @@ public class BinanceAPI
         );*/
         //NewOrder order = Binance.sellMarketOrder("BTCEUR", new BigDecimal("0.0005"));
         //NewOrderResponse newOrderResponse = client.newOrder(order);
-        //print(newOrderResponse);
+        //Log.jsonConsole(newOrderResponse);
 
         //Order orderStatus = client.getOrderStatus(new OrderStatusRequest("BTCEUR", 307540435L));
-        //print(orderStatus);
+        //Log.jsonConsole(orderStatus);
 
         //List<Order> openOrders = client.getOpenOrders(new OrderRequest("BTCEUR"));
-        //print(openOrders);
-    }
-
-    private static void print(Object object)
-    {
-        Log.console(Json.toJsonString(object));
+        //Log.jsonConsole(openOrders);
     }
 }

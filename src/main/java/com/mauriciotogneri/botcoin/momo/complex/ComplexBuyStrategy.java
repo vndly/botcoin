@@ -42,7 +42,7 @@ public class ComplexBuyStrategy
 
             if (percentageDown.compareTo(MIN_PERCENTAGE_DOWN) >= 0)
             {
-                Log.console("Trying to buy at:  %s/%s (+%s%%)", price, allTimeHigh, percentageDown.multiply(new BigDecimal("100")).setScale(2, RoundingMode.DOWN).toString());
+                Log.console("Trying to buy at:  %s/%s (-%s%%)", price, allTimeHigh, percentageDown.multiply(new BigDecimal("100")).setScale(2, RoundingMode.DOWN).toString());
 
                 BigDecimal multiplier = percentageDown.multiply(new BigDecimal("10"));
                 BigDecimal amountToSpend = balanceB.amount.min(balanceB.amount.multiply(multiplier));

@@ -48,8 +48,8 @@ public class Botcoin
 
     @NotNull
     // 0.03756188 EUR
-    // 0.00250156 BTC
-    // 0.00098100 ETH
+    // 0.00250372 BTC
+    // 0.00097500 ETH
     private static Market<Price> market(Currency currencyA, Currency currencyB)
     {
         ExchangeInfo exchangeInfo = Binance.apiClient().getExchangeInfo();

@@ -79,7 +79,7 @@ public class Log
         file(Json.toJsonString(object));
     }
 
-    public void jsonConsole(Object object)
+    public static void jsonConsole(Object object)
     {
         console(Json.toJsonString(object));
     }
