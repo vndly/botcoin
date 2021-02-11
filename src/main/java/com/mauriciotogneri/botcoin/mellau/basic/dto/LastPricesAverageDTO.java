@@ -16,7 +16,6 @@ public class LastPricesAverageDTO {
         BigDecimal avgLong = new BigDecimal(0);
         BigDecimal avgShort = new BigDecimal(0);
 
-        // TODO: if the last price it's at the begining make priceEntries[y]
         for (int y = 0; y < ConfigConst.NUMBER_FOR_LONG_AVERAGE; y++) {
             avgLong = new BigDecimal(priceEntries.get(priceEntries.size() - 1 - y).getClose()).add(avgLong);
             if (y < ConfigConst.NUMBER_FOR_SHORT_AVERAGE) {
@@ -25,6 +24,6 @@ public class LastPricesAverageDTO {
         }
 
         this.avgLong = avgLong.divide(new BigDecimal(ConfigConst.NUMBER_FOR_LONG_AVERAGE));
-        this.avgLong = avgShort.divide(new BigDecimal(ConfigConst.NUMBER_FOR_SHORT_AVERAGE));
+        this.avgShort = avgShort.divide(new BigDecimal(ConfigConst.NUMBER_FOR_SHORT_AVERAGE));
     }
 }

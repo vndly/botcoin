@@ -15,7 +15,7 @@ import com.mauriciotogneri.botcoin.wallet.Currency;
 
 public class MellauCandle {
     public static void main(String[] args) throws Exception {
-        DataProvider<RequestDataDTO> dataProvider = new BinanceCandlePriceProvider("BTCBUSD", 10);
+        DataProvider<RequestDataDTO> dataProvider = new BinanceCandlePriceProvider("BTCBUSD");
 
         Balance balanceEUR = new Balance(Currency.EUR, "20");
         Balance balanceBTC = new Balance(Currency.BTC, "0");

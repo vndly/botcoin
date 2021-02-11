@@ -36,7 +36,7 @@ public class Botcoin<T>
             List<Object> events = strategy.update(responses);
 
             LogEntry logEntry = new LogEntry(data, events);
-            log.jsonFile(logEntry);
+            // log.jsonFile(logEntry);
 
             if (logEntry.hasEvents())
             {

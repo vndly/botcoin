@@ -2,9 +2,10 @@ package com.mauriciotogneri.botcoin.mellau.basic;
 
 import com.binance.api.client.domain.OrderSide;
 import com.binance.api.client.domain.OrderStatus;
-import com.binance.api.client.domain.TimeInForce;
+import com.binance.api.client.domain.OrderType;
 import com.binance.api.client.domain.account.NewOrder;
 import com.binance.api.client.domain.account.NewOrderResponse;
+import com.binance.api.client.domain.account.request.CancelOrderResponse;
 import com.binance.api.client.domain.market.Candlestick;
 import com.google.gson.JsonObject;
 import com.mauriciotogneri.botcoin.config.ConfigConst;
@@ -19,14 +20,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
+
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 public class CrossStrategy implements Strategy<RequestDataDTO> {
     private BigDecimal spent = BigDecimal.ZERO;
+    private String lostLimitOrderId;
     private BigDecimal oldLimit = BigDecimal.ZERO;
     private final String symbol;
     private final Balance balanceA;
@@ -54,18 +55,43 @@ public class CrossStrategy implements Strategy<RequestDataDTO> {
 
         boolean possibleSell = 0 > boughtPrice().compareTo(lastPrice.multiply(new BigDecimal("1.005")));
 
-        if (!shortWasUp && shortIsUp && balanceA.amount.compareTo(BigDecimal.ZERO) > ConfigConst.MIN_EUR_TO_TRADE){
-            oldLimit = new BigDecimal(0);
-            return Collections.singletonList(Binance.buyMarketOrder(symbol, balanceA.amount.multiply(lastPrice)));
-        } else if (shortWasUp && possibleSell && !shortIsUp && balanceB.amount.compareTo(BigDecimal.ZERO) > ConfigConst.MIN_BTC_TO_TRADE){
-            BigDecimal newLimit = lastPrice.multiply(new BigDecimal("0.999"));
-            if (0 < newLimit.compareTo(oldLimit)) {
-                // TODO: delete old limitSell
-                return Collections.singletonList(Binance.limitSell(symbol, balanceB.amount.divide(lastPrice, balanceA.currency.decimals, RoundingMode.DOWN).toString(), newLimit.toString()));
-            }
-            return Collections.singletonList(Binance.sellMarketOrder(symbol, balanceB.amount.divide(lastPrice, balanceA.currency.decimals, RoundingMode.DOWN)));
+        BigDecimal newLimit = lastPrice.multiply(new BigDecimal("0.999"));
+
+        if (!shortWasUp && shortIsUp) {
+            System.out.println("Short is up and now is down: ");
+        } else if (!shortWasUp && shortIsUp) {
+            System.out.println("Short is down and now is up: ");
         }
 
+        if (!shortWasUp && shortIsUp && balanceA.amount.compareTo(BigDecimal.ZERO) > ConfigConst.MIN_EUR_TO_TRADE){
+            System.out.println("---------------------- BUY -------------------------");
+            System.out.println("Last Price: " + lastPrice.toString());
+
+            oldLimit = new BigDecimal(0);
+            lostLimitOrderId = "";
+
+            List<NewOrder> newOrders = new ArrayList<>();
+            newOrders.add(Binance.buyMarketOrder(symbol, balanceA.amount.multiply(lastPrice)));
+            newOrders.add(Binance.limitSell(symbol, balanceB.amount.divide(lastPrice, balanceA.currency.decimals, RoundingMode.DOWN).toString(), newLimit.toString()));
+            return newOrders;
+
+        } else if (shortWasUp && possibleSell && balanceB.amount.compareTo(BigDecimal.ZERO) > ConfigConst.MIN_BTC_TO_TRADE){
+            System.out.println("---------------------- SELL -------------------------");
+            System.out.println("Last Price: " + lastPrice.toString());
+
+            if (0 < newLimit.compareTo(oldLimit) && !isEmpty(lostLimitOrderId)) {
+                System.out.println("New Limit: " + newLimit.toString());
+                CancelOrderResponse response = Binance.cancelOrder(symbol, Long.parseLong(lostLimitOrderId));
+                if (response.getStatus().equals(OrderStatus.CANCELED.toString())) {
+                    return Collections.singletonList(Binance.limitSell(symbol, balanceB.amount.divide(lastPrice, balanceA.currency.decimals, RoundingMode.DOWN).toString(), newLimit.toString()));
+                }
+            }
+
+            if (isEmpty(lostLimitOrderId)){
+                System.out.println("Set Limit: " + newLimit.toString());
+              return Collections.singletonList(Binance.limitSell(symbol, balanceB.amount.divide(lastPrice, balanceA.currency.decimals, RoundingMode.DOWN).toString(), newLimit.toString()));
+            }
+        }
         return new ArrayList<>();
     }
 
@@ -78,9 +104,12 @@ public class CrossStrategy implements Strategy<RequestDataDTO> {
             NewOrderResponse response = entry.getValue();
             JsonObject event = process(order, response);
 
+            if (order.getType() == OrderType.STOP_LOSS_LIMIT) {
+                lostLimitOrderId = order.getNewClientOrderId();
+            }
+
             result.add(event);
         }
-        // TODO: get id from open limit id
 
         return result;
     }
