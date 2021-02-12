@@ -6,6 +6,7 @@ import com.binance.api.client.domain.account.Account;
 import com.binance.api.client.domain.account.NewOrder;
 import com.binance.api.client.domain.account.NewOrderResponse;
 import com.mauriciotogneri.botcoin.exchange.Binance;
+import com.mauriciotogneri.botcoin.log.Log;
 import com.mauriciotogneri.botcoin.log.StatusProperties;
 import com.mauriciotogneri.botcoin.market.Symbol;
 import com.mauriciotogneri.botcoin.momo.LogEvent;
@@ -32,8 +33,8 @@ public class ComplexStrategy implements Strategy<Price>
     private final ComplexSellStrategy sellStrategy;
     private final StatusProperties statusProperties;
 
-    private BigDecimal boughtPrice = BigDecimal.ZERO;
-    private State state = State.BUYING;
+    private BigDecimal boughtPrice;
+    private State state;
 
     public ComplexStrategy(@NotNull Symbol symbol,
                            Balance balanceA,
@@ -55,6 +56,8 @@ public class ComplexStrategy implements Strategy<Price>
     @Override
     public List<NewOrder> orders(@NotNull Price price)
     {
+        statusProperties.load();
+
         if (statusProperties.enabled)
         {
             if (state == State.BUYING)
@@ -80,6 +83,8 @@ public class ComplexStrategy implements Strategy<Price>
         }
         else
         {
+            Log.console("[%s] Shutting down market", symbol.name);
+
             return null;
         }
     }

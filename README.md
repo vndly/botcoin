@@ -7,7 +7,7 @@ A crypto trading bot.
 
 ## TODO
 Create folder AB to store the following files: 
-* balance.json:
+* balance.properties:
 ```properties
 type=buy
 quantity=0.00600000 ETH

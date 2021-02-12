@@ -44,7 +44,7 @@ public class LogEvent
 
     public void log(@NotNull Symbol symbol)
     {
-        Log balanceLog = new Log(String.format("output/%s/balance.json", symbol.name));
+        Log balanceLog = new Log(String.format("output/%s/balance.properties", symbol.name));
         balanceLog.file(properties());
     }
 
