@@ -52,6 +52,7 @@ public class LogEvent
     private String properties()
     {
         StringBuilder builder = new StringBuilder();
+        builder.append(String.format("type=%s%n", type));
         builder.append(String.format("%s%n", (quantity != null) ? quantity.property() : "-"));
         builder.append(String.format("%s%n", (price != null) ? price.property() : "-"));
         builder.append(String.format("%s%n", (spent != null) ? spent.property() : "-"));
