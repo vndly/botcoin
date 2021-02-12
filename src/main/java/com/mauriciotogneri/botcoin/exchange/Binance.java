@@ -8,12 +8,13 @@ import com.binance.api.client.domain.account.Account;
 import com.binance.api.client.domain.account.AssetBalance;
 import com.binance.api.client.domain.event.OrderTradeUpdateEvent;
 import com.binance.api.client.domain.event.UserDataUpdateEvent.UserDataUpdateEventType;
+import com.mauriciotogneri.botcoin.wallet.Asset;
 import com.mauriciotogneri.botcoin.wallet.Balance;
-import com.mauriciotogneri.botcoin.wallet.Currency;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class Binance
 {
@@ -57,14 +58,14 @@ public class Binance
     @NotNull
     public static BigDecimal balance(@NotNull Account account, @NotNull Balance balance)
     {
-        return balance(account, balance.asset.currency);
+        return balance(account, balance.asset);
     }
 
     @NotNull
-    public static BigDecimal balance(@NotNull Account account, @NotNull Currency currency)
+    public static BigDecimal balance(@NotNull Account account, @NotNull Asset asset)
     {
-        AssetBalance assetBalance = account.getAssetBalance(currency.name());
+        AssetBalance assetBalance = account.getAssetBalance(asset.currency.name());
 
-        return new BigDecimal(assetBalance.getFree());
+        return new BigDecimal(assetBalance.getFree()).setScale(asset.decimals, RoundingMode.DOWN);
     }
 }

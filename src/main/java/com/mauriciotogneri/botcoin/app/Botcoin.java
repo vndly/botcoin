@@ -6,16 +6,16 @@ import com.binance.api.client.domain.general.FilterType;
 import com.binance.api.client.domain.general.SymbolFilter;
 import com.binance.api.client.domain.general.SymbolInfo;
 import com.mauriciotogneri.botcoin.exchange.Binance;
-import com.mauriciotogneri.botcoin.exchange.BinancePriceProvider;
-import com.mauriciotogneri.botcoin.exchange.BinanceTrader;
 import com.mauriciotogneri.botcoin.log.Log;
 import com.mauriciotogneri.botcoin.log.StatusProperties;
 import com.mauriciotogneri.botcoin.market.Market;
 import com.mauriciotogneri.botcoin.market.Symbol;
 import com.mauriciotogneri.botcoin.momo.complex.ComplexStrategy;
 import com.mauriciotogneri.botcoin.provider.DataProvider;
+import com.mauriciotogneri.botcoin.provider.FilePriceProvider;
 import com.mauriciotogneri.botcoin.provider.Price;
 import com.mauriciotogneri.botcoin.strategy.Strategy;
+import com.mauriciotogneri.botcoin.trader.FakeTrader;
 import com.mauriciotogneri.botcoin.trader.Trader;
 import com.mauriciotogneri.botcoin.wallet.Balance;
 import com.mauriciotogneri.botcoin.wallet.Currency;
@@ -42,8 +42,8 @@ public class Botcoin
     {
         List<Market<?>> markets = new ArrayList<>();
         markets.add(market(Currency.ETH, Currency.BTC));
-        markets.add(market(Currency.LTC, Currency.BTC));
-        markets.add(market(Currency.ADA, Currency.BTC));
+       // markets.add(market(Currency.LTC, Currency.BTC));
+       // markets.add(market(Currency.ADA, Currency.BTC));
 
         return markets;
     }
@@ -63,21 +63,21 @@ public class Botcoin
         SymbolFilter filter = symbolInfo.getSymbolFilter(FilterType.LOT_SIZE);
         BigDecimal minQuantity = new BigDecimal(filter.getMinQty());
 
-        DataProvider<Price> dataProvider = new BinancePriceProvider(symbol, 10);
-        //DataProvider<Price> dataProvider = new FilePriceProvider(String.format("input/prices_%s%s_ONE_MINUTE.csv", currencyA.name(), currencyB.name()));
+        //DataProvider<Price> dataProvider = new BinancePriceProvider(symbol, 10);
+        DataProvider<Price> dataProvider = new FilePriceProvider(String.format("input/prices_%s%s_ONE_MINUTE.csv", currencyA.name(), currencyB.name()));
 
         Account account = Binance.account();
 
-        BigDecimal balanceAssetA = Binance.balance(account, currencyA);
+        BigDecimal balanceAssetA = Binance.balance(account, symbol.assetA);
         Balance balanceA = new Balance(symbol.assetA, balanceAssetA);
 
-        BigDecimal balanceAssetB = Binance.balance(account, currencyB);
+        BigDecimal balanceAssetB = Binance.balance(account, symbol.assetB);
         Balance balanceB = new Balance(symbol.assetB, balanceAssetB);
 
         Strategy<Price> strategy = new ComplexStrategy(symbol, balanceA, balanceB, minQuantity, statusProperties);
 
-        Trader trader = new BinanceTrader();
-        //Trader trader = new FakeTrader();
+        //Trader trader = new BinanceTrader();
+        Trader trader = new FakeTrader();
 
         Log log = new Log(String.format("output/%s/logs.json", symbol.name));
 

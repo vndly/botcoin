@@ -1,6 +1,9 @@
 package com.mauriciotogneri.botcoin.wallet;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class Balance
 {
@@ -13,13 +16,13 @@ public class Balance
         this.amount = amount;
     }
 
-    public Balance of(BigDecimal value)
+    public Balance of(@NotNull BigDecimal value)
     {
         return new Balance(asset, value);
     }
 
-    public String property()
+    public String property(String name)
     {
-        return String.format("quantity=%s %s%n", amount.toString(), asset.currency.name());
+        return String.format("%s=%s %s%n", name, amount.setScale(asset.decimals, RoundingMode.DOWN).toString(), asset.currency.name());
     }
 }
