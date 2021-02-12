@@ -103,7 +103,6 @@ public class BasicStrategy implements Strategy<Price>
     @NotNull
     private JsonObject buy(NewOrder order, @NotNull NewOrderResponse response)
     {
-        // TODO: refactor
         JsonObject json = new JsonObject();
         json.add("order", Json.toJsonObject(order));
         json.add("response", Json.toJsonObject(response));

@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-// TODO: create file status_A_B.json with the latest state of the strategy
 public class ComplexStrategy implements Strategy<Price>
 {
     private final Symbol symbol;
@@ -179,7 +178,7 @@ public class ComplexStrategy implements Strategy<Price>
 
     private Balance totalBalance(BigDecimal price)
     {
-        return balanceB.of(balanceB.amount.add(balanceB.amount.multiply(price)));
+        return balanceB.of(balanceB.amount.add(balanceB.amount.multiply(price)).setScale(balanceB.asset.decimals, RoundingMode.DOWN));
     }
 
     private enum State
