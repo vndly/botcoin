@@ -131,11 +131,11 @@ public class ComplexStrategy implements Strategy<Price>
             BigDecimal price = toSpend.divide(quantity, balanceA.asset.decimals, RoundingMode.DOWN);
 
             Account account = Binance.account();
-            //balanceA.amount = Binance.balance(account, balanceA);
-            //balanceB.amount = Binance.balance(account, balanceB);
+            balanceA.amount = Binance.balance(account, balanceA);
+            balanceB.amount = Binance.balance(account, balanceB);
 
-            balanceA.amount = balanceA.amount.add(quantity);
-            balanceB.amount = balanceB.amount.subtract(toSpend);
+            //balanceA.amount = balanceA.amount.add(quantity);
+            //balanceB.amount = balanceB.amount.subtract(toSpend);
 
             boughtPrice = price;
 
@@ -175,11 +175,11 @@ public class ComplexStrategy implements Strategy<Price>
             BigDecimal profit = toGain.subtract(originalCost);
 
             Account account = Binance.account();
-            //balanceA.amount = Binance.balance(account, balanceA);
-            //balanceB.amount = Binance.balance(account, balanceB);
+            balanceA.amount = Binance.balance(account, balanceA);
+            balanceB.amount = Binance.balance(account, balanceB);
 
-            balanceA.amount = balanceA.amount.subtract(quantity);
-            balanceB.amount = balanceB.amount.add(toGain);
+            //balanceA.amount = balanceA.amount.subtract(quantity);
+            //balanceB.amount = balanceB.amount.add(toGain);
 
             LogEvent logEvent = LogEvent.sell(
                     balanceA.of(quantity),
