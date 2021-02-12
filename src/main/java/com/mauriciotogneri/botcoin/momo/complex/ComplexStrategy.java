@@ -6,6 +6,7 @@ import com.binance.api.client.domain.account.Account;
 import com.binance.api.client.domain.account.NewOrder;
 import com.binance.api.client.domain.account.NewOrderResponse;
 import com.mauriciotogneri.botcoin.exchange.Binance;
+import com.mauriciotogneri.botcoin.log.StatusProperties;
 import com.mauriciotogneri.botcoin.market.Symbol;
 import com.mauriciotogneri.botcoin.momo.LogEvent;
 import com.mauriciotogneri.botcoin.provider.Price;
@@ -33,10 +34,11 @@ public class ComplexStrategy implements Strategy<Price>
     private BigDecimal boughtPrice = BigDecimal.ZERO;
     private State state = State.BUYING;
 
-    public ComplexStrategy(Symbol symbol,
+    public ComplexStrategy(@NotNull Symbol symbol,
                            Balance balanceA,
                            Balance balanceB,
-                           BigDecimal minQuantity)
+                           BigDecimal minQuantity,
+                           @NotNull StatusProperties statusProperties)
     {
         this.symbol = symbol;
         this.balanceA = balanceA;
@@ -44,6 +46,8 @@ public class ComplexStrategy implements Strategy<Price>
         this.minQuantity = minQuantity;
         this.buyStrategy = new ComplexBuyStrategy(minQuantity);
         this.sellStrategy = new ComplexSellStrategy(minQuantity);
+        this.boughtPrice = statusProperties.boughtPrice;
+        this.state = statusProperties.state;
     }
 
     @Override
@@ -189,7 +193,7 @@ public class ComplexStrategy implements Strategy<Price>
         return balanceB.of(balanceB.amount.add(balanceB.amount.multiply(price)).setScale(balanceB.asset.decimals, RoundingMode.DOWN));
     }
 
-    private enum State
+    public enum State
     {
         BUYING,
         SELLING

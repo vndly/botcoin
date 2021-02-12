@@ -9,6 +9,7 @@ import com.mauriciotogneri.botcoin.exchange.Binance;
 import com.mauriciotogneri.botcoin.exchange.BinancePriceProvider;
 import com.mauriciotogneri.botcoin.exchange.BinanceTrader;
 import com.mauriciotogneri.botcoin.log.Log;
+import com.mauriciotogneri.botcoin.log.StatusProperties;
 import com.mauriciotogneri.botcoin.market.Market;
 import com.mauriciotogneri.botcoin.market.Symbol;
 import com.mauriciotogneri.botcoin.momo.complex.ComplexStrategy;
@@ -20,6 +21,7 @@ import com.mauriciotogneri.botcoin.wallet.Balance;
 import com.mauriciotogneri.botcoin.wallet.Currency;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -31,8 +33,11 @@ public class Botcoin
     {
         for (Market<?> market : markets())
         {
-            Thread thread = new Thread(market);
-            thread.start();
+            if (market != null)
+            {
+                Thread thread = new Thread(market);
+                thread.start();
+            }
         }
     }
 
@@ -47,7 +52,7 @@ public class Botcoin
         return markets;
     }
 
-    @NotNull
+    @Nullable
     // 0.03756188 EUR
     // 0.00224810 BTC
     // 0.00096400 ETH
@@ -57,6 +62,13 @@ public class Botcoin
         ExchangeInfo exchangeInfo = Binance.apiClient().getExchangeInfo();
 
         Symbol symbol = new Symbol(currencyA, currencyB, exchangeInfo);
+
+        StatusProperties statusProperties = new StatusProperties(symbol);
+
+        if (!statusProperties.enabled)
+        {
+            return null;
+        }
 
         SymbolInfo symbolInfo = exchangeInfo.getSymbolInfo(symbol.name);
         SymbolFilter filter = symbolInfo.getSymbolFilter(FilterType.LOT_SIZE);
@@ -70,10 +82,10 @@ public class Botcoin
         BigDecimal balanceAssetA = Binance.balance(account, currencyA);
         Balance balanceA = new Balance(symbol.assetA, balanceAssetA);
 
-        BigDecimal balanceAssetB = Binance.balance(account,currencyB);
+        BigDecimal balanceAssetB = Binance.balance(account, currencyB);
         Balance balanceB = new Balance(symbol.assetB, balanceAssetB);
 
-        Strategy<Price> strategy = new ComplexStrategy(symbol, balanceA, balanceB, minQuantity);
+        Strategy<Price> strategy = new ComplexStrategy(symbol, balanceA, balanceB, minQuantity, statusProperties);
 
         Trader trader = new BinanceTrader();
         //Trader trader = new FakeTrader();
