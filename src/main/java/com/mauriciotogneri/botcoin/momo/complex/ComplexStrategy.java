@@ -121,7 +121,7 @@ public class ComplexStrategy implements Strategy<Price>
 
             boughtPrice = price;
 
-            return LogEvent.buy(
+            LogEvent logEvent = LogEvent.buy(
                     balanceA.of(quantity),
                     balanceB.of(price),
                     balanceB.of(toSpend),
@@ -130,6 +130,10 @@ public class ComplexStrategy implements Strategy<Price>
                     balanceB,
                     totalBalance(price)
             );
+
+            logEvent.log(symbol);
+
+            return logEvent;
         }
         else
         {
@@ -159,7 +163,7 @@ public class ComplexStrategy implements Strategy<Price>
             //balanceA.amount = balanceA.amount.subtract(quantity);
             //balanceB.amount.add(toGain);
 
-            return LogEvent.sell(
+            LogEvent logEvent = LogEvent.sell(
                     balanceA.of(quantity),
                     balanceB.of(price),
                     balanceB.of(toGain),
@@ -169,6 +173,10 @@ public class ComplexStrategy implements Strategy<Price>
                     balanceB,
                     totalBalance(price)
             );
+
+            logEvent.log(symbol);
+
+            return logEvent;
         }
         else
         {

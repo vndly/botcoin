@@ -13,13 +13,13 @@ public class Balance
         this.amount = amount;
     }
 
-    public Balance(Asset asset, String amount)
-    {
-        this(asset, new BigDecimal(amount));
-    }
-
     public Balance of(BigDecimal value)
     {
         return new Balance(asset, value);
+    }
+
+    public String property()
+    {
+        return String.format("quantity=%s %s%n", amount.toString(), asset.currency.name());
     }
 }

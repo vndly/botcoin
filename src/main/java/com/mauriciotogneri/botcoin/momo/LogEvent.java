@@ -1,5 +1,7 @@
 package com.mauriciotogneri.botcoin.momo;
 
+import com.mauriciotogneri.botcoin.log.Log;
+import com.mauriciotogneri.botcoin.market.Symbol;
 import com.mauriciotogneri.botcoin.wallet.Balance;
 
 import org.jetbrains.annotations.NotNull;
@@ -38,6 +40,29 @@ public class LogEvent
         this.balanceA = balanceA;
         this.balanceB = balanceB;
         this.total = total;
+    }
+
+    public void log(@NotNull Symbol symbol)
+    {
+        Log balanceLog = new Log(String.format("output/%s/balance.json", symbol.name));
+        balanceLog.file(properties());
+    }
+
+    @NotNull
+    private String properties()
+    {
+        StringBuilder builder = new StringBuilder();
+        builder.append(String.format("%s%n", (quantity != null) ? quantity.property() : "-"));
+        builder.append(String.format("%s%n", (price != null) ? price.property() : "-"));
+        builder.append(String.format("%s%n", (spent != null) ? spent.property() : "-"));
+        builder.append(String.format("%s%n", (gained != null) ? gained.property() : "-"));
+        builder.append(String.format("%s%n", (profit != null) ? profit.property() : "-"));
+        builder.append(String.format("%s%n", (boughtPrice != null) ? boughtPrice.property() : "-"));
+        builder.append(String.format("%s%n", (balanceA != null) ? balanceA.property() : "-"));
+        builder.append(String.format("%s%n", (balanceB != null) ? balanceB.property() : "-"));
+        builder.append(String.format("%s", (total != null) ? total.property() : "-"));
+
+        return builder.toString();
     }
 
     @NotNull
