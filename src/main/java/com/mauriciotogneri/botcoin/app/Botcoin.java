@@ -78,7 +78,7 @@ public class Botcoin
         Trader trader = new BinanceTrader();
         //Trader trader = new FakeTrader();
 
-        Log log = new Log(String.format("output/logs_%s.json", symbol.name));
+        Log log = new Log(String.format("output/%s/logs.json", symbol.name));
 
         return new Market<>(dataProvider, strategy, trader, log);
     }
