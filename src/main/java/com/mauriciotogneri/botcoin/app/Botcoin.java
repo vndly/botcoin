@@ -21,7 +21,6 @@ import com.mauriciotogneri.botcoin.wallet.Balance;
 import com.mauriciotogneri.botcoin.wallet.Currency;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -33,11 +32,8 @@ public class Botcoin
     {
         for (Market<?> market : markets())
         {
-            if (market != null)
-            {
-                Thread thread = new Thread(market);
-                thread.start();
-            }
+            Thread thread = new Thread(market);
+            thread.start();
         }
     }
 
@@ -52,7 +48,7 @@ public class Botcoin
         return markets;
     }
 
-    @Nullable
+    @NotNull
     // 0.03756188 EUR
     // 0.00224810 BTC
     // 0.00096400 ETH
@@ -60,15 +56,8 @@ public class Botcoin
     private static Market<Price> market(Currency currencyA, Currency currencyB)
     {
         ExchangeInfo exchangeInfo = Binance.apiClient().getExchangeInfo();
-
         Symbol symbol = new Symbol(currencyA, currencyB, exchangeInfo);
-
         StatusProperties statusProperties = new StatusProperties(symbol);
-
-        if (!statusProperties.enabled)
-        {
-            return null;
-        }
 
         SymbolInfo symbolInfo = exchangeInfo.getSymbolInfo(symbol.name);
         SymbolFilter filter = symbolInfo.getSymbolFilter(FilterType.LOT_SIZE);

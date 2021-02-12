@@ -30,6 +30,7 @@ public class ComplexStrategy implements Strategy<Price>
     private final BigDecimal minQuantity;
     private final ComplexBuyStrategy buyStrategy;
     private final ComplexSellStrategy sellStrategy;
+    private final StatusProperties statusProperties;
 
     private BigDecimal boughtPrice = BigDecimal.ZERO;
     private State state = State.BUYING;
@@ -46,6 +47,7 @@ public class ComplexStrategy implements Strategy<Price>
         this.minQuantity = minQuantity;
         this.buyStrategy = new ComplexBuyStrategy(minQuantity);
         this.sellStrategy = new ComplexSellStrategy(minQuantity);
+        this.statusProperties = statusProperties;
         this.boughtPrice = statusProperties.boughtPrice;
         this.state = statusProperties.state;
     }
@@ -53,26 +55,33 @@ public class ComplexStrategy implements Strategy<Price>
     @Override
     public List<NewOrder> orders(@NotNull Price price)
     {
-        if (state == State.BUYING)
+        if (statusProperties.enabled)
         {
-            BigDecimal amount = buyStrategy.amount(symbol, price.value, balanceA, balanceB);
-
-            if (amount.compareTo(minQuantity) > 0)
+            if (state == State.BUYING)
             {
-                return Collections.singletonList(NewOrder.marketBuy(symbol.name, amount.toString()));
+                BigDecimal amount = buyStrategy.amount(symbol, price.value, balanceA, balanceB);
+
+                if (amount.compareTo(minQuantity) > 0)
+                {
+                    return Collections.singletonList(NewOrder.marketBuy(symbol.name, amount.toString()));
+                }
             }
+            else if (state == State.SELLING)
+            {
+                BigDecimal amount = sellStrategy.amount(symbol, price.value, boughtPrice, balanceA);
+
+                if (amount.compareTo(minQuantity) > 0)
+                {
+                    return Collections.singletonList(NewOrder.marketSell(symbol.name, amount.toString()));
+                }
+            }
+
+            return new ArrayList<>();
         }
-        else if (state == State.SELLING)
+        else
         {
-            BigDecimal amount = sellStrategy.amount(symbol, price.value, boughtPrice, balanceA);
-
-            if (amount.compareTo(minQuantity) > 0)
-            {
-                return Collections.singletonList(NewOrder.marketSell(symbol.name, amount.toString()));
-            }
+            return null;
         }
-
-        return new ArrayList<>();
     }
 
     @Override

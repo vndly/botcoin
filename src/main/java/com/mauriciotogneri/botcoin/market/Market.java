@@ -32,6 +32,12 @@ public class Market<T> implements Runnable
         {
             T data = dataProvider.data();
             List<NewOrder> orders = strategy.orders(data);
+
+            if (orders == null)
+            {
+                break;
+            }
+
             List<OrderSent> sent = trader.process(orders);
             List<Object> events = strategy.update(sent);
 
@@ -40,7 +46,7 @@ public class Market<T> implements Runnable
 
             if (logEntry.hasEvents())
             {
-                log.jsonConsole(logEntry);
+                Log.jsonConsole(logEntry);
             }
         }
     }
