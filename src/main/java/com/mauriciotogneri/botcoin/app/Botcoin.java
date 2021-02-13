@@ -16,8 +16,10 @@ import com.mauriciotogneri.botcoin.market.Symbol;
 import com.mauriciotogneri.botcoin.momo.LogEvent;
 import com.mauriciotogneri.botcoin.momo.complex.ComplexStrategy;
 import com.mauriciotogneri.botcoin.provider.DataProvider;
+import com.mauriciotogneri.botcoin.provider.FilePriceProvider;
 import com.mauriciotogneri.botcoin.provider.Price;
 import com.mauriciotogneri.botcoin.strategy.Strategy;
+import com.mauriciotogneri.botcoin.trader.FakeTrader;
 import com.mauriciotogneri.botcoin.trader.Trader;
 import com.mauriciotogneri.botcoin.wallet.Balance;
 import com.mauriciotogneri.botcoin.wallet.Currency;
@@ -30,6 +32,8 @@ import java.util.List;
 
 public class Botcoin
 {
+    public static final Boolean TEST_MODE = true;
+
     public static void main(String[] args)
     {
         for (Market<?> market : markets())
@@ -61,8 +65,13 @@ public class Botcoin
         SymbolFilter filter = symbolInfo.getSymbolFilter(FilterType.LOT_SIZE);
         BigDecimal minQuantity = new BigDecimal(filter.getMinQty());
 
-        DataProvider<Price> dataProvider = new BinancePriceProvider(symbol, 10);
-        //DataProvider<Price> dataProvider = new FilePriceProvider(String.format("input/prices_%s%s_ONE_MINUTE.csv", currencyA.name(), currencyB.name()));
+        DataProvider<Price> dataProvider = TEST_MODE ?
+                new FilePriceProvider(String.format("input/prices_%s%s_ONE_MINUTE.csv", currencyA.name(), currencyB.name())) :
+                new BinancePriceProvider(symbol, 10);
+
+        Trader trader = TEST_MODE ?
+                new FakeTrader() :
+                new BinanceTrader();
 
         Account account = Binance.account();
 
@@ -76,9 +85,6 @@ public class Botcoin
         Balance balanceB = new Balance(symbol.assetB, balanceAssetB);
 
         Strategy<Price> strategy = new ComplexStrategy(symbol, balanceA, balanceB, minQuantity, statusProperties);
-
-        Trader trader = new BinanceTrader();
-        //Trader trader = new FakeTrader();
 
         Log log = new Log(String.format("output/%s/logs.json", symbol.name));
 

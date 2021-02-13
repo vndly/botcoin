@@ -5,6 +5,7 @@ import com.binance.api.client.domain.OrderStatus;
 import com.binance.api.client.domain.account.Account;
 import com.binance.api.client.domain.account.NewOrder;
 import com.binance.api.client.domain.account.NewOrderResponse;
+import com.mauriciotogneri.botcoin.app.Botcoin;
 import com.mauriciotogneri.botcoin.exchange.Binance;
 import com.mauriciotogneri.botcoin.log.Log;
 import com.mauriciotogneri.botcoin.log.PriceFile;
@@ -156,12 +157,17 @@ public class ComplexStrategy implements Strategy<Price>
             BigDecimal toSpend = new BigDecimal(response.getCummulativeQuoteQty());
             BigDecimal price = toSpend.divide(quantity, balanceA.asset.decimals, RoundingMode.DOWN);
 
-            Account account = Binance.account();
-            balanceA.amount = Binance.balance(account, balanceA);
-            balanceB.amount = Binance.balance(account, balanceB);
-
-            //balanceA.amount = balanceA.amount.add(quantity);
-            //balanceB.amount = balanceB.amount.subtract(toSpend);
+            if (Botcoin.TEST_MODE)
+            {
+                balanceA.amount = balanceA.amount.add(quantity);
+                balanceB.amount = balanceB.amount.subtract(toSpend);
+            }
+            else
+            {
+                Account account = Binance.account();
+                balanceA.amount = Binance.balance(account, balanceA);
+                balanceB.amount = Binance.balance(account, balanceB);
+            }
 
             boughtPrice = price;
 
@@ -200,18 +206,23 @@ public class ComplexStrategy implements Strategy<Price>
             BigDecimal originalCost = quantity.multiply(boughtPrice);
             BigDecimal profit = toGain.subtract(originalCost);
 
-            Account account = Binance.account();
-            balanceA.amount = Binance.balance(account, balanceA);
-            balanceB.amount = Binance.balance(account, balanceB);
-
-            //balanceA.amount = balanceA.amount.subtract(quantity);
-            //balanceB.amount = balanceB.amount.add(toGain);
+            if (Botcoin.TEST_MODE)
+            {
+                balanceA.amount = balanceA.amount.subtract(quantity);
+                balanceB.amount = balanceB.amount.add(toGain);
+            }
+            else
+            {
+                Account account = Binance.account();
+                balanceA.amount = Binance.balance(account, balanceA);
+                balanceB.amount = Binance.balance(account, balanceB);
+            }
 
             profitFile.save(profit);
 
             if (statusProperties.isShutdown())
             {
-                statusProperties.off();;
+                statusProperties.off();
             }
 
             LogEvent logEvent = LogEvent.sell(
