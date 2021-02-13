@@ -36,9 +36,7 @@ public class Botcoin
 
     public static void main(String[] args)
     {
-        Account account = Binance.account();
-
-        for (Market<?> market : markets(account))
+        for (Market<?> market : markets())
         {
             Thread thread = new Thread(market);
             thread.start();
@@ -46,32 +44,34 @@ public class Botcoin
     }
 
     @NotNull
-    private static List<Market<?>> markets(Account account)
+    private static List<Market<?>> markets()
     {
+        ExchangeInfo exchangeInfo = Binance.apiClient().getExchangeInfo();
+        Account account = Binance.account();
+
         List<Market<?>> markets = new ArrayList<>();
-        markets.add(market(account, Currency.ETH, Currency.BTC));
-        markets.add(market(account, Currency.XRP, Currency.BTC));
-        markets.add(market(account, Currency.LTC, Currency.BTC));
-        markets.add(market(account, Currency.ADA, Currency.BTC));
-        markets.add(market(account, Currency.DOT, Currency.BTC));
-        markets.add(market(account, Currency.BNB, Currency.BTC));
-        markets.add(market(account, Currency.LINK, Currency.BTC));
-        markets.add(market(account, Currency.XLM, Currency.BTC));
-        markets.add(market(account, Currency.EOS, Currency.BTC));
-        markets.add(market(account, Currency.VET, Currency.BTC));
-        markets.add(market(account, Currency.DOGE, Currency.BTC));
-        markets.add(market(account, Currency.GRT, Currency.BTC));
-        markets.add(market(account, Currency.ZIL, Currency.BTC));
-        markets.add(market(account, Currency.TRX, Currency.BTC));
-        markets.add(market(account, Currency.XMR, Currency.BTC));
+        markets.add(market(exchangeInfo, account, Currency.ETH, Currency.BTC));
+        markets.add(market(exchangeInfo, account, Currency.XRP, Currency.BTC));
+        markets.add(market(exchangeInfo, account, Currency.LTC, Currency.BTC));
+        markets.add(market(exchangeInfo, account, Currency.ADA, Currency.BTC));
+        markets.add(market(exchangeInfo, account, Currency.DOT, Currency.BTC));
+        markets.add(market(exchangeInfo, account, Currency.BNB, Currency.BTC));
+        markets.add(market(exchangeInfo, account, Currency.LINK, Currency.BTC));
+        markets.add(market(exchangeInfo, account, Currency.XLM, Currency.BTC));
+        markets.add(market(exchangeInfo, account, Currency.EOS, Currency.BTC));
+        markets.add(market(exchangeInfo, account, Currency.VET, Currency.BTC));
+        markets.add(market(exchangeInfo, account, Currency.DOGE, Currency.BTC));
+        markets.add(market(exchangeInfo, account, Currency.GRT, Currency.BTC));
+        markets.add(market(exchangeInfo, account, Currency.ZIL, Currency.BTC));
+        markets.add(market(exchangeInfo, account, Currency.TRX, Currency.BTC));
+        markets.add(market(exchangeInfo, account, Currency.XMR, Currency.BTC));
 
         return markets;
     }
 
     @NotNull
-    private static Market<Price> market(Account account, Currency currencyA, Currency currencyB)
+    private static Market<Price> market(ExchangeInfo exchangeInfo, Account account, Currency currencyA, Currency currencyB)
     {
-        ExchangeInfo exchangeInfo = Binance.apiClient().getExchangeInfo();
         Symbol symbol = new Symbol(currencyA, currencyB, exchangeInfo);
         StatusProperties statusProperties = new StatusProperties(symbol);
 
