@@ -4,6 +4,8 @@ import com.mauriciotogneri.botcoin.market.Symbol;
 import com.mauriciotogneri.botcoin.momo.complex.ComplexStrategy;
 import com.mauriciotogneri.botcoin.momo.complex.ComplexStrategy.State;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.FileInputStream;
 import java.math.BigDecimal;
 import java.util.Properties;
@@ -30,7 +32,7 @@ public class StatusProperties
         try
         {
             Properties properties = new Properties();
-            properties.load(new FileInputStream(String.format("output/%s/status.properties", symbol.name)));
+            properties.load(new FileInputStream(path(symbol)));
 
             mode = properties.getProperty("MODE");
             state = State.valueOf(properties.getProperty("STATE"));
@@ -40,6 +42,11 @@ public class StatusProperties
         {
             e.printStackTrace();
         }
+    }
+
+    private String path(@NotNull Symbol symbol)
+    {
+        return String.format("output/%s/status.properties", symbol.name);
     }
 
     public boolean isRunning()
@@ -54,6 +61,9 @@ public class StatusProperties
 
     public void off()
     {
-        mode = MODE_OFF;
+        Log log = new Log(path(symbol));
+        log.write("MODE=off\n");
+        log.write(String.format("STATE=%s%n", state.name()));
+        log.write(String.format("BOUGHT_PRICE=%s", boughtPrice.toString()));
     }
 }
