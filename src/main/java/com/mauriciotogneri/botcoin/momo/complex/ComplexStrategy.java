@@ -63,7 +63,7 @@ public class ComplexStrategy implements Strategy<Price>
     @Override
     public List<NewOrder> orders(@NotNull Price price)
     {
-        List<NewOrder> result = null;
+        List<NewOrder> result = new ArrayList<>();
         statusProperties.load();
 
         if (statusProperties.enabled)
@@ -80,7 +80,7 @@ public class ComplexStrategy implements Strategy<Price>
                                allTimeHigh,
                                boughtPrice,
                                price.value,
-                               new BigDecimal("0"));
+                               BigDecimal.ONE.subtract(price.value.divide(allTimeHigh, 10, RoundingMode.DOWN)));
 
                 BigDecimal amount = buyStrategy.amount(symbol, price.value, allTimeHigh, balanceA, balanceB);
 
@@ -91,6 +91,12 @@ public class ComplexStrategy implements Strategy<Price>
             }
             else if (state == State.SELLING)
             {
+                priceFile.save(state,
+                               allTimeHigh,
+                               boughtPrice,
+                               price.value,
+                               price.value.divide(boughtPrice, 10, RoundingMode.DOWN).subtract(BigDecimal.ONE));
+
                 BigDecimal amount = sellStrategy.amount(symbol, price.value, boughtPrice, balanceA);
 
                 if (amount.compareTo(minQuantity) > 0)
@@ -102,6 +108,8 @@ public class ComplexStrategy implements Strategy<Price>
         else
         {
             Log.console("[%s] Shutting down market", symbol.name);
+
+            result = null;
         }
 
         return result;

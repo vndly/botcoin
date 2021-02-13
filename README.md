@@ -30,6 +30,14 @@ STATUS=BUYING/SELLING
 BOUGHT_PRICE=0.00000000
 SHUTDOWN_AFTER_SELL=false
 ```
+* price.properties:
+```properties
+state=SELLING
+allTimeHigh=0.00000000
+boughtPrice=0.00001981
+currentPrice=0.00001879
+percentage=-5.14%
+```
 * logs.json
 ```json
 {
