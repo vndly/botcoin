@@ -104,6 +104,8 @@ public class LogEvent
             builder.append(total.property("total"));
         }
 
+        builder.append(String.format("timestamp=%s", System.currentTimeMillis()));
+
         return builder.toString();
     }
 
