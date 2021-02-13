@@ -3,8 +3,6 @@ package com.mauriciotogneri.botcoin.app;
 import com.mauriciotogneri.botcoin.provider.FilePriceProvider;
 import com.mauriciotogneri.botcoin.provider.Price;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
@@ -20,46 +18,58 @@ public class PriceAnalyzer
         int sumTicks = 0;
         int count = 0;
 
-        for (int i = 0; i < (prices.length - 1); i++)
-        {
-            Result result = analyze(prices, i);
+        boolean searchingAllTimeHigh = true;
+        int tempTicks = 0;
+        BigDecimal allTimeHigh = BigDecimal.ZERO;
+        BigDecimal lowestPrice = BigDecimal.ZERO;
 
-            if (result.isValid())
+        for (Price value : prices)
+        {
+            BigDecimal price = value.value;
+
+            if (searchingAllTimeHigh)
             {
-                sumPercentageDown = sumPercentageDown.add(result.percentageDown);
-                sumTicks += result.ticks;
-                count++;
+                if (price.compareTo(allTimeHigh) >= 0)
+                {
+                    allTimeHigh = price;
+                }
+                else
+                {
+                    searchingAllTimeHigh = false;
+                    lowestPrice = allTimeHigh;
+                    tempTicks = 0;
+                }
+            }
+            else
+            {
+                tempTicks++;
+
+                if (price.compareTo(allTimeHigh) <= 0)
+                {
+                    if (price.compareTo(lowestPrice) <= 0)
+                    {
+                        lowestPrice = price;
+                    }
+                }
+                else
+                {
+                    BigDecimal percentageDown = BigDecimal.ONE.subtract(lowestPrice.divide(allTimeHigh, 10, RoundingMode.DOWN));
+
+                    if (percentageDown.compareTo(new BigDecimal("0.01")) >= 0)
+                    {
+                        sumPercentageDown = sumPercentageDown.add(percentageDown);
+                        sumTicks += tempTicks;
+                        count++;
+                    }
+
+                    searchingAllTimeHigh = true;
+                    allTimeHigh = BigDecimal.ZERO;
+                }
             }
         }
 
         System.out.printf("PERCENTAGE DOWN: %s%n", sumPercentageDown.divide(new BigDecimal(count), 2, BigDecimal.ROUND_DOWN).toString());
-        System.out.printf("TICKS: %s%n", sumTicks / (double) count);
-    }
-
-    @NotNull
-    private static Result analyze(@NotNull Price[] prices, int index)
-    {
-        BigDecimal startPrice = prices[index].value;
-        BigDecimal lowestPrice = startPrice;
-
-        for (int i = index; i < prices.length; i++)
-        {
-            BigDecimal price = prices[i].value;
-
-            if (price.compareTo(lowestPrice) < 0)
-            {
-                lowestPrice = price;
-            }
-            else if (price.compareTo(startPrice) > 0)
-            {
-                break;
-            }
-        }
-
-        BigDecimal status = new BigDecimal(String.valueOf((index * 100) / (double) prices.length));
-        System.out.printf("STATUS: %s%%%n", status.setScale(0, RoundingMode.DOWN));
-
-        return new Result(new BigDecimal("1"), 12);
+        System.out.printf("TICKS: %s%n", sumTicks / count);
     }
 
     public static class Result
