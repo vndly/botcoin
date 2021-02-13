@@ -7,6 +7,7 @@ import com.binance.api.client.domain.account.NewOrder;
 import com.binance.api.client.domain.account.NewOrderResponse;
 import com.mauriciotogneri.botcoin.exchange.Binance;
 import com.mauriciotogneri.botcoin.log.Log;
+import com.mauriciotogneri.botcoin.log.PriceFile;
 import com.mauriciotogneri.botcoin.log.ProfitFile;
 import com.mauriciotogneri.botcoin.log.StatusProperties;
 import com.mauriciotogneri.botcoin.market.Symbol;
@@ -34,7 +35,9 @@ public class ComplexStrategy implements Strategy<Price>
     private final ComplexSellStrategy sellStrategy;
     private final StatusProperties statusProperties;
     private final ProfitFile profitFile;
+    private final PriceFile priceFile;
 
+    private BigDecimal allTimeHigh = BigDecimal.ZERO;
     private BigDecimal boughtPrice;
     private State state;
 
@@ -54,22 +57,36 @@ public class ComplexStrategy implements Strategy<Price>
         this.boughtPrice = statusProperties.boughtPrice;
         this.state = statusProperties.state;
         this.profitFile = new ProfitFile(symbol);
+        this.priceFile = new PriceFile(symbol);
     }
 
     @Override
     public List<NewOrder> orders(@NotNull Price price)
     {
+        List<NewOrder> result = null;
         statusProperties.load();
 
         if (statusProperties.enabled)
         {
             if (state == State.BUYING)
             {
-                BigDecimal amount = buyStrategy.amount(symbol, price.value, balanceA, balanceB);
+                if (price.value.compareTo(allTimeHigh) >= 0)
+                {
+                    allTimeHigh = price.value;
+                    Log.console("[%s] New all time high: %s", symbol.name, allTimeHigh);
+                }
+
+                priceFile.save(state,
+                               allTimeHigh,
+                               boughtPrice,
+                               price.value,
+                               new BigDecimal("0"));
+
+                BigDecimal amount = buyStrategy.amount(symbol, price.value, allTimeHigh, balanceA, balanceB);
 
                 if (amount.compareTo(minQuantity) > 0)
                 {
-                    return Collections.singletonList(NewOrder.marketBuy(symbol.name, amount.toString()));
+                    result = Collections.singletonList(NewOrder.marketBuy(symbol.name, amount.toString()));
                 }
             }
             else if (state == State.SELLING)
@@ -78,18 +95,16 @@ public class ComplexStrategy implements Strategy<Price>
 
                 if (amount.compareTo(minQuantity) > 0)
                 {
-                    return Collections.singletonList(NewOrder.marketSell(symbol.name, amount.toString()));
+                    result = Collections.singletonList(NewOrder.marketSell(symbol.name, amount.toString()));
                 }
             }
-
-            return new ArrayList<>();
         }
         else
         {
             Log.console("[%s] Shutting down market", symbol.name);
-
-            return null;
         }
+
+        return result;
     }
 
     @Override
@@ -168,7 +183,7 @@ public class ComplexStrategy implements Strategy<Price>
         if (response.getStatus() == OrderStatus.FILLED)
         {
             state = State.BUYING;
-            buyStrategy.reset();
+            allTimeHigh = BigDecimal.ZERO;
 
             BigDecimal quantity = new BigDecimal(response.getExecutedQty());
             BigDecimal toGain = new BigDecimal(response.getCummulativeQuoteQty());
