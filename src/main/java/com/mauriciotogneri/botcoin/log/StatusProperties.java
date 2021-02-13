@@ -11,10 +11,13 @@ import java.util.Properties;
 public class StatusProperties
 {
     private final Symbol symbol;
-    public Boolean enabled;
+    public String mode;
     public ComplexStrategy.State state;
     public BigDecimal boughtPrice;
-    public Boolean shutdownAfterSell;
+
+    public static final String MODE_ON = "on";
+    public static final String MODE_OFF = "off";
+    public static final String MODE_SHUTDOWN = "shutdown";
 
     public StatusProperties(Symbol symbol)
     {
@@ -29,14 +32,28 @@ public class StatusProperties
             Properties properties = new Properties();
             properties.load(new FileInputStream(String.format("output/%s/status.properties", symbol.name)));
 
-            enabled = Boolean.parseBoolean(properties.getProperty("ENABLED"));
+            mode = properties.getProperty("MODE");
             state = State.valueOf(properties.getProperty("STATE"));
             boughtPrice = new BigDecimal(properties.getProperty("BOUGHT_PRICE"));
-            shutdownAfterSell = Boolean.parseBoolean(properties.getProperty("SHUTDOWN_AFTER_SELL"));
         }
         catch (Exception e)
         {
             e.printStackTrace();
         }
+    }
+
+    public boolean isRunning()
+    {
+        return mode.equals(MODE_ON) || mode.equals(MODE_SHUTDOWN);
+    }
+
+    public boolean isShutdown()
+    {
+        return mode.equals(MODE_SHUTDOWN);
+    }
+
+    public void off()
+    {
+        mode = MODE_OFF;
     }
 }

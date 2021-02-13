@@ -66,7 +66,7 @@ public class ComplexStrategy implements Strategy<Price>
         List<NewOrder> result = new ArrayList<>();
         statusProperties.load();
 
-        if (statusProperties.enabled)
+        if (statusProperties.isRunning())
         {
             if (state == State.BUYING)
             {
@@ -209,9 +209,9 @@ public class ComplexStrategy implements Strategy<Price>
 
             profitFile.save(profit);
 
-            if (statusProperties.shutdownAfterSell)
+            if (statusProperties.isShutdown())
             {
-                statusProperties.enabled = false;
+                statusProperties.off();;
             }
 
             LogEvent logEvent = LogEvent.sell(

@@ -25,10 +25,9 @@ total=0.00187904 BTC
 ```
 * status.properties:
 ```properties
-ENABLED=true
+MODE=on/off/shutdown
 STATUS=BUYING/SELLING
 BOUGHT_PRICE=0.00000000
-SHUTDOWN_AFTER_SELL=false
 ```
 * price.properties:
 ```properties
