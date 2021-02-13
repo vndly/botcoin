@@ -10,7 +10,7 @@ public class PriceAnalyzer
 {
     public static void main(String[] args)
     {
-        String symbol = "ETHBTC";
+        String symbol = "LTCBTC";
         FilePriceProvider dataProvider = new FilePriceProvider(String.format("input/prices_%s_ONE_MINUTE.csv", symbol));
         Price[] prices = dataProvider.prices();
 
@@ -55,7 +55,7 @@ public class PriceAnalyzer
                 {
                     BigDecimal percentageDown = BigDecimal.ONE.subtract(lowestPrice.divide(allTimeHigh, 10, RoundingMode.DOWN));
 
-                    if (percentageDown.compareTo(new BigDecimal("0.01")) >= 0)
+                    if (percentageDown.compareTo(new BigDecimal("0.02")) >= 0)
                     {
                         sumPercentageDown = sumPercentageDown.add(percentageDown);
                         sumTicks += tempTicks;
@@ -70,6 +70,7 @@ public class PriceAnalyzer
 
         System.out.printf("PERCENTAGE DOWN: %s%n", sumPercentageDown.divide(new BigDecimal(count), 2, BigDecimal.ROUND_DOWN).toString());
         System.out.printf("TICKS: %s%n", sumTicks / count);
+        System.out.printf("COUNT: %s%n", count);
     }
 
     public static class Result
