@@ -13,7 +13,12 @@ public class ProfitFile
 
     public ProfitFile(@NotNull Symbol symbol)
     {
-        this.path = String.format("output/%s/profit.txt", symbol.name);
+        this.path = path(symbol);
+    }
+
+    public static String path(@NotNull Symbol symbol)
+    {
+        return String.format("output/%s/profit.txt", symbol.name);
     }
 
     public void save(@NotNull BigDecimal value)

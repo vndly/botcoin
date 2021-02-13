@@ -44,8 +44,13 @@ public class LogEvent
 
     public void log(@NotNull Symbol symbol)
     {
-        Log balanceLog = new Log(String.format("output/%s/balance.properties", symbol.name));
+        Log balanceLog = new Log(balancePath(symbol));
         balanceLog.file(properties());
+    }
+
+    public static String balancePath(@NotNull Symbol symbol)
+    {
+        return String.format("output/%s/balance.properties", symbol.name);
     }
 
     @NotNull

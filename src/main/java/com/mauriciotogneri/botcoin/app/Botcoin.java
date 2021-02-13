@@ -9,9 +9,11 @@ import com.mauriciotogneri.botcoin.exchange.Binance;
 import com.mauriciotogneri.botcoin.exchange.BinancePriceProvider;
 import com.mauriciotogneri.botcoin.exchange.BinanceTrader;
 import com.mauriciotogneri.botcoin.log.Log;
+import com.mauriciotogneri.botcoin.log.ProfitFile;
 import com.mauriciotogneri.botcoin.log.StatusProperties;
 import com.mauriciotogneri.botcoin.market.Market;
 import com.mauriciotogneri.botcoin.market.Symbol;
+import com.mauriciotogneri.botcoin.momo.LogEvent;
 import com.mauriciotogneri.botcoin.momo.complex.ComplexStrategy;
 import com.mauriciotogneri.botcoin.provider.DataProvider;
 import com.mauriciotogneri.botcoin.provider.Price;
@@ -63,6 +65,9 @@ public class Botcoin
         //DataProvider<Price> dataProvider = new FilePriceProvider(String.format("input/prices_%s%s_ONE_MINUTE.csv", currencyA.name(), currencyB.name()));
 
         Account account = Binance.account();
+
+        Log.truncate(ProfitFile.path(symbol));
+        Log.truncate(LogEvent.balancePath(symbol));
 
         BigDecimal balanceAssetA = Binance.balance(account, symbol.assetA);
         Balance balanceA = new Balance(symbol.assetA, balanceAssetA);

@@ -23,16 +23,11 @@ public class Log
 
             if (file.exists())
             {
-                FileChannel fileChannel = new FileOutputStream(file, true).getChannel();
-                fileChannel.truncate(0);
-                fileChannel.close();
+                truncate(file.getAbsolutePath());
             }
-            else
+            else if (!file.createNewFile())
             {
-                if (!file.createNewFile())
-                {
-                    throw new RuntimeException("Cannot create log file " + path);
-                }
+                throw new RuntimeException("Cannot create log file " + path);
             }
 
             FileWriter fileWriter = new FileWriter(file, true);
@@ -43,6 +38,20 @@ public class Log
             e.printStackTrace();
 
             throw new RuntimeException("Cannot create log file " + path);
+        }
+    }
+
+    public static void truncate(String path)
+    {
+        try
+        {
+            FileChannel fileChannel = new FileOutputStream(path, true).getChannel();
+            fileChannel.truncate(0);
+            fileChannel.close();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
         }
     }
 
