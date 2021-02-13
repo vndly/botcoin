@@ -18,26 +18,42 @@ public class PriceAnalyzer
 
         BigDecimal sumPercentageDown = BigDecimal.ZERO;
         int sumTicks = 0;
+        int count = 0;
 
-        for (int i = 0; i < prices.length; i++)
+        for (int i = 0; i < (prices.length - 1); i++)
         {
             Result result = analyze(prices, i);
-            sumPercentageDown = sumPercentageDown.add(result.percentageDown);
-            sumTicks += result.ticks;
+
+            if (result.isValid())
+            {
+                sumPercentageDown = sumPercentageDown.add(result.percentageDown);
+                sumTicks += result.ticks;
+                count++;
+            }
         }
 
-        System.out.printf("PERCENTAGE DOWN: %s%n", sumPercentageDown.divide(new BigDecimal(prices.length), 2, BigDecimal.ROUND_DOWN).toString());
-        System.out.printf("TICKS: %s%n", sumTicks / prices.length);
+        System.out.printf("PERCENTAGE DOWN: %s%n", sumPercentageDown.divide(new BigDecimal(count), 2, BigDecimal.ROUND_DOWN).toString());
+        System.out.printf("TICKS: %s%n", sumTicks / (double) count);
     }
 
     @NotNull
     private static Result analyze(@NotNull Price[] prices, int index)
     {
         BigDecimal startPrice = prices[index].value;
+        BigDecimal lowestPrice = startPrice;
 
-        for (int j = index; j < prices.length; j++)
+        for (int i = index; i < prices.length; i++)
         {
-            Price price = prices[j];
+            BigDecimal price = prices[i].value;
+
+            if (price.compareTo(lowestPrice) < 0)
+            {
+                lowestPrice = price;
+            }
+            else if (price.compareTo(startPrice) > 0)
+            {
+                break;
+            }
         }
 
         BigDecimal status = new BigDecimal(String.valueOf((index * 100) / (double) prices.length));
@@ -49,12 +65,17 @@ public class PriceAnalyzer
     public static class Result
     {
         public final BigDecimal percentageDown;
-        public final int ticks;
+        public final Integer ticks;
 
-        public Result(BigDecimal percentageDown, int ticks)
+        public Result(BigDecimal percentageDown, Integer ticks)
         {
             this.percentageDown = percentageDown;
             this.ticks = ticks;
+        }
+
+        public boolean isValid()
+        {
+            return (percentageDown != null) && (ticks != null);
         }
     }
 }
