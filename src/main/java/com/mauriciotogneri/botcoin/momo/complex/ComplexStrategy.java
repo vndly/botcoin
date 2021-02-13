@@ -2,8 +2,10 @@ package com.mauriciotogneri.botcoin.momo.complex;
 
 import com.binance.api.client.domain.OrderSide;
 import com.binance.api.client.domain.OrderStatus;
+import com.binance.api.client.domain.account.Account;
 import com.binance.api.client.domain.account.NewOrder;
 import com.binance.api.client.domain.account.NewOrderResponse;
+import com.mauriciotogneri.botcoin.exchange.Binance;
 import com.mauriciotogneri.botcoin.log.Log;
 import com.mauriciotogneri.botcoin.log.ProfitFile;
 import com.mauriciotogneri.botcoin.log.StatusProperties;
@@ -131,12 +133,12 @@ public class ComplexStrategy implements Strategy<Price>
             BigDecimal toSpend = new BigDecimal(response.getCummulativeQuoteQty());
             BigDecimal price = toSpend.divide(quantity, balanceA.asset.decimals, RoundingMode.DOWN);
 
-            //Account account = Binance.account();
-            //balanceA.amount = Binance.balance(account, balanceA);
-            //balanceB.amount = Binance.balance(account, balanceB);
+            Account account = Binance.account();
+            balanceA.amount = Binance.balance(account, balanceA);
+            balanceB.amount = Binance.balance(account, balanceB);
 
-            balanceA.amount = balanceA.amount.add(quantity);
-            balanceB.amount = balanceB.amount.subtract(toSpend);
+            //balanceA.amount = balanceA.amount.add(quantity);
+            //balanceB.amount = balanceB.amount.subtract(toSpend);
 
             boughtPrice = price;
 
@@ -175,12 +177,12 @@ public class ComplexStrategy implements Strategy<Price>
             BigDecimal originalCost = quantity.multiply(boughtPrice);
             BigDecimal profit = toGain.subtract(originalCost);
 
-            //Account account = Binance.account();
-            //balanceA.amount = Binance.balance(account, balanceA);
-            //balanceB.amount = Binance.balance(account, balanceB);
+            Account account = Binance.account();
+            balanceA.amount = Binance.balance(account, balanceA);
+            balanceB.amount = Binance.balance(account, balanceB);
 
-            balanceA.amount = balanceA.amount.subtract(quantity);
-            balanceB.amount = balanceB.amount.add(toGain);
+            //balanceA.amount = balanceA.amount.subtract(quantity);
+            //balanceB.amount = balanceB.amount.add(toGain);
 
             profitFile.save(profit);
 
