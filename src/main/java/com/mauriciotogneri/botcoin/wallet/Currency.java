@@ -23,5 +23,9 @@ public enum Currency
     BSV,
     EOS,
     XMR,
-    XEM
+    XEM,
+    VET,
+    GRT,
+    ZIL,
+    TRX
 }

@@ -36,7 +36,9 @@ public class Botcoin
 
     public static void main(String[] args)
     {
-        for (Market<?> market : markets())
+        Account account = Binance.account();
+
+        for (Market<?> market : markets(account))
         {
             Thread thread = new Thread(market);
             thread.start();
@@ -44,18 +46,30 @@ public class Botcoin
     }
 
     @NotNull
-    private static List<Market<?>> markets()
+    private static List<Market<?>> markets(Account account)
     {
         List<Market<?>> markets = new ArrayList<>();
-        markets.add(market(Currency.ETH, Currency.BTC));
-        markets.add(market(Currency.LTC, Currency.BTC));
-        markets.add(market(Currency.ADA, Currency.BTC));
+        markets.add(market(account, Currency.ETH, Currency.BTC));
+        markets.add(market(account, Currency.XRP, Currency.BTC));
+        markets.add(market(account, Currency.LTC, Currency.BTC));
+        markets.add(market(account, Currency.ADA, Currency.BTC));
+        markets.add(market(account, Currency.DOT, Currency.BTC));
+        markets.add(market(account, Currency.BNB, Currency.BTC));
+        markets.add(market(account, Currency.LINK, Currency.BTC));
+        markets.add(market(account, Currency.XLM, Currency.BTC));
+        markets.add(market(account, Currency.EOS, Currency.BTC));
+        markets.add(market(account, Currency.VET, Currency.BTC));
+        markets.add(market(account, Currency.DOGE, Currency.BTC));
+        markets.add(market(account, Currency.GRT, Currency.BTC));
+        markets.add(market(account, Currency.ZIL, Currency.BTC));
+        markets.add(market(account, Currency.TRX, Currency.BTC));
+        markets.add(market(account, Currency.XMR, Currency.BTC));
 
         return markets;
     }
 
     @NotNull
-    private static Market<Price> market(Currency currencyA, Currency currencyB)
+    private static Market<Price> market(Account account, Currency currencyA, Currency currencyB)
     {
         ExchangeInfo exchangeInfo = Binance.apiClient().getExchangeInfo();
         Symbol symbol = new Symbol(currencyA, currencyB, exchangeInfo);
@@ -72,8 +86,6 @@ public class Botcoin
         Trader trader = TEST_MODE ?
                 new FakeTrader() :
                 new BinanceTrader();
-
-        Account account = Binance.account();
 
         Log.truncate(ProfitFile.path(symbol));
         Log.truncate(LogEvent.balancePath(symbol));
