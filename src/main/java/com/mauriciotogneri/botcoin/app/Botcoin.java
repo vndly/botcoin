@@ -50,21 +50,21 @@ public class Botcoin
         Account account = Binance.account();
 
         List<Market<?>> markets = new ArrayList<>();
-        markets.add(market(exchangeInfo, account, Currency.ETH, Currency.BTC));
-        markets.add(market(exchangeInfo, account, Currency.XRP, Currency.BTC));
-        markets.add(market(exchangeInfo, account, Currency.LTC, Currency.BTC));
         markets.add(market(exchangeInfo, account, Currency.ADA, Currency.BTC));
-        markets.add(market(exchangeInfo, account, Currency.DOT, Currency.BTC));
         markets.add(market(exchangeInfo, account, Currency.BNB, Currency.BTC));
-        markets.add(market(exchangeInfo, account, Currency.LINK, Currency.BTC));
-        markets.add(market(exchangeInfo, account, Currency.XLM, Currency.BTC));
-        markets.add(market(exchangeInfo, account, Currency.EOS, Currency.BTC));
-        markets.add(market(exchangeInfo, account, Currency.VET, Currency.BTC));
         markets.add(market(exchangeInfo, account, Currency.DOGE, Currency.BTC));
+        markets.add(market(exchangeInfo, account, Currency.DOT, Currency.BTC));
+        markets.add(market(exchangeInfo, account, Currency.EOS, Currency.BTC));
+        markets.add(market(exchangeInfo, account, Currency.ETH, Currency.BTC));
         markets.add(market(exchangeInfo, account, Currency.GRT, Currency.BTC));
-        markets.add(market(exchangeInfo, account, Currency.ZIL, Currency.BTC));
+        markets.add(market(exchangeInfo, account, Currency.LINK, Currency.BTC));
+        markets.add(market(exchangeInfo, account, Currency.LTC, Currency.BTC));
         markets.add(market(exchangeInfo, account, Currency.TRX, Currency.BTC));
+        markets.add(market(exchangeInfo, account, Currency.VET, Currency.BTC));
+        markets.add(market(exchangeInfo, account, Currency.XLM, Currency.BTC));
         markets.add(market(exchangeInfo, account, Currency.XMR, Currency.BTC));
+        markets.add(market(exchangeInfo, account, Currency.XRP, Currency.BTC));
+        markets.add(market(exchangeInfo, account, Currency.ZIL, Currency.BTC));
 
         return markets;
     }
