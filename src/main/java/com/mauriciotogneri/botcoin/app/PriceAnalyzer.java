@@ -72,21 +72,4 @@ public class PriceAnalyzer
         System.out.printf("TICKS: %s%n", sumTicks / count);
         System.out.printf("COUNT: %s%n", count);
     }
-
-    public static class Result
-    {
-        public final BigDecimal percentageDown;
-        public final Integer ticks;
-
-        public Result(BigDecimal percentageDown, Integer ticks)
-        {
-            this.percentageDown = percentageDown;
-            this.ticks = ticks;
-        }
-
-        public boolean isValid()
-        {
-            return (percentageDown != null) && (ticks != null);
-        }
-    }
 }
