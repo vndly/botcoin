@@ -33,12 +33,14 @@ public class PriceFile
 
         if (percentage.compareTo(BigDecimal.ZERO) >= 0)
         {
-            builder.append(String.format("percentage=+%s%%", percentageString));
+            builder.append(String.format("percentage=+%s%%%n", percentageString));
         }
         else
         {
-            builder.append(String.format("percentage=%s%%", percentageString));
+            builder.append(String.format("percentage=%s%%%n", percentageString));
         }
+
+        builder.append(String.format("timestamp=%s", System.currentTimeMillis()));
 
         Log log = new Log(path);
         log.write(builder.toString());
