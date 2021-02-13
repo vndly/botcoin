@@ -134,11 +134,11 @@ public class ComplexStrategy implements Strategy<Price>
     {
         if (order.getSide() == OrderSide.BUY)
         {
-            return buy(order, response);
+            return buy(response);
         }
         else if (order.getSide() == OrderSide.SELL)
         {
-            return sell(order, response);
+            return sell(response);
         }
         else
         {
@@ -147,7 +147,7 @@ public class ComplexStrategy implements Strategy<Price>
     }
 
     @NotNull
-    private Object buy(NewOrder order, @NotNull NewOrderResponse response)
+    private Object buy(@NotNull NewOrderResponse response)
     {
         if (response.getStatus() == OrderStatus.FILLED)
         {
@@ -192,7 +192,7 @@ public class ComplexStrategy implements Strategy<Price>
     }
 
     @NotNull
-    private Object sell(NewOrder order, @NotNull NewOrderResponse response)
+    private Object sell(@NotNull NewOrderResponse response)
     {
         if (response.getStatus() == OrderStatus.FILLED)
         {
