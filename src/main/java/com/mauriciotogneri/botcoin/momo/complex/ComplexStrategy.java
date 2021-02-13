@@ -186,6 +186,11 @@ public class ComplexStrategy implements Strategy<Price>
 
             profitFile.save(profit);
 
+            if (statusProperties.shutdownAfterSell)
+            {
+                statusProperties.enabled = false;
+            }
+
             LogEvent logEvent = LogEvent.sell(
                     balanceA.of(quantity),
                     balanceB.of(price),

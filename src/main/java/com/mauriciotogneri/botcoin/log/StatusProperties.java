@@ -14,6 +14,7 @@ public class StatusProperties
     public Boolean enabled;
     public ComplexStrategy.State state;
     public BigDecimal boughtPrice;
+    public Boolean shutdownAfterSell;
 
     public StatusProperties(Symbol symbol)
     {
@@ -31,6 +32,7 @@ public class StatusProperties
             enabled = Boolean.parseBoolean(properties.getProperty("ENABLED"));
             state = State.valueOf(properties.getProperty("STATE"));
             boughtPrice = new BigDecimal(properties.getProperty("BOUGHT_PRICE"));
+            shutdownAfterSell = Boolean.parseBoolean(properties.getProperty("SHUTDOWN_AFTER_SELL"));
         }
         catch (Exception e)
         {
