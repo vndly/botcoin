@@ -5,8 +5,7 @@ A crypto trading bot.
 * BINANCE_API
 * BINANCE_SECRET
 
-## TODO
-Create folder AB to store the following files: 
+## Logs
 * balance.properties:
 ```properties
 type=buy
@@ -20,9 +19,18 @@ balanceA=0.00696900 ETH
 balanceB=0.00181191 BTC
 total=0.00187904 BTC
 ```
+* profit.txt:
+```text
+0.00024224154
+```
 * status.properties:
 ```properties
 ENABLED=true
 STATUS=BUYING/SELLING
 BOUGHT_PRICE=0.00000000
+```
+* logs.json
+```json
+{
+}
 ```

@@ -73,6 +73,19 @@ public class Log
         }
     }
 
+    public void write(String data)
+    {
+        try
+        {
+            writer.write(data);
+            writer.flush();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
     public void jsonFile(Object object)
     {
         file(Json.toJsonString(object));
