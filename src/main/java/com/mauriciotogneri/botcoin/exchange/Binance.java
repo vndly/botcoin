@@ -68,23 +68,6 @@ public class Binance
     }
 
     @NotNull
-    public static NewOrder marketOrder(OrderSide orderSide, String symbol, @NotNull BigDecimal quantity)
-    {
-        return new NewOrder(
-                symbol,
-                orderSide,
-                OrderType.MARKET,
-                null,
-                quantity.toString()
-        );
-    }
-
-    @NotNull
-    public static NewOrder limitSell(String symbol, String quantity, String price) {
-        return new NewOrder(symbol, OrderSide.SELL, OrderType.LIMIT, TimeInForce.GTC, quantity, price);
-    }
-
-    @NotNull
     public static CancelOrderResponse cancelOrder(String symbol, Long orderId) {
         return apiClient().cancelOrder(new CancelOrderRequest(symbol, orderId));
     }

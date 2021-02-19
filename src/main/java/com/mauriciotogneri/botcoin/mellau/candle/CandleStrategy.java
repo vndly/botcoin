@@ -2,16 +2,20 @@ package com.mauriciotogneri.botcoin.mellau.candle;
 
 import com.binance.api.client.domain.OrderSide;
 import com.binance.api.client.domain.OrderStatus;
+import com.binance.api.client.domain.TimeInForce;
 import com.binance.api.client.domain.account.Account;
 import com.binance.api.client.domain.account.NewOrder;
 import com.binance.api.client.domain.account.NewOrderResponse;
+import com.binance.api.client.domain.account.request.CancelOrderResponse;
 import com.binance.api.client.domain.market.Candlestick;
 import com.binance.api.client.domain.market.TickerPrice;
 import com.google.gson.JsonObject;
 import com.mauriciotogneri.botcoin.config.ConfigConst;
 import com.mauriciotogneri.botcoin.exchange.Binance;
+import com.mauriciotogneri.botcoin.exchange.DataProviderSleepTime;
 import com.mauriciotogneri.botcoin.json.Json;
 import com.mauriciotogneri.botcoin.market.Symbol;
+import com.mauriciotogneri.botcoin.mellau.basic.dto.LastPricesAverageDTO;
 import com.mauriciotogneri.botcoin.mellau.candle.dto.RequestDataDTO;
 import com.mauriciotogneri.botcoin.momo.LogEvent;
 import com.mauriciotogneri.botcoin.strategy.Strategy;
@@ -25,18 +29,25 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+
 public class CandleStrategy implements Strategy<RequestDataDTO> {
     private BigDecimal spent = BigDecimal.ZERO;
     private final String symbol;
     private final Balance balanceA;
     private final Balance balanceB;
+    private final DataProviderSleepTime dataProviderSleepTime;
+    private String lostLimitOrderId;
+    private BigDecimal oldLimit = BigDecimal.ZERO;
 
     public CandleStrategy(@NotNull Balance balanceA,
                           @NotNull Balance balanceB,
-                          Symbol symbol) {
+                          Symbol symbol,
+                          DataProviderSleepTime dataProviderSleepTime) {
         this.symbol = symbol.toString();
         this.balanceA = balanceA;
         this.balanceB = balanceB;
+        this.dataProviderSleepTime = dataProviderSleepTime;
     }
 
     @Override
@@ -44,6 +55,8 @@ public class CandleStrategy implements Strategy<RequestDataDTO> {
         List<Candlestick> candlestickBars = requestDataDTO.candlestickBars;
         TickerPrice price = requestDataDTO.tickerPrice;
         Candlestick lastCandlestick = candlestickBars.get(candlestickBars.size() - 1);
+        BigDecimal lastPrice = new BigDecimal(requestDataDTO.tickerPrice.getPrice());
+        BigDecimal newLimit = lastPrice.multiply(new BigDecimal("0.999"));
 
         boolean haveBalanceA = balanceA.amount.compareTo(BigDecimal.ZERO) > ConfigConst.MIN_EUR_TO_TRADE;
         boolean haveBalanceB = balanceB.amount.compareTo(BigDecimal.ZERO) > ConfigConst.MIN_BTC_TO_TRADE;
@@ -65,21 +78,40 @@ public class CandleStrategy implements Strategy<RequestDataDTO> {
         boolean comeFromPick = Double.parseDouble(candlestickBars.get(candlestickBars.size() - 4).getOpen()) < (Double.parseDouble(lastCandlestick.getOpen()) * 0.98);
 
         if (haveBalanceA && actualPriceNearCloseCandle && !comeFromPick && (haveBigVolume && isRedCandle && isRedLowPrice || (haveMassiveVolume && (isRedBigCandle || isRedBigLowPrice)))) {
-            // Available to buy
-            return Collections.singletonList(
-                    NewOrder.marketBuy(
-                            symbol,
-                            balanceA.amount.multiply(new BigDecimal(price.getPrice())).toString()));
+            System.out.println("---------------------- BUY -------------------------");
+            System.out.println("Last Price: " + lastPrice.toString());
+
+            oldLimit = new BigDecimal(0);
+            lostLimitOrderId = "";
+
+            List<NewOrder> newOrders = new ArrayList<>();
+            newOrders.add(NewOrder.marketBuy(symbol, balanceA.amount.multiply(lastPrice).toString()));
+            newOrders.add(NewOrder.limitSell(symbol, TimeInForce.GTC,  balanceB.amount.divide(lastPrice, balanceA.asset.decimals, RoundingMode.DOWN).toString(), newLimit.toString()));
+            return newOrders;
 
         } else if (haveBalanceB && possibleSell) { // Sells as soon as made 0.5&
-            // Available to sell
+            System.out.println("---------------------- SELL -------------------------");
+            System.out.println("Last Price: " + lastPrice.toString());
 
+            if (0 < newLimit.compareTo(oldLimit) && !isEmpty(lostLimitOrderId)) {
+                System.out.println("New Limit: " + newLimit.toString());
+                CancelOrderResponse response = Binance.cancelOrder(symbol, Long.parseLong(lostLimitOrderId));
+                if (response.getStatus().equals(OrderStatus.CANCELED.toString())) {
+                    return Collections.singletonList(NewOrder.limitSell(symbol, TimeInForce.GTC, balanceB.amount.divide(lastPrice, balanceA.asset.decimals, RoundingMode.DOWN).toString(), newLimit.toString()));
+                }
+            }
+
+            if (isEmpty(lostLimitOrderId)){
+                System.out.println("Set Limit: " + newLimit.toString());
+                return Collections.singletonList(NewOrder.limitSell(symbol, TimeInForce.GTC, balanceB.amount.divide(lastPrice, balanceA.asset.decimals, RoundingMode.DOWN).toString(), newLimit.toString()));
+            }
+            /*
             return Collections.singletonList(
                     NewOrder.marketSell(
                             symbol,
                             balanceB.amount.divide(new BigDecimal(price.getPrice()),
                                     balanceA.asset.decimals,
-                                    RoundingMode.DOWN).toString()));
+                                    RoundingMode.DOWN).toString()));*/
         }
 
         return new ArrayList<>();
@@ -124,11 +156,13 @@ public class CandleStrategy implements Strategy<RequestDataDTO> {
             balanceB.amount = Binance.balance(account, balanceB.asset);
             spent = spent.add(toSpend);
 
+            dataProviderSleepTime.value = 3 * 1000;
+
             LogEvent logEvent = LogEvent.buy(
                     balanceB.of(quantity),
                     balanceA.of(price),
                     balanceA.of(spent),
-                    null,
+                    balanceB.of(boughtPrice()),
                     balanceA,
                     balanceB,
                     totalBalance(price)
@@ -159,12 +193,14 @@ public class CandleStrategy implements Strategy<RequestDataDTO> {
             balanceB.amount = balanceB.amount.subtract(quantity);
             spent = spent.subtract(originalCost);
 
+            dataProviderSleepTime.value = 60 * 1000;
+
             LogEvent logEvent = LogEvent.sell(
                     balanceB.of(quantity),
                     balanceA.of(price),
                     balanceA.of(toGain),
                     balanceA.of(profit),
-                    null,
+                    balanceB.of(boughtPrice()),
                     balanceA,
                     balanceB,
                     totalBalance(price)

@@ -1,5 +1,5 @@
 package com.mauriciotogneri.botcoin.mellau.basic;
-
+/*
 import com.binance.api.client.domain.OrderSide;
 import com.binance.api.client.domain.OrderStatus;
 import com.binance.api.client.domain.OrderType;
@@ -10,6 +10,7 @@ import com.binance.api.client.domain.market.Candlestick;
 import com.google.gson.JsonObject;
 import com.mauriciotogneri.botcoin.config.ConfigConst;
 import com.mauriciotogneri.botcoin.exchange.Binance;
+import com.mauriciotogneri.botcoin.json.Json;
 import com.mauriciotogneri.botcoin.mellau.basic.dto.LastPricesAverageDTO;
 import com.mauriciotogneri.botcoin.mellau.candle.dto.RequestDataDTO;
 import com.mauriciotogneri.botcoin.momo.LogEvent;
@@ -24,7 +25,7 @@ import java.util.Map.Entry;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
-/*
+
 public class CrossStrategy implements Strategy<RequestDataDTO> {
     private BigDecimal spent = BigDecimal.ZERO;
     private String lostLimitOrderId;

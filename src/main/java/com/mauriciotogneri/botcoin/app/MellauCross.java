@@ -1,23 +1,5 @@
 package com.mauriciotogneri.botcoin.app;
 
-import com.binance.api.client.domain.general.ExchangeInfo;
-import com.mauriciotogneri.botcoin.exchange.Binance;
-import com.mauriciotogneri.botcoin.exchange.BinanceCrossPriceProvider;
-import com.mauriciotogneri.botcoin.log.Log;
-import com.mauriciotogneri.botcoin.log.StatusProperties;
-import com.mauriciotogneri.botcoin.market.Market;
-import com.mauriciotogneri.botcoin.market.Symbol;
-import com.mauriciotogneri.botcoin.mellau.candle.dto.RequestDataDTO;
-import com.mauriciotogneri.botcoin.provider.DataProvider;
-import com.mauriciotogneri.botcoin.provider.Price;
-import com.mauriciotogneri.botcoin.strategy.Strategy;
-import com.mauriciotogneri.botcoin.trader.FakeTrader;
-import com.mauriciotogneri.botcoin.trader.Trader;
-import com.mauriciotogneri.botcoin.wallet.Balance;
-import com.mauriciotogneri.botcoin.wallet.Currency;
-
-import java.math.BigDecimal;
-
 public class MellauCross {
     public static void main(String[] args) {
         /*ExchangeInfo exchangeInfo = Binance.apiClient().getExchangeInfo();

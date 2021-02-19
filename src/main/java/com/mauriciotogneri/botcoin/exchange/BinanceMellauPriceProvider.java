@@ -10,13 +10,15 @@ import com.mauriciotogneri.botcoin.provider.DataProvider;
 
 import java.util.List;
 
-public class BinanceCrossPriceProvider implements DataProvider<RequestDataDTO>
+public class BinanceMellauPriceProvider implements DataProvider<RequestDataDTO>
 {
     private final String symbol;
     private final BinanceApiRestClient client;
+    private final DataProviderSleepTime dataProviderSleepTime;
 
-    public BinanceCrossPriceProvider(String symbol)
+    public BinanceMellauPriceProvider(String symbol, DataProviderSleepTime dataProviderSleepTime)
     {
+        this.dataProviderSleepTime = dataProviderSleepTime;
         this.symbol = symbol;
         this.client = Binance.apiClient();
     }
@@ -30,7 +32,7 @@ public class BinanceCrossPriceProvider implements DataProvider<RequestDataDTO>
     @Override
     public RequestDataDTO data() {
         try {
-            Thread.sleep(10000L);
+            Thread.sleep(dataProviderSleepTime.value);
         } catch (Exception e) {
             // SAD
         }
