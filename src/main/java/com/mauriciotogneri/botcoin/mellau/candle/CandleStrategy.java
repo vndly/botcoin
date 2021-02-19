@@ -2,6 +2,7 @@ package com.mauriciotogneri.botcoin.mellau.candle;
 
 import com.binance.api.client.domain.OrderSide;
 import com.binance.api.client.domain.OrderStatus;
+import com.binance.api.client.domain.account.Account;
 import com.binance.api.client.domain.account.NewOrder;
 import com.binance.api.client.domain.account.NewOrderResponse;
 import com.binance.api.client.domain.market.Candlestick;
@@ -9,10 +10,12 @@ import com.binance.api.client.domain.market.TickerPrice;
 import com.google.gson.JsonObject;
 import com.mauriciotogneri.botcoin.config.ConfigConst;
 import com.mauriciotogneri.botcoin.exchange.Binance;
+import com.mauriciotogneri.botcoin.json.Json;
+import com.mauriciotogneri.botcoin.market.Symbol;
 import com.mauriciotogneri.botcoin.mellau.candle.dto.RequestDataDTO;
 import com.mauriciotogneri.botcoin.momo.LogEvent;
 import com.mauriciotogneri.botcoin.strategy.Strategy;
-import com.mauriciotogneri.botcoin.util.Json;
+import com.mauriciotogneri.botcoin.trader.OrderSent;
 import com.mauriciotogneri.botcoin.wallet.Balance;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,8 +24,6 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 public class CandleStrategy implements Strategy<RequestDataDTO> {
     private BigDecimal spent = BigDecimal.ZERO;
@@ -31,8 +32,9 @@ public class CandleStrategy implements Strategy<RequestDataDTO> {
     private final Balance balanceB;
 
     public CandleStrategy(@NotNull Balance balanceA,
-                          @NotNull Balance balanceB) {
-        this.symbol = String.format("%s%s", balanceB.currency.symbol, balanceA.currency.symbol);
+                          @NotNull Balance balanceB,
+                          Symbol symbol) {
+        this.symbol = symbol.toString();
         this.balanceA = balanceA;
         this.balanceB = balanceB;
     }
@@ -65,32 +67,30 @@ public class CandleStrategy implements Strategy<RequestDataDTO> {
         if (haveBalanceA && actualPriceNearCloseCandle && !comeFromPick && (haveBigVolume && isRedCandle && isRedLowPrice || (haveMassiveVolume && (isRedBigCandle || isRedBigLowPrice)))) {
             // Available to buy
             return Collections.singletonList(
-                    Binance.buyMarketOrder(
+                    NewOrder.marketBuy(
                             symbol,
-                            balanceA.amount.multiply(new BigDecimal(price.getPrice()))));
+                            balanceA.amount.multiply(new BigDecimal(price.getPrice())).toString()));
 
         } else if (haveBalanceB && possibleSell) { // Sells as soon as made 0.5&
             // Available to sell
 
             return Collections.singletonList(
-                    Binance.sellMarketOrder(
+                    NewOrder.marketSell(
                             symbol,
                             balanceB.amount.divide(new BigDecimal(price.getPrice()),
-                                    balanceA.currency.decimals,
-                                    RoundingMode.DOWN)));
+                                    balanceA.asset.decimals,
+                                    RoundingMode.DOWN).toString()));
         }
 
         return new ArrayList<>();
     }
 
     @Override
-    public List<Object> update(@NotNull Map<NewOrder, NewOrderResponse> orders) {
+    public List<Object> update(@NotNull List<OrderSent> sent) {
         List<Object> result = new ArrayList<>();
 
-        for (Entry<NewOrder, NewOrderResponse> entry : orders.entrySet()) {
-            NewOrder order = entry.getKey();
-            NewOrderResponse response = entry.getValue();
-            JsonObject event = process(order, response);
+        for (OrderSent orderSent : sent) {
+            JsonObject event = process(orderSent.order, orderSent.response);
 
             result.add(event);
         }
@@ -117,16 +117,18 @@ public class CandleStrategy implements Strategy<RequestDataDTO> {
         if (response.getStatus() == OrderStatus.FILLED) {
             BigDecimal quantity = new BigDecimal(response.getExecutedQty());
             BigDecimal toSpend = new BigDecimal(response.getCummulativeQuoteQty());
-            BigDecimal price = toSpend.divide(quantity, balanceA.currency.decimals, RoundingMode.DOWN);
+            BigDecimal price = toSpend.divide(quantity, balanceA.asset.decimals, RoundingMode.DOWN);
 
+            Account account = Binance.account();
             balanceA.amount = balanceA.amount.subtract(toSpend);
-            balanceB.amount = Binance.balance(balanceB.currency.symbol);
+            balanceB.amount = Binance.balance(account, balanceB.asset);
             spent = spent.add(toSpend);
 
             LogEvent logEvent = LogEvent.buy(
                     balanceB.of(quantity),
                     balanceA.of(price),
                     balanceA.of(spent),
+                    null,
                     balanceA,
                     balanceB,
                     totalBalance(price)
@@ -148,12 +150,12 @@ public class CandleStrategy implements Strategy<RequestDataDTO> {
         if (response.getStatus() == OrderStatus.FILLED) {
             BigDecimal quantity = new BigDecimal(response.getExecutedQty());
             BigDecimal toGain = new BigDecimal(response.getCummulativeQuoteQty());
-            BigDecimal price = toGain.divide(quantity, balanceA.currency.decimals, RoundingMode.DOWN);
+            BigDecimal price = toGain.divide(quantity, balanceA.asset.decimals, RoundingMode.DOWN);
 
             BigDecimal originalCost = quantity.multiply(boughtPrice());
             BigDecimal profit = toGain.subtract(originalCost);
-
-            balanceA.amount = Binance.balance(balanceA.currency.symbol);
+             Account account = Binance.account();
+            balanceA.amount = Binance.balance(account, balanceA.asset);
             balanceB.amount = balanceB.amount.subtract(quantity);
             spent = spent.subtract(originalCost);
 
@@ -162,6 +164,7 @@ public class CandleStrategy implements Strategy<RequestDataDTO> {
                     balanceA.of(price),
                     balanceA.of(toGain),
                     balanceA.of(profit),
+                    null,
                     balanceA,
                     balanceB,
                     totalBalance(price)
@@ -176,7 +179,7 @@ public class CandleStrategy implements Strategy<RequestDataDTO> {
 
     private BigDecimal boughtPrice() {
         return (balanceB.amount.compareTo(BigDecimal.ZERO) > 0) ?
-                spent.divide(balanceB.amount, balanceA.currency.decimals, RoundingMode.DOWN) :
+                spent.divide(balanceB.amount, balanceA.asset.decimals, RoundingMode.DOWN) :
                 BigDecimal.ZERO;
     }
 

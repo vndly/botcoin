@@ -1,47 +1,105 @@
 package com.mauriciotogneri.botcoin.app;
 
-import com.binance.api.client.domain.account.NewOrder;
-import com.binance.api.client.domain.account.NewOrderResponse;
+import com.binance.api.client.domain.account.Account;
+import com.binance.api.client.domain.general.ExchangeInfo;
+import com.binance.api.client.domain.general.FilterType;
+import com.binance.api.client.domain.general.SymbolFilter;
+import com.binance.api.client.domain.general.SymbolInfo;
+import com.mauriciotogneri.botcoin.exchange.Binance;
+import com.mauriciotogneri.botcoin.exchange.BinancePriceProvider;
+import com.mauriciotogneri.botcoin.exchange.BinanceTrader;
+import com.mauriciotogneri.botcoin.log.Log;
+import com.mauriciotogneri.botcoin.log.ProfitFile;
+import com.mauriciotogneri.botcoin.log.StatusProperties;
+import com.mauriciotogneri.botcoin.market.Market;
+import com.mauriciotogneri.botcoin.market.Symbol;
+import com.mauriciotogneri.botcoin.momo.LogEvent;
+import com.mauriciotogneri.botcoin.momo.complex.ComplexStrategy;
 import com.mauriciotogneri.botcoin.provider.DataProvider;
+import com.mauriciotogneri.botcoin.provider.FilePriceProvider;
+import com.mauriciotogneri.botcoin.provider.Price;
 import com.mauriciotogneri.botcoin.strategy.Strategy;
+import com.mauriciotogneri.botcoin.trader.FakeTrader;
 import com.mauriciotogneri.botcoin.trader.Trader;
-import com.mauriciotogneri.botcoin.util.Log;
-import com.mauriciotogneri.botcoin.util.LogEntry;
+import com.mauriciotogneri.botcoin.wallet.Balance;
+import com.mauriciotogneri.botcoin.wallet.Currency;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-public class Botcoin<T>
+public class Botcoin
 {
-    private final DataProvider<T> dataProvider;
-    private final Strategy<T> strategy;
-    private final Trader trader;
-    private final Log log;
+    public static final Boolean TEST_MODE = true;
 
-    public Botcoin(DataProvider<T> dataProvider, Strategy<T> strategy, Trader trader, Log log)
+    public static void main(String[] args)
     {
-        this.dataProvider = dataProvider;
-        this.strategy = strategy;
-        this.trader = trader;
-        this.log = log;
+        for (Market<?> market : markets())
+        {
+            Thread thread = new Thread(market);
+            thread.start();
+        }
     }
 
-    public void start() throws Exception
+    @NotNull
+    private static List<Market<?>> markets()
     {
-        while (dataProvider.hasData())
-        {
-            T data = dataProvider.data();
-            List<NewOrder> orders = strategy.orders(data);
-            Map<NewOrder, NewOrderResponse> responses = trader.process(orders);
-            List<Object> events = strategy.update(responses);
+        ExchangeInfo exchangeInfo = Binance.apiClient().getExchangeInfo();
+        Account account = Binance.account();
 
-            LogEntry logEntry = new LogEntry(data, events);
-            // log.jsonFile(logEntry);
+        List<Market<?>> markets = new ArrayList<>();
+        markets.add(market(exchangeInfo, account, Currency.ADA, Currency.BTC));
+        markets.add(market(exchangeInfo, account, Currency.BNB, Currency.BTC));
+        markets.add(market(exchangeInfo, account, Currency.DOGE, Currency.BTC));
+        markets.add(market(exchangeInfo, account, Currency.DOT, Currency.BTC));
+        markets.add(market(exchangeInfo, account, Currency.EOS, Currency.BTC));
+        markets.add(market(exchangeInfo, account, Currency.ETH, Currency.BTC));
+        markets.add(market(exchangeInfo, account, Currency.GRT, Currency.BTC));
+        markets.add(market(exchangeInfo, account, Currency.LINK, Currency.BTC));
+        markets.add(market(exchangeInfo, account, Currency.LTC, Currency.BTC));
+        markets.add(market(exchangeInfo, account, Currency.TRX, Currency.BTC));
+        markets.add(market(exchangeInfo, account, Currency.VET, Currency.BTC));
+        markets.add(market(exchangeInfo, account, Currency.XLM, Currency.BTC));
+        markets.add(market(exchangeInfo, account, Currency.XMR, Currency.BTC));
+        markets.add(market(exchangeInfo, account, Currency.XRP, Currency.BTC));
+        markets.add(market(exchangeInfo, account, Currency.ZIL, Currency.BTC));
 
-            if (logEntry.hasEvents())
-            {
-                log.jsonConsole(logEntry);
-            }
-        }
+        return markets;
+    }
+
+    @NotNull
+    private static Market<Price> market(ExchangeInfo exchangeInfo, Account account, Currency currencyA, Currency currencyB)
+    {
+        Symbol symbol = new Symbol(currencyA, currencyB, exchangeInfo);
+        StatusProperties statusProperties = new StatusProperties(symbol);
+
+        SymbolInfo symbolInfo = exchangeInfo.getSymbolInfo(symbol.name);
+        SymbolFilter filter = symbolInfo.getSymbolFilter(FilterType.LOT_SIZE);
+        BigDecimal minQuantity = new BigDecimal(filter.getMinQty());
+
+        DataProvider<Price> dataProvider = TEST_MODE ?
+                new FilePriceProvider(String.format("input/prices_%s%s_ONE_MINUTE.csv", currencyA.name(), currencyB.name())) :
+                new BinancePriceProvider(symbol, 10);
+
+        Trader trader = TEST_MODE ?
+                new FakeTrader() :
+                new BinanceTrader();
+
+        Log.truncate(ProfitFile.path(symbol));
+        Log.truncate(LogEvent.balancePath(symbol));
+
+        BigDecimal balanceAssetA = Binance.balance(account, symbol.assetA);
+        Balance balanceA = new Balance(symbol.assetA, balanceAssetA);
+
+        BigDecimal balanceAssetB = Binance.balance(account, symbol.assetB);
+        Balance balanceB = new Balance(symbol.assetB, balanceAssetB);
+
+        Strategy<Price> strategy = new ComplexStrategy(symbol, balanceA, balanceB, minQuantity, statusProperties);
+
+        Log log = new Log(String.format("output/%s/logs.json", symbol.name));
+
+        return new Market<>(dataProvider, strategy, trader, log);
     }
 }

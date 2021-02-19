@@ -6,10 +6,12 @@ import com.binance.api.client.domain.account.NewOrder;
 import com.binance.api.client.domain.account.NewOrderResponse;
 import com.google.gson.JsonObject;
 import com.mauriciotogneri.botcoin.exchange.Binance;
+import com.mauriciotogneri.botcoin.market.Symbol;
 import com.mauriciotogneri.botcoin.momo.LogEvent;
 import com.mauriciotogneri.botcoin.provider.Price;
 import com.mauriciotogneri.botcoin.strategy.Strategy;
-import com.mauriciotogneri.botcoin.util.Json;
+import com.mauriciotogneri.botcoin.trader.OrderSent;
+import com.mauriciotogneri.botcoin.json.Json;
 import com.mauriciotogneri.botcoin.wallet.Balance;
 
 import org.jetbrains.annotations.NotNull;
@@ -19,19 +21,18 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 public class BasicStrategy implements Strategy<Price>
 {
     private BigDecimal spent = BigDecimal.ZERO;
-    private final String symbol;
+    private final Symbol symbol;
     private final Balance balanceA;
     private final Balance balanceB;
     private final BasicBuyStrategy buyStrategy;
     private final BasicSellStrategy sellStrategy;
 
-    public BasicStrategy(@NotNull Balance balanceA,
+    public BasicStrategy(Symbol symbol,
+                         @NotNull Balance balanceA,
                          @NotNull Balance balanceB,
                          String minPercentageDown,
                          String percentageBuyMultiplier,
@@ -41,7 +42,7 @@ public class BasicStrategy implements Strategy<Price>
                          String minTradeAmountA,
                          String minTradeAmountB)
     {
-        this.symbol = String.format("%s%s", balanceB.currency.symbol, balanceA.currency.symbol);
+        this.symbol = symbol;
         this.balanceA = balanceA;
         this.balanceB = balanceB;
         this.buyStrategy = new BasicBuyStrategy(minPercentageDown, percentageBuyMultiplier, minTradeAmountA, minTradeAmountB);
@@ -57,11 +58,11 @@ public class BasicStrategy implements Strategy<Price>
 
         if (buyAmount.compareTo(BigDecimal.ZERO) > 0)
         {
-            return Collections.singletonList(Binance.buyMarketOrder(symbol, buyAmount));
+            return Collections.singletonList(NewOrder.marketBuy(symbol.name, buyAmount.toString()));
         }
         else if (sellAmount.compareTo(BigDecimal.ZERO) > 0)
         {
-            return Collections.singletonList(Binance.sellMarketOrder(symbol, sellAmount));
+            return Collections.singletonList(NewOrder.marketSell(symbol.name, sellAmount.toString()));
         }
         else
         {
@@ -70,16 +71,13 @@ public class BasicStrategy implements Strategy<Price>
     }
 
     @Override
-    public List<Object> update(@NotNull Map<NewOrder, NewOrderResponse> orders)
+    public List<Object> update(@NotNull List<OrderSent> sent)
     {
         List<Object> result = new ArrayList<>();
 
-        for (Entry<NewOrder, NewOrderResponse> entry : orders.entrySet())
+        for (OrderSent orderSent : sent)
         {
-            NewOrder order = entry.getKey();
-            NewOrderResponse response = entry.getValue();
-            JsonObject event = process(order, response);
-
+            JsonObject event = process(orderSent.order, orderSent.response);
             result.add(event);
         }
 
@@ -113,16 +111,17 @@ public class BasicStrategy implements Strategy<Price>
         {
             BigDecimal quantity = new BigDecimal(response.getExecutedQty());
             BigDecimal toSpend = new BigDecimal(response.getCummulativeQuoteQty());
-            BigDecimal price = toSpend.divide(quantity, balanceA.currency.decimals, RoundingMode.DOWN);
+            BigDecimal price = toSpend.divide(quantity, balanceA.asset.decimals, RoundingMode.DOWN);
 
             balanceA.amount = balanceA.amount.subtract(toSpend);
-            balanceB.amount = Binance.balance(balanceB.currency.symbol);
+            balanceB.amount = Binance.balance(Binance.account(), balanceB);
             spent = spent.add(toSpend);
 
             LogEvent logEvent = LogEvent.buy(
                     balanceB.of(quantity),
                     balanceA.of(price),
                     balanceA.of(spent),
+                    balanceA.of(boughtPrice()),
                     balanceA,
                     balanceB,
                     totalBalance(price)
@@ -148,12 +147,12 @@ public class BasicStrategy implements Strategy<Price>
         {
             BigDecimal quantity = new BigDecimal(response.getExecutedQty());
             BigDecimal toGain = new BigDecimal(response.getCummulativeQuoteQty());
-            BigDecimal price = toGain.divide(quantity, balanceA.currency.decimals, RoundingMode.DOWN);
+            BigDecimal price = toGain.divide(quantity, balanceA.asset.decimals, RoundingMode.DOWN);
 
             BigDecimal originalCost = quantity.multiply(boughtPrice());
             BigDecimal profit = toGain.subtract(originalCost);
 
-            balanceA.amount = Binance.balance(balanceA.currency.symbol);
+            balanceA.amount = Binance.balance(Binance.account(), balanceA);
             balanceB.amount = balanceB.amount.subtract(quantity);
             spent = spent.subtract(originalCost);
 
@@ -162,6 +161,7 @@ public class BasicStrategy implements Strategy<Price>
                     balanceA.of(price),
                     balanceA.of(toGain),
                     balanceA.of(profit),
+                    balanceA.of(boughtPrice()),
                     balanceA,
                     balanceB,
                     totalBalance(price)
@@ -179,7 +179,7 @@ public class BasicStrategy implements Strategy<Price>
     private BigDecimal boughtPrice()
     {
         return (balanceB.amount.compareTo(BigDecimal.ZERO) > 0) ?
-                spent.divide(balanceB.amount, balanceA.currency.decimals, RoundingMode.DOWN) :
+                spent.divide(balanceB.amount, balanceA.asset.decimals, RoundingMode.DOWN) :
                 BigDecimal.ZERO;
     }
 

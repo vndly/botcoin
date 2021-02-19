@@ -14,7 +14,6 @@ import com.mauriciotogneri.botcoin.mellau.basic.dto.LastPricesAverageDTO;
 import com.mauriciotogneri.botcoin.mellau.candle.dto.RequestDataDTO;
 import com.mauriciotogneri.botcoin.momo.LogEvent;
 import com.mauriciotogneri.botcoin.strategy.Strategy;
-import com.mauriciotogneri.botcoin.util.Json;
 import com.mauriciotogneri.botcoin.wallet.Balance;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,6 +24,7 @@ import java.util.Map.Entry;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
+/*
 public class CrossStrategy implements Strategy<RequestDataDTO> {
     private BigDecimal spent = BigDecimal.ZERO;
     private String lostLimitOrderId;
@@ -32,7 +32,6 @@ public class CrossStrategy implements Strategy<RequestDataDTO> {
     private final String symbol;
     private final Balance balanceA;
     private final Balance balanceB;
-
     public CrossStrategy(@NotNull Balance balanceA,
                          @NotNull Balance balanceB) {
         this.symbol = String.format("%s%s", balanceB.currency.symbol, balanceA.currency.symbol);
@@ -199,4 +198,4 @@ public class CrossStrategy implements Strategy<RequestDataDTO> {
     private Balance totalBalance(BigDecimal price) {
         return balanceA.of(balanceA.amount.add(balanceB.amount.multiply(price)));
     }
-}
+}*/

@@ -9,8 +9,6 @@ import com.mauriciotogneri.botcoin.provider.DataProvider;
 import com.mauriciotogneri.botcoin.provider.Price;
 import com.mauriciotogneri.botcoin.strategy.Strategy;
 import com.mauriciotogneri.botcoin.trader.Trader;
-import com.mauriciotogneri.botcoin.util.Json;
-import com.mauriciotogneri.botcoin.util.Log;
 import com.mauriciotogneri.botcoin.wallet.Balance;
 import com.mauriciotogneri.botcoin.wallet.Currency;
 
@@ -18,13 +16,13 @@ public class Tester
 {
     public static void main(String[] args) throws Exception
     {
-        runBot();
+        //runBot();
         //testApi();
     }
 
     private static void testApi()
     {
-        BinanceApiRestClient client = Binance.apiClient();
+        /*BinanceApiRestClient client = Binance.apiClient();
 
         //Account account = client.getAccount();
         //print(account);
@@ -35,14 +33,14 @@ public class Tester
         //CancelOrderResponse cancelOrderResponse = client.cancelOrder(new CancelOrderRequest("BTCEUR", 307513170L));
         //print(cancelOrderResponse);
 
-        /*NewOrder order = new NewOrder(
+        NewOrder order = new NewOrder(
                 "BTCEUR",
                 OrderSide.BUY,
                 OrderType.MARKET,
                 null,
                 "0.0001", // min 0.0005 BTC
                 "31050.00"
-        );*/
+        );
         //NewOrder order = Binance.sellMarketOrder("BTCEUR", new BigDecimal("0.0005"));
         //NewOrderResponse newOrderResponse = client.newOrder(order);
         //print(newOrderResponse);
@@ -61,7 +59,7 @@ public class Tester
 
     // 93.61401233 EUR
     // 0.00000016 BTC
-    private static void runBot() throws Exception
+    private static void runBot() throws Exception*
     {
         String minEurToTrade = "10";
         String minBtcToTrade = "0.0005";
@@ -94,6 +92,6 @@ public class Tester
         Log log = new Log("output/logs.json");
 
         Botcoin<Price> botcoin = new Botcoin<>(dataProvider, strategy, trader, log);
-        botcoin.start();
+        botcoin.start();*/
     }
 }

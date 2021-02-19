@@ -3,14 +3,15 @@ package com.mauriciotogneri.botcoin.exchange;
 import com.binance.api.client.BinanceApiRestClient;
 import com.binance.api.client.domain.account.NewOrder;
 import com.binance.api.client.domain.account.NewOrderResponse;
+import com.mauriciotogneri.botcoin.json.Json;
+import com.mauriciotogneri.botcoin.log.Log;
+import com.mauriciotogneri.botcoin.trader.OrderSent;
 import com.mauriciotogneri.botcoin.trader.Trader;
-import com.mauriciotogneri.botcoin.util.Json;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class BinanceTrader implements Trader
 {
@@ -22,18 +23,18 @@ public class BinanceTrader implements Trader
     }
 
     @Override
-    public Map<NewOrder, NewOrderResponse> process(@NotNull List<NewOrder> orders)
+    public List<OrderSent> process(@NotNull List<NewOrder> orders)
     {
-        Map<NewOrder, NewOrderResponse> responses = new HashMap<>();
+        List<OrderSent> sent = new ArrayList<>();
 
         for (NewOrder order : orders)
         {
-            System.out.printf("Attempt to execute order: %s%n", Json.toJsonString(order));
+            Log.console("Attempt to execute order: %s", Json.toJsonString(order));
 
             NewOrderResponse response = client.newOrder(order);
-            responses.put(order, response);
+            sent.add(new OrderSent(order, response));
         }
 
-        return responses;
+        return sent;
     }
 }

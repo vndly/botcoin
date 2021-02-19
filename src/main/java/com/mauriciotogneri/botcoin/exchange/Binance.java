@@ -14,10 +14,13 @@ import com.binance.api.client.domain.account.request.CancelOrderRequest;
 import com.binance.api.client.domain.account.request.CancelOrderResponse;
 import com.binance.api.client.domain.event.OrderTradeUpdateEvent;
 import com.binance.api.client.domain.event.UserDataUpdateEvent.UserDataUpdateEventType;
+import com.mauriciotogneri.botcoin.wallet.Asset;
+import com.mauriciotogneri.botcoin.wallet.Balance;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class Binance
 {
@@ -53,15 +56,15 @@ public class Binance
     }
 
     @NotNull
-    public static NewOrder buyMarketOrder(String symbol, @NotNull BigDecimal quantity)
+    public static Account account()
     {
-        return marketOrder(OrderSide.BUY, symbol, quantity);
+        return apiClient().getAccount();
     }
 
     @NotNull
-    public static NewOrder sellMarketOrder(String symbol, @NotNull BigDecimal quantity)
+    public static BigDecimal balance(@NotNull Account account, @NotNull Balance balance)
     {
-        return marketOrder(OrderSide.SELL, symbol, quantity);
+        return balance(account, balance.asset);
     }
 
     @NotNull
@@ -87,11 +90,10 @@ public class Binance
     }
 
     @NotNull
-    public static BigDecimal balance(String asset)
+    public static BigDecimal balance(@NotNull Account account, @NotNull Asset asset)
     {
-        Account account = apiClient().getAccount();
-        AssetBalance assetBalance = account.getAssetBalance(asset);
+        AssetBalance assetBalance = account.getAssetBalance(asset.currency.name());
 
-        return new BigDecimal(assetBalance.getFree());
+        return new BigDecimal(assetBalance.getFree()).setScale(asset.decimals, RoundingMode.DOWN);
     }
 }

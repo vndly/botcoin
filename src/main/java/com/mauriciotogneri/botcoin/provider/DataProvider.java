@@ -4,5 +4,5 @@ public interface DataProvider<T>
 {
     boolean hasData();
 
-    T data() throws Exception;
+    T data();
 }

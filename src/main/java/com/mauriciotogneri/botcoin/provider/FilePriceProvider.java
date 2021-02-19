@@ -14,43 +14,50 @@ public class FilePriceProvider implements DataProvider<Price>
     private int index = 0;
     private final Price[] prices;
 
-    public FilePriceProvider(String path) throws Exception
+    public FilePriceProvider(String path)
     {
         this.prices = load(path);
     }
 
     @NotNull
-    private Price[] load(String path) throws Exception
+    private Price[] load(String path)
     {
-        List<Price> list = new ArrayList<>();
-
-        File file = new File(path);
-        FileReader fileReader = new FileReader(file);
-        BufferedReader bufferedReader = new BufferedReader(fileReader);
-        String line;
-
-        while ((line = bufferedReader.readLine()) != null)
+        try
         {
-            String[] parts = line.split(";");
+            List<Price> list = new ArrayList<>();
 
-            if (parts.length > 1)
+            File file = new File(path);
+            FileReader fileReader = new FileReader(file);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            String line;
+
+            while ((line = bufferedReader.readLine()) != null)
             {
-                long timestamp = Long.parseLong(parts[0]);
-                BigDecimal price = new BigDecimal(parts[1]);
-                list.add(new Price(timestamp, price));
+                String[] parts = line.split(";");
+
+                if (parts.length > 1)
+                {
+                    long timestamp = Long.parseLong(parts[0]);
+                    BigDecimal price = new BigDecimal(parts[1]);
+                    list.add(new Price(timestamp, price));
+                }
             }
+
+            fileReader.close();
+
+            Price[] result = new Price[list.size()];
+
+            for (int i = 0; i < list.size(); i++)
+            {
+                result[i] = list.get(i);
+            }
+
+            return result;
         }
-
-        fileReader.close();
-
-        Price[] result = new Price[list.size()];
-
-        for (int i = 0; i < list.size(); i++)
+        catch (Exception e)
         {
-            result[i] = list.get(i);
+            throw new RuntimeException(e);
         }
-
-        return result;
     }
 
     public void reset()

@@ -28,8 +28,7 @@ public class BinanceCandlePriceProvider implements DataProvider<RequestDataDTO>
     }
 
     @Override
-    public RequestDataDTO data() throws Exception
-    {
+    public RequestDataDTO data() {
         Long now = System.currentTimeMillis();
         Long xMinAgo = now - (ConfigConst.NUMBER_OF_CANDLES_TO_LOOK_BACK * 60000);
         List<Candlestick> candlestickBars = client.getCandlestickBars(symbol, CandlestickInterval.ONE_MINUTE, ConfigConst.NUMBER_OF_CANDLES_TO_LOOK_BACK, xMinAgo, now);

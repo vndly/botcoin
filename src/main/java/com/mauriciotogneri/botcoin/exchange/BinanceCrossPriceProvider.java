@@ -28,8 +28,13 @@ public class BinanceCrossPriceProvider implements DataProvider<RequestDataDTO>
     }
 
     @Override
-    public RequestDataDTO data() throws InterruptedException {
-        Thread.sleep(10000L);
+    public RequestDataDTO data() {
+        try {
+            Thread.sleep(10000L);
+        } catch (Exception e) {
+            // SAD
+        }
+
         Long now = System.currentTimeMillis();
         Long xMinAgo = now - ((ConfigConst.NUMBER_FOR_LONG_AVERAGE + 5) * 60000);
         List<Candlestick> candlestickBars = client.getCandlestickBars(symbol, CandlestickInterval.ONE_MINUTE, ConfigConst.NUMBER_FOR_LONG_AVERAGE, xMinAgo, now);
