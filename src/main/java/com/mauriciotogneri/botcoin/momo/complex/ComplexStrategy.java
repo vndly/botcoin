@@ -39,8 +39,7 @@ public class ComplexStrategy implements Strategy<Price>
     private final StatusFile statusFile;
 
     private BigDecimal allTimeHigh = BigDecimal.ZERO;
-    private BigDecimal boughtPrice;
-    private State state;
+    private BigDecimal spent;
 
     public ComplexStrategy(@NotNull Symbol symbol,
                            Balance balanceA,
@@ -55,8 +54,7 @@ public class ComplexStrategy implements Strategy<Price>
         this.buyStrategy = new ComplexBuyStrategy(minQuantity);
         this.sellStrategy = new ComplexSellStrategy(minQuantity);
         this.configProperties = configProperties;
-        this.boughtPrice = configProperties.boughtPrice;
-        this.state = configProperties.state;
+        this.spent = configProperties.spent;
         this.profitFile = new ProfitFile(symbol);
         this.statusFile = new StatusFile(symbol);
     }
@@ -69,14 +67,16 @@ public class ComplexStrategy implements Strategy<Price>
 
         if (configProperties.isRunning())
         {
-            if (state == State.BUYING)
+            if (price.value.compareTo(allTimeHigh) >= 0)
             {
-                if (price.value.compareTo(allTimeHigh) >= 0)
-                {
-                    allTimeHigh = price.value;
-                    Log.console("[%s] New all time high: %s", symbol.name, allTimeHigh);
-                }
+                allTimeHigh = price.value;
+                Log.console("[%s] New all time high: %s", symbol.name, allTimeHigh);
+            }
 
+            BigDecimal boughtPrice = boughtPrice();
+
+            if ((spent.compareTo(BigDecimal.ZERO) == 0) || (price.value.compareTo(boughtPrice) < 0))
+            {
                 statusFile.save(allTimeHigh,
                                 boughtPrice,
                                 price.value,
@@ -91,7 +91,7 @@ public class ComplexStrategy implements Strategy<Price>
                     result = Collections.singletonList(NewOrder.marketBuy(symbol.name, amount.toString()));
                 }
             }
-            else if (state == State.SELLING)
+            else
             {
                 statusFile.save(allTimeHigh,
                                 boughtPrice,
@@ -153,8 +153,6 @@ public class ComplexStrategy implements Strategy<Price>
     {
         if (response.getStatus() == OrderStatus.FILLED)
         {
-            state = State.SELLING;
-
             BigDecimal quantity = new BigDecimal(response.getExecutedQty());
             BigDecimal toSpend = new BigDecimal(response.getCummulativeQuoteQty());
             BigDecimal price = toSpend.divide(quantity, balanceA.asset.decimals, RoundingMode.DOWN);
@@ -171,13 +169,13 @@ public class ComplexStrategy implements Strategy<Price>
                 balanceB.amount = Binance.balance(account, balanceB);
             }
 
-            boughtPrice = price;
+            spent = spent.add(toSpend);
 
             LogEvent logEvent = LogEvent.buy(
                     balanceA.of(quantity),
                     balanceB.of(price),
                     balanceB.of(toSpend),
-                    balanceB.of(boughtPrice),
+                    balanceB.of(boughtPrice()),
                     balanceA,
                     balanceB,
                     totalBalance(price)
@@ -198,14 +196,14 @@ public class ComplexStrategy implements Strategy<Price>
     {
         if (response.getStatus() == OrderStatus.FILLED)
         {
-            state = State.BUYING;
             allTimeHigh = BigDecimal.ZERO;
+            spent = BigDecimal.ZERO;
 
             BigDecimal quantity = new BigDecimal(response.getExecutedQty());
             BigDecimal toGain = new BigDecimal(response.getCummulativeQuoteQty());
             BigDecimal price = toGain.divide(quantity, balanceA.asset.decimals, RoundingMode.DOWN);
 
-            BigDecimal originalCost = quantity.multiply(boughtPrice);
+            BigDecimal originalCost = quantity.multiply(boughtPrice());
             BigDecimal profit = toGain.subtract(originalCost);
 
             if (Botcoin.TEST_MODE)
@@ -224,7 +222,7 @@ public class ComplexStrategy implements Strategy<Price>
 
             if (configProperties.isShutdown())
             {
-                configProperties.off();
+                configProperties.stop();
             }
 
             LogEvent logEvent = LogEvent.sell(
@@ -232,7 +230,7 @@ public class ComplexStrategy implements Strategy<Price>
                     balanceB.of(price),
                     balanceB.of(toGain),
                     balanceB.of(profit),
-                    balanceB.of(boughtPrice),
+                    balanceB.of(boughtPrice()),
                     balanceA,
                     balanceB,
                     totalBalance(price)
@@ -248,14 +246,15 @@ public class ComplexStrategy implements Strategy<Price>
         }
     }
 
+    private BigDecimal boughtPrice()
+    {
+        return (balanceA.amount.compareTo(BigDecimal.ZERO) > 0) ?
+                spent.divide(balanceA.amount, balanceB.asset.decimals, RoundingMode.DOWN) :
+                BigDecimal.ZERO;
+    }
+
     private Balance totalBalance(BigDecimal price)
     {
         return balanceB.of(balanceB.amount.add(balanceB.amount.multiply(price)).setScale(balanceB.asset.decimals, RoundingMode.DOWN));
-    }
-
-    public enum State
-    {
-        BUYING,
-        SELLING
     }
 }
