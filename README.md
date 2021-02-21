@@ -34,12 +34,13 @@ balanceA=0.00696900 ETH
 balanceB=0.00181191 BTC
 total=0.00187904 BTC
 ```
-
-* price.properties:
+* status.properties:
 ```properties
-state=SELLING
-allTimeHigh=0.00000000
-boughtPrice=0.00001981
-currentPrice=0.00001879
-percentage=-5.14%
+allTimeHigh=0.03473350
+boughtPrice=0.03407800
+currentPrice=0.03194200
+percentage=-6.26%
+balanceA=2.97700000 ADA
+balanceB=0.29785479 BTC
+timestamp=1613252078103
 ```

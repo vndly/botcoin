@@ -77,11 +77,12 @@ public class ComplexStrategy implements Strategy<Price>
                     Log.console("[%s] New all time high: %s", symbol.name, allTimeHigh);
                 }
 
-                priceFile.save(state,
-                               allTimeHigh,
+                priceFile.save(allTimeHigh,
                                boughtPrice,
                                price.value,
-                               BigDecimal.ONE.subtract(price.value.divide(allTimeHigh, 10, RoundingMode.DOWN)));
+                               BigDecimal.ONE.subtract(price.value.divide(allTimeHigh, 10, RoundingMode.DOWN)),
+                               balanceA,
+                               balanceB);
 
                 BigDecimal amount = buyStrategy.amount(symbol, price.value, allTimeHigh, balanceA, balanceB);
 
@@ -92,11 +93,12 @@ public class ComplexStrategy implements Strategy<Price>
             }
             else if (state == State.SELLING)
             {
-                priceFile.save(state,
-                               allTimeHigh,
+                priceFile.save(allTimeHigh,
                                boughtPrice,
                                price.value,
-                               price.value.divide(boughtPrice, 10, RoundingMode.DOWN).subtract(BigDecimal.ONE));
+                               price.value.divide(boughtPrice, 10, RoundingMode.DOWN).subtract(BigDecimal.ONE),
+                               balanceA,
+                               balanceB);
 
                 BigDecimal amount = sellStrategy.amount(symbol, price.value, boughtPrice, balanceA);
 

@@ -1,7 +1,7 @@
 package com.mauriciotogneri.botcoin.log;
 
 import com.mauriciotogneri.botcoin.market.Symbol;
-import com.mauriciotogneri.botcoin.momo.complex.ComplexStrategy.State;
+import com.mauriciotogneri.botcoin.wallet.Balance;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -14,17 +14,17 @@ public class PriceFile
 
     public PriceFile(@NotNull Symbol symbol)
     {
-        this.path = String.format("output/%s/price.properties", symbol.name);
+        this.path = String.format("output/%s/status.properties", symbol.name);
     }
 
-    public void save(@NotNull State state,
-                     @NotNull BigDecimal allTimeHigh,
+    public void save(@NotNull BigDecimal allTimeHigh,
                      @NotNull BigDecimal boughtPrice,
                      @NotNull BigDecimal currentPrice,
-                     @NotNull BigDecimal percentage)
+                     @NotNull BigDecimal percentage,
+                     @NotNull Balance balanceA,
+                     @NotNull Balance balanceB)
     {
         StringBuilder builder = new StringBuilder();
-        builder.append(String.format("state=%s%n", state.name()));
         builder.append(String.format("allTimeHigh=%s%n", allTimeHigh.setScale(8, RoundingMode.DOWN).toString()));
         builder.append(String.format("boughtPrice=%s%n", boughtPrice.toString()));
         builder.append(String.format("currentPrice=%s%n", currentPrice.toString()));
@@ -40,6 +40,8 @@ public class PriceFile
             builder.append(String.format("percentage=%s%%%n", percentageString));
         }
 
+        builder.append(String.format("balanceA=%s%n", balanceA.toString()));
+        builder.append(String.format("balanceB=%s%n", balanceB.toString()));
         builder.append(String.format("timestamp=%s", System.currentTimeMillis()));
 
         Log log = new Log(path);
