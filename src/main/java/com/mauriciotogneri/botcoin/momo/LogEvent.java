@@ -45,16 +45,16 @@ public class LogEvent
     public void log(@NotNull Symbol symbol)
     {
         Log balanceLog = new Log(balancePath(symbol));
-        balanceLog.file(properties());
+        balanceLog.file(lastOperationProperties());
     }
 
     public static String balancePath(@NotNull Symbol symbol)
     {
-        return String.format("output/%s/balance.properties", symbol.name);
+        return String.format("output/%s/last_operation.properties", symbol.name);
     }
 
     @NotNull
-    private String properties()
+    private String lastOperationProperties()
     {
         StringBuilder builder = new StringBuilder();
         builder.append(String.format("type=%s%n", type));
