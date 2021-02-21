@@ -30,7 +30,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-// Logs.json opens chart
 public class Botcoin
 {
     public static final Boolean TEST_MODE = true;
