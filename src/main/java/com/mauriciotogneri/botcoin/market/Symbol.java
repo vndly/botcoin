@@ -46,4 +46,10 @@ public class Symbol
 
         return result;
     }
+
+    @Override
+    public String toString()
+    {
+        return name;
+    }
 }

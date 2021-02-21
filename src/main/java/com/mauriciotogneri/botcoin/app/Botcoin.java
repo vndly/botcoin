@@ -8,9 +8,9 @@ import com.binance.api.client.domain.general.SymbolInfo;
 import com.mauriciotogneri.botcoin.exchange.Binance;
 import com.mauriciotogneri.botcoin.exchange.BinancePriceProvider;
 import com.mauriciotogneri.botcoin.exchange.BinanceTrader;
+import com.mauriciotogneri.botcoin.log.ConfigProperties;
 import com.mauriciotogneri.botcoin.log.Log;
 import com.mauriciotogneri.botcoin.log.ProfitFile;
-import com.mauriciotogneri.botcoin.log.ConfigProperties;
 import com.mauriciotogneri.botcoin.market.Market;
 import com.mauriciotogneri.botcoin.market.Symbol;
 import com.mauriciotogneri.botcoin.momo.LogEvent;
@@ -31,19 +31,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 // Logs.json opens chart
-// Launch thread apart every second
 // Balance global
-// Symbol toString()
 public class Botcoin
 {
     public static final Boolean TEST_MODE = true;
+    private static final Integer FREQUENCY = 10; // in seconds
 
     public static void main(String[] args)
     {
-        for (Market<?> market : markets())
+        List<Market<?>> markets = markets();
+        int sleepTime = (1000 * FREQUENCY) / markets.size();
+
+        for (Market<?> market : markets)
         {
             Thread thread = new Thread(market);
             thread.start();
+
+            try
+            {
+                Thread.sleep(sleepTime);
+            }
+            catch (Exception e)
+            {
+                // ignore
+            }
         }
     }
 
@@ -54,13 +65,13 @@ public class Botcoin
         Account account = Binance.account();
 
         List<Market<?>> markets = new ArrayList<>();
-        markets.add(market(exchangeInfo, account, Currency.ADA, Currency.BTC));
+        /*markets.add(market(exchangeInfo, account, Currency.ADA, Currency.BTC));
         markets.add(market(exchangeInfo, account, Currency.BNB, Currency.BTC));
         markets.add(market(exchangeInfo, account, Currency.DOGE, Currency.BTC));
         markets.add(market(exchangeInfo, account, Currency.DOT, Currency.BTC));
-        markets.add(market(exchangeInfo, account, Currency.EOS, Currency.BTC));
+        markets.add(market(exchangeInfo, account, Currency.EOS, Currency.BTC));*/
         markets.add(market(exchangeInfo, account, Currency.ETH, Currency.BTC));
-        markets.add(market(exchangeInfo, account, Currency.GRT, Currency.BTC));
+        /*markets.add(market(exchangeInfo, account, Currency.GRT, Currency.BTC));
         markets.add(market(exchangeInfo, account, Currency.LINK, Currency.BTC));
         markets.add(market(exchangeInfo, account, Currency.LTC, Currency.BTC));
         markets.add(market(exchangeInfo, account, Currency.TRX, Currency.BTC));
@@ -68,7 +79,7 @@ public class Botcoin
         markets.add(market(exchangeInfo, account, Currency.XLM, Currency.BTC));
         markets.add(market(exchangeInfo, account, Currency.XMR, Currency.BTC));
         markets.add(market(exchangeInfo, account, Currency.XRP, Currency.BTC));
-        markets.add(market(exchangeInfo, account, Currency.ZIL, Currency.BTC));
+        markets.add(market(exchangeInfo, account, Currency.ZIL, Currency.BTC));*/
 
         return markets;
     }
@@ -85,7 +96,7 @@ public class Botcoin
 
         DataProvider<Price> dataProvider = TEST_MODE ?
                 new FilePriceProvider(String.format("input/prices_%s%s_ONE_MINUTE.csv", currencyA.name(), currencyB.name())) :
-                new BinancePriceProvider(symbol, 10);
+                new BinancePriceProvider(symbol, FREQUENCY);
 
         Trader trader = TEST_MODE ?
                 new FakeTrader() :
