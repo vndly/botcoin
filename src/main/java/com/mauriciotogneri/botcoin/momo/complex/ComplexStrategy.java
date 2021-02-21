@@ -8,7 +8,7 @@ import com.binance.api.client.domain.account.NewOrderResponse;
 import com.mauriciotogneri.botcoin.app.Botcoin;
 import com.mauriciotogneri.botcoin.exchange.Binance;
 import com.mauriciotogneri.botcoin.log.Log;
-import com.mauriciotogneri.botcoin.log.PriceFile;
+import com.mauriciotogneri.botcoin.log.StatusFile;
 import com.mauriciotogneri.botcoin.log.ProfitFile;
 import com.mauriciotogneri.botcoin.log.ConfigProperties;
 import com.mauriciotogneri.botcoin.market.Symbol;
@@ -36,7 +36,7 @@ public class ComplexStrategy implements Strategy<Price>
     private final ComplexSellStrategy sellStrategy;
     private final ConfigProperties configProperties;
     private final ProfitFile profitFile;
-    private final PriceFile priceFile;
+    private final StatusFile statusFile;
 
     private BigDecimal allTimeHigh = BigDecimal.ZERO;
     private BigDecimal boughtPrice;
@@ -58,7 +58,7 @@ public class ComplexStrategy implements Strategy<Price>
         this.boughtPrice = configProperties.boughtPrice;
         this.state = configProperties.state;
         this.profitFile = new ProfitFile(symbol);
-        this.priceFile = new PriceFile(symbol);
+        this.statusFile = new StatusFile(symbol);
     }
 
     @Override
@@ -77,12 +77,12 @@ public class ComplexStrategy implements Strategy<Price>
                     Log.console("[%s] New all time high: %s", symbol.name, allTimeHigh);
                 }
 
-                priceFile.save(allTimeHigh,
-                               boughtPrice,
-                               price.value,
-                               BigDecimal.ONE.subtract(price.value.divide(allTimeHigh, 10, RoundingMode.DOWN)),
-                               balanceA,
-                               balanceB);
+                statusFile.save(allTimeHigh,
+                                boughtPrice,
+                                price.value,
+                                BigDecimal.ONE.subtract(price.value.divide(allTimeHigh, 10, RoundingMode.DOWN)),
+                                balanceA,
+                                balanceB);
 
                 BigDecimal amount = buyStrategy.amount(symbol, price.value, allTimeHigh, balanceA, balanceB);
 
@@ -93,12 +93,12 @@ public class ComplexStrategy implements Strategy<Price>
             }
             else if (state == State.SELLING)
             {
-                priceFile.save(allTimeHigh,
-                               boughtPrice,
-                               price.value,
-                               price.value.divide(boughtPrice, 10, RoundingMode.DOWN).subtract(BigDecimal.ONE),
-                               balanceA,
-                               balanceB);
+                statusFile.save(allTimeHigh,
+                                boughtPrice,
+                                price.value,
+                                price.value.divide(boughtPrice, 10, RoundingMode.DOWN).subtract(BigDecimal.ONE),
+                                balanceA,
+                                balanceB);
 
                 BigDecimal amount = sellStrategy.amount(symbol, price.value, boughtPrice, balanceA);
 

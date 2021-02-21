@@ -8,11 +8,11 @@ import org.jetbrains.annotations.NotNull;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-public class PriceFile
+public class StatusFile
 {
     private final String path;
 
-    public PriceFile(@NotNull Symbol symbol)
+    public StatusFile(@NotNull Symbol symbol)
     {
         this.path = String.format("output/%s/status.properties", symbol.name);
     }
@@ -40,8 +40,8 @@ public class PriceFile
             builder.append(String.format("percentage=%s%%%n", percentageString));
         }
 
-        builder.append(String.format("balanceA=%s%n", balanceA.toString()));
-        builder.append(String.format("balanceB=%s%n", balanceB.toString()));
+        builder.append(balanceA.property("balanceA"));
+        builder.append(balanceB.property("balanceB"));
         builder.append(String.format("timestamp=%s", System.currentTimeMillis()));
 
         Log log = new Log(path);
