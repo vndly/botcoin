@@ -33,7 +33,7 @@ import java.util.List;
 // Logs.json opens chart
 public class Botcoin
 {
-    public static final Boolean TEST_MODE = false;
+    public static final Boolean TEST_MODE = true;
     private static final Integer FREQUENCY = 10; // in seconds
 
     public static void main(String[] args)
