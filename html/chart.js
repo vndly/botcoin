@@ -30,8 +30,8 @@ function priceHistory(json)
 
     for (var index in json)
     {
-        var element = json[index]
-        list.push([element.timestamp, element.price])
+        var data = json[index].data
+        list.push([data.timestamp, data.value])
     }
 
     return list
@@ -44,15 +44,18 @@ function eventHistory(json, type)
 
     for (var index in json)
     {
-        var element = json[index]
+        var data = json[index].data
+        var events = json[index].events
 
-        if (element[type])
+        if (events && events[0].custom && (events[0].custom.type === type))
         {
+            var custom = events[0].custom
+
 	        list.push({
-	            x: element.timestamp,
-	            y: element.price,
+	            x: data.timestamp,
+	            y: data.value,
 	            title: type.toUpperCase() + ': ' + counter++,
-	            text: eventSummary(element)
+	            text: eventSummary(custom)
 	        })
         }
     }
@@ -60,19 +63,21 @@ function eventHistory(json, type)
     return list
 }
 
-function eventSummary(json)
+function eventSummary(data)
 {
-	var data = json.buy || json.sell
 	var result = ''
 
-	for (const [key, value] of Object.entries(data))
+	for (var [key, value] of Object.entries(data))
 	{
-		if (result !== '')
+		if (key !== 'type')
 		{
-			result += '<br/>'
-		}
+			if (result !== '')
+			{
+				result += '<br/>'
+			}
 
-        result += `${key}: ${value.amount} ${value.currency}`
+	        result += `${key}: ${value.amount} ${value.asset}`
+        }
     }
 
 	return result
