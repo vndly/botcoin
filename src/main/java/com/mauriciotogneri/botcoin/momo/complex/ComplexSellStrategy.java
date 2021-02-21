@@ -23,13 +23,13 @@ public class ComplexSellStrategy
     public BigDecimal amount(Symbol symbol,
                              @NotNull BigDecimal price,
                              BigDecimal boughtPrice,
+                             BigDecimal percentageUp,
                              Balance balanceA)
     {
         BigDecimal result = BigDecimal.ZERO;
 
         if ((price.compareTo(boughtPrice) > 0) && (boughtPrice.compareTo(BigDecimal.ZERO) > 0))
         {
-            BigDecimal percentageUp = price.divide(boughtPrice, 10, RoundingMode.DOWN).subtract(BigDecimal.ONE);
             Log.console("[%s] Trying to sell at: %s/%s (+%s%%)", symbol.name, price, boughtPrice, percentageUp.multiply(new BigDecimal("100")).setScale(2, RoundingMode.DOWN).toString());
 
             if (percentageUp.compareTo(MIN_PERCENTAGE_UP) >= 0)

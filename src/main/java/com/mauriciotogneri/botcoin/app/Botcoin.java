@@ -8,7 +8,7 @@ import com.binance.api.client.domain.general.SymbolInfo;
 import com.mauriciotogneri.botcoin.exchange.Binance;
 import com.mauriciotogneri.botcoin.exchange.BinancePriceProvider;
 import com.mauriciotogneri.botcoin.exchange.BinanceTrader;
-import com.mauriciotogneri.botcoin.log.ConfigProperties;
+import com.mauriciotogneri.botcoin.log.ConfigFile;
 import com.mauriciotogneri.botcoin.log.Log;
 import com.mauriciotogneri.botcoin.log.ProfitFile;
 import com.mauriciotogneri.botcoin.market.Market;
@@ -88,7 +88,7 @@ public class Botcoin
     private static Market<Price> market(ExchangeInfo exchangeInfo, Account account, Currency currencyA, Currency currencyB)
     {
         Symbol symbol = new Symbol(currencyA, currencyB, exchangeInfo);
-        ConfigProperties configProperties = new ConfigProperties(symbol);
+        ConfigFile configFile = new ConfigFile(symbol);
 
         SymbolInfo symbolInfo = exchangeInfo.getSymbolInfo(symbol.name);
         SymbolFilter filter = symbolInfo.getSymbolFilter(FilterType.LOT_SIZE);
@@ -111,7 +111,7 @@ public class Botcoin
         BigDecimal balanceAssetB = Binance.balance(account, symbol.assetB);
         Balance balanceB = new Balance(symbol.assetB, balanceAssetB);
 
-        Strategy<Price> strategy = new ComplexStrategy(symbol, balanceA, balanceB, minQuantity, configProperties);
+        Strategy<Price> strategy = new ComplexStrategy(symbol, balanceA, balanceB, minQuantity, configFile);
 
         Log log = new Log(String.format("output/%s/logs.json", symbol.name));
 

@@ -7,10 +7,10 @@ import com.binance.api.client.domain.account.NewOrder;
 import com.binance.api.client.domain.account.NewOrderResponse;
 import com.mauriciotogneri.botcoin.app.Botcoin;
 import com.mauriciotogneri.botcoin.exchange.Binance;
+import com.mauriciotogneri.botcoin.log.ConfigFile;
 import com.mauriciotogneri.botcoin.log.Log;
-import com.mauriciotogneri.botcoin.log.StatusFile;
 import com.mauriciotogneri.botcoin.log.ProfitFile;
-import com.mauriciotogneri.botcoin.log.ConfigProperties;
+import com.mauriciotogneri.botcoin.log.StatusFile;
 import com.mauriciotogneri.botcoin.market.Symbol;
 import com.mauriciotogneri.botcoin.momo.LogEvent;
 import com.mauriciotogneri.botcoin.provider.Price;
@@ -34,7 +34,7 @@ public class ComplexStrategy implements Strategy<Price>
     private final BigDecimal minQuantity;
     private final ComplexBuyStrategy buyStrategy;
     private final ComplexSellStrategy sellStrategy;
-    private final ConfigProperties configProperties;
+    private final ConfigFile configFile;
     private final ProfitFile profitFile;
     private final StatusFile statusFile;
 
@@ -45,7 +45,7 @@ public class ComplexStrategy implements Strategy<Price>
                            Balance balanceA,
                            Balance balanceB,
                            BigDecimal minQuantity,
-                           @NotNull ConfigProperties configProperties)
+                           @NotNull ConfigFile configFile)
     {
         this.symbol = symbol;
         this.balanceA = balanceA;
@@ -53,8 +53,8 @@ public class ComplexStrategy implements Strategy<Price>
         this.minQuantity = minQuantity;
         this.buyStrategy = new ComplexBuyStrategy(minQuantity);
         this.sellStrategy = new ComplexSellStrategy(minQuantity);
-        this.configProperties = configProperties;
-        this.spent = configProperties.spent;
+        this.configFile = configFile;
+        this.spent = configFile.spent;
         this.profitFile = new ProfitFile(symbol);
         this.statusFile = new StatusFile(symbol);
     }
@@ -63,9 +63,9 @@ public class ComplexStrategy implements Strategy<Price>
     public List<NewOrder> orders(@NotNull Price price)
     {
         List<NewOrder> result = new ArrayList<>();
-        configProperties.load();
+        configFile.load();
 
-        if (configProperties.isRunning())
+        if (configFile.isRunning())
         {
             if (price.value.compareTo(allTimeHigh) >= 0)
             {
@@ -77,30 +77,46 @@ public class ComplexStrategy implements Strategy<Price>
 
             if ((spent.compareTo(BigDecimal.ZERO) == 0) || (price.value.compareTo(boughtPrice) < 0))
             {
+                BigDecimal limit = (spent.compareTo(BigDecimal.ZERO) == 0) ? allTimeHigh : boughtPrice;
+                BigDecimal percentageDown = percentageDiff(price.value, limit);
+
                 statusFile.save(allTimeHigh,
                                 boughtPrice,
                                 price.value,
-                                BigDecimal.ONE.subtract(price.value.divide(allTimeHigh, 10, RoundingMode.DOWN)),
+                                percentageDown,
                                 balanceA,
                                 balanceB);
 
-                BigDecimal amount = buyStrategy.amount(symbol, price.value, allTimeHigh, balanceA, balanceB);
+                BigDecimal amount = buyStrategy.amount(
+                        symbol,
+                        price.value,
+                        limit,
+                        percentageDown,
+                        balanceA,
+                        balanceB);
 
                 if (amount.compareTo(minQuantity) > 0)
                 {
                     result = Collections.singletonList(NewOrder.marketBuy(symbol.name, amount.toString()));
                 }
             }
-            else
+            else if (price.value.compareTo(boughtPrice) > 0)
             {
+                BigDecimal percentageUp = percentageDiff(price.value, boughtPrice);
+
                 statusFile.save(allTimeHigh,
                                 boughtPrice,
                                 price.value,
-                                price.value.divide(boughtPrice, 10, RoundingMode.DOWN).subtract(BigDecimal.ONE),
+                                percentageUp,
                                 balanceA,
                                 balanceB);
 
-                BigDecimal amount = sellStrategy.amount(symbol, price.value, boughtPrice, balanceA);
+                BigDecimal amount = sellStrategy.amount(
+                        symbol,
+                        price.value,
+                        boughtPrice,
+                        percentageUp,
+                        balanceA);
 
                 if (amount.compareTo(minQuantity) > 0)
                 {
@@ -220,9 +236,9 @@ public class ComplexStrategy implements Strategy<Price>
 
             profitFile.save(profit);
 
-            if (configProperties.isShutdown())
+            if (configFile.isShutdown())
             {
-                configProperties.stop();
+                configFile.stop();
             }
 
             LogEvent logEvent = LogEvent.sell(
@@ -243,6 +259,18 @@ public class ComplexStrategy implements Strategy<Price>
         else
         {
             return "ERROR";
+        }
+    }
+
+    private BigDecimal percentageDiff(BigDecimal a, BigDecimal b)
+    {
+        if (a.compareTo(b) < 0)
+        {
+            return BigDecimal.ONE.subtract(a.divide(b, 10, RoundingMode.DOWN));
+        }
+        else
+        {
+            return a.divide(b, 10, RoundingMode.DOWN).subtract(BigDecimal.ONE);
         }
     }
 

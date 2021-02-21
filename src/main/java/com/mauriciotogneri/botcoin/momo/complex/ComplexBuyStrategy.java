@@ -22,16 +22,16 @@ public class ComplexBuyStrategy
 
     public BigDecimal amount(Symbol symbol,
                              @NotNull BigDecimal price,
-                             BigDecimal allTimeHigh,
+                             BigDecimal limit,
+                             BigDecimal percentageDown,
                              @NotNull Balance balanceA,
                              @NotNull Balance balanceB)
     {
         BigDecimal result = BigDecimal.ZERO;
 
-        if (price.compareTo(allTimeHigh) < 0)
+        if (price.compareTo(limit) < 0)
         {
-            BigDecimal percentageDown = BigDecimal.ONE.subtract(price.divide(allTimeHigh, 10, RoundingMode.DOWN));
-            Log.console("[%s] Trying to buy at:  %s/%s (-%s%%)", symbol.name, price, allTimeHigh, percentageDown.multiply(new BigDecimal("100")).setScale(2, RoundingMode.DOWN).toString());
+            Log.console("[%s] Trying to buy at:  %s/%s (-%s%%)", symbol.name, price, limit, percentageDown.multiply(new BigDecimal("100")).setScale(2, RoundingMode.DOWN).toString());
 
             if (percentageDown.compareTo(MIN_PERCENTAGE_DOWN) >= 0)
             {

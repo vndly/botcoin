@@ -8,7 +8,7 @@ import java.io.FileInputStream;
 import java.math.BigDecimal;
 import java.util.Properties;
 
-public class ConfigProperties
+public class ConfigFile
 {
     private final Symbol symbol;
     public String mode;
@@ -18,7 +18,7 @@ public class ConfigProperties
     public static final String MODE_STOPPED = "stopped";
     public static final String MODE_SHUTDOWN = "shutdown";
 
-    public ConfigProperties(Symbol symbol)
+    public ConfigFile(Symbol symbol)
     {
         this.symbol = symbol;
         load();
