@@ -10,7 +10,7 @@ import com.mauriciotogneri.botcoin.exchange.Binance;
 import com.mauriciotogneri.botcoin.log.Log;
 import com.mauriciotogneri.botcoin.log.PriceFile;
 import com.mauriciotogneri.botcoin.log.ProfitFile;
-import com.mauriciotogneri.botcoin.log.StatusProperties;
+import com.mauriciotogneri.botcoin.log.ConfigProperties;
 import com.mauriciotogneri.botcoin.market.Symbol;
 import com.mauriciotogneri.botcoin.momo.LogEvent;
 import com.mauriciotogneri.botcoin.provider.Price;
@@ -34,7 +34,7 @@ public class ComplexStrategy implements Strategy<Price>
     private final BigDecimal minQuantity;
     private final ComplexBuyStrategy buyStrategy;
     private final ComplexSellStrategy sellStrategy;
-    private final StatusProperties statusProperties;
+    private final ConfigProperties configProperties;
     private final ProfitFile profitFile;
     private final PriceFile priceFile;
 
@@ -46,7 +46,7 @@ public class ComplexStrategy implements Strategy<Price>
                            Balance balanceA,
                            Balance balanceB,
                            BigDecimal minQuantity,
-                           @NotNull StatusProperties statusProperties)
+                           @NotNull ConfigProperties configProperties)
     {
         this.symbol = symbol;
         this.balanceA = balanceA;
@@ -54,9 +54,9 @@ public class ComplexStrategy implements Strategy<Price>
         this.minQuantity = minQuantity;
         this.buyStrategy = new ComplexBuyStrategy(minQuantity);
         this.sellStrategy = new ComplexSellStrategy(minQuantity);
-        this.statusProperties = statusProperties;
-        this.boughtPrice = statusProperties.boughtPrice;
-        this.state = statusProperties.state;
+        this.configProperties = configProperties;
+        this.boughtPrice = configProperties.boughtPrice;
+        this.state = configProperties.state;
         this.profitFile = new ProfitFile(symbol);
         this.priceFile = new PriceFile(symbol);
     }
@@ -65,9 +65,9 @@ public class ComplexStrategy implements Strategy<Price>
     public List<NewOrder> orders(@NotNull Price price)
     {
         List<NewOrder> result = new ArrayList<>();
-        statusProperties.load();
+        configProperties.load();
 
-        if (statusProperties.isRunning())
+        if (configProperties.isRunning())
         {
             if (state == State.BUYING)
             {
@@ -220,9 +220,9 @@ public class ComplexStrategy implements Strategy<Price>
 
             profitFile.save(profit);
 
-            if (statusProperties.isShutdown())
+            if (configProperties.isShutdown())
             {
-                statusProperties.off();
+                configProperties.off();
             }
 
             LogEvent logEvent = LogEvent.sell(

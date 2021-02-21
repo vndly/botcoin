@@ -10,7 +10,7 @@ import com.mauriciotogneri.botcoin.exchange.BinancePriceProvider;
 import com.mauriciotogneri.botcoin.exchange.BinanceTrader;
 import com.mauriciotogneri.botcoin.log.Log;
 import com.mauriciotogneri.botcoin.log.ProfitFile;
-import com.mauriciotogneri.botcoin.log.StatusProperties;
+import com.mauriciotogneri.botcoin.log.ConfigProperties;
 import com.mauriciotogneri.botcoin.market.Market;
 import com.mauriciotogneri.botcoin.market.Symbol;
 import com.mauriciotogneri.botcoin.momo.LogEvent;
@@ -30,6 +30,10 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+// Logs.json opens chart
+// Launch thread apart every second
+// Balance global
+// Symbol toString()
 public class Botcoin
 {
     public static final Boolean TEST_MODE = true;
@@ -73,7 +77,7 @@ public class Botcoin
     private static Market<Price> market(ExchangeInfo exchangeInfo, Account account, Currency currencyA, Currency currencyB)
     {
         Symbol symbol = new Symbol(currencyA, currencyB, exchangeInfo);
-        StatusProperties statusProperties = new StatusProperties(symbol);
+        ConfigProperties configProperties = new ConfigProperties(symbol);
 
         SymbolInfo symbolInfo = exchangeInfo.getSymbolInfo(symbol.name);
         SymbolFilter filter = symbolInfo.getSymbolFilter(FilterType.LOT_SIZE);
@@ -96,7 +100,7 @@ public class Botcoin
         BigDecimal balanceAssetB = Binance.balance(account, symbol.assetB);
         Balance balanceB = new Balance(symbol.assetB, balanceAssetB);
 
-        Strategy<Price> strategy = new ComplexStrategy(symbol, balanceA, balanceB, minQuantity, statusProperties);
+        Strategy<Price> strategy = new ComplexStrategy(symbol, balanceA, balanceB, minQuantity, configProperties);
 
         Log log = new Log(String.format("output/%s/logs.json", symbol.name));
 

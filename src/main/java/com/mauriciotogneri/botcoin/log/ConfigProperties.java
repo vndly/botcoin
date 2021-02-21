@@ -10,7 +10,7 @@ import java.io.FileInputStream;
 import java.math.BigDecimal;
 import java.util.Properties;
 
-public class StatusProperties
+public class ConfigProperties
 {
     private final Symbol symbol;
     public String mode;
@@ -21,7 +21,7 @@ public class StatusProperties
     public static final String MODE_OFF = "off";
     public static final String MODE_SHUTDOWN = "shutdown";
 
-    public StatusProperties(Symbol symbol)
+    public ConfigProperties(Symbol symbol)
     {
         this.symbol = symbol;
         load();
@@ -46,7 +46,7 @@ public class StatusProperties
 
     private String path(@NotNull Symbol symbol)
     {
-        return String.format("output/%s/status.properties", symbol.name);
+        return String.format("output/%s/config.properties", symbol.name);
     }
 
     public boolean isRunning()
