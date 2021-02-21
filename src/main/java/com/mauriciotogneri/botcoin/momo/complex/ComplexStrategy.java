@@ -214,10 +214,6 @@ public class ComplexStrategy implements Strategy<Price>
     {
         if (response.getStatus() == OrderStatus.FILLED)
         {
-            allTimeHigh = BigDecimal.ZERO;
-            amountSpent = BigDecimal.ZERO;
-            amountBought = BigDecimal.ZERO;
-
             BigDecimal quantity = new BigDecimal(response.getExecutedQty());
             BigDecimal toGain = new BigDecimal(response.getCummulativeQuoteQty());
             BigDecimal price = toGain.divide(quantity, balanceA.asset.decimals, RoundingMode.DOWN);
@@ -255,6 +251,10 @@ public class ComplexStrategy implements Strategy<Price>
             );
 
             logEvent.log(symbol);
+
+            allTimeHigh = BigDecimal.ZERO;
+            amountSpent = BigDecimal.ZERO;
+            amountBought = BigDecimal.ZERO;
 
             return logEvent;
         }
