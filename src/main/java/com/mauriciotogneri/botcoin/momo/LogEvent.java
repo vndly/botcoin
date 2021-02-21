@@ -17,7 +17,6 @@ public class LogEvent
     private final Balance boughtPrice;
     private final Balance balanceA;
     private final Balance balanceB;
-    private final Balance total;
 
     public LogEvent(String type,
                     Balance quantity,
@@ -27,8 +26,7 @@ public class LogEvent
                     Balance profit,
                     Balance boughtPrice,
                     Balance balanceA,
-                    Balance balanceB,
-                    Balance total)
+                    Balance balanceB)
     {
         this.type = type;
         this.quantity = quantity;
@@ -39,7 +37,6 @@ public class LogEvent
         this.boughtPrice = boughtPrice;
         this.balanceA = balanceA;
         this.balanceB = balanceB;
-        this.total = total;
     }
 
     public void log(@NotNull Symbol symbol)
@@ -99,11 +96,6 @@ public class LogEvent
             builder.append(balanceB.property("balanceB"));
         }
 
-        if (total != null)
-        {
-            builder.append(total.property("total"));
-        }
-
         builder.append(String.format("timestamp=%s", System.currentTimeMillis()));
 
         return builder.toString();
@@ -115,10 +107,9 @@ public class LogEvent
                                Balance spent,
                                Balance boughtPrice,
                                Balance balanceA,
-                               Balance balanceB,
-                               Balance total)
+                               Balance balanceB)
     {
-        return new LogEvent("buy", quantity, price, spent, null, null, boughtPrice, balanceA, balanceB, total);
+        return new LogEvent("buy", quantity, price, spent, null, null, boughtPrice, balanceA, balanceB);
     }
 
     @NotNull
@@ -128,9 +119,8 @@ public class LogEvent
                                 Balance profit,
                                 Balance boughtPrice,
                                 Balance balanceA,
-                                Balance balanceB,
-                                Balance total)
+                                Balance balanceB)
     {
-        return new LogEvent("sell", quantity, price, null, gained, profit, boughtPrice, balanceA, balanceB, total);
+        return new LogEvent("sell", quantity, price, null, gained, profit, boughtPrice, balanceA, balanceB);
     }
 }

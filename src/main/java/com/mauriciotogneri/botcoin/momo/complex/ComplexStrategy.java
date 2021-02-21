@@ -196,8 +196,7 @@ public class ComplexStrategy implements Strategy<Price>
                     balanceB.of(toSpend),
                     balanceB.of(boughtPrice()),
                     balanceA,
-                    balanceB,
-                    totalBalance(price)
+                    balanceB
             );
 
             logEvent.log(symbol);
@@ -252,8 +251,7 @@ public class ComplexStrategy implements Strategy<Price>
                     balanceB.of(profit),
                     balanceB.of(boughtPrice()),
                     balanceA,
-                    balanceB,
-                    totalBalance(price)
+                    balanceB
             );
 
             logEvent.log(symbol);
@@ -283,10 +281,5 @@ public class ComplexStrategy implements Strategy<Price>
         return (amountBought.compareTo(BigDecimal.ZERO) > 0) ?
                 amountSpent.divide(amountBought, balanceB.asset.decimals, RoundingMode.DOWN) :
                 BigDecimal.ZERO;
-    }
-
-    private Balance totalBalance(BigDecimal price)
-    {
-        return balanceB.of(balanceB.amount.add(balanceB.amount.multiply(price)).setScale(balanceB.asset.decimals, RoundingMode.DOWN));
     }
 }

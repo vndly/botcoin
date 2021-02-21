@@ -123,8 +123,7 @@ public class BasicStrategy implements Strategy<Price>
                     balanceA.of(spent),
                     balanceA.of(boughtPrice()),
                     balanceA,
-                    balanceB,
-                    totalBalance(price)
+                    balanceB
             );
             json.add("custom", Json.toJsonObject(logEvent));
         }
@@ -163,8 +162,7 @@ public class BasicStrategy implements Strategy<Price>
                     balanceA.of(profit),
                     balanceA.of(boughtPrice()),
                     balanceA,
-                    balanceB,
-                    totalBalance(price)
+                    balanceB
             );
             json.add("custom", Json.toJsonObject(logEvent));
         }
