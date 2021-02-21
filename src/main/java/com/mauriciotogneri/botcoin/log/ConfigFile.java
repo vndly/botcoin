@@ -13,6 +13,7 @@ public class ConfigFile
     private final Symbol symbol;
     public String mode;
     public BigDecimal spent;
+    public BigDecimal bought;
 
     public static final String MODE_RUNNING = "running";
     public static final String MODE_STOPPED = "stopped";
@@ -33,6 +34,7 @@ public class ConfigFile
 
             mode = properties.getProperty("MODE");
             spent = new BigDecimal(properties.getProperty("SPENT"));
+            bought = new BigDecimal(properties.getProperty("BOUGHT"));
         }
         catch (Exception e)
         {
@@ -59,6 +61,7 @@ public class ConfigFile
     {
         Log log = new Log(path(symbol));
         log.write(String.format("MODE=%s%n", MODE_STOPPED));
-        log.write(String.format("SPENT=%s", spent.toString()));
+        log.write(String.format("SPENT=%s%n", spent.toString()));
+        log.write(String.format("BOUGHT=%s", bought.toString()));
     }
 }
