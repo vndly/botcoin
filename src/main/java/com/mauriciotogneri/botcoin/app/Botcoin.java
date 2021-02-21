@@ -31,10 +31,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 // Logs.json opens chart
-// Balance global
 public class Botcoin
 {
-    public static final Boolean TEST_MODE = true;
+    public static final Boolean TEST_MODE = false;
     private static final Integer FREQUENCY = 10; // in seconds
 
     public static void main(String[] args)
@@ -65,13 +64,13 @@ public class Botcoin
         Account account = Binance.account();
 
         List<Market<?>> markets = new ArrayList<>();
-        /*markets.add(market(exchangeInfo, account, Currency.ADA, Currency.BTC));
+        markets.add(market(exchangeInfo, account, Currency.ADA, Currency.BTC));
         markets.add(market(exchangeInfo, account, Currency.BNB, Currency.BTC));
         markets.add(market(exchangeInfo, account, Currency.DOGE, Currency.BTC));
         markets.add(market(exchangeInfo, account, Currency.DOT, Currency.BTC));
-        markets.add(market(exchangeInfo, account, Currency.EOS, Currency.BTC));*/
+        markets.add(market(exchangeInfo, account, Currency.EOS, Currency.BTC));
         markets.add(market(exchangeInfo, account, Currency.ETH, Currency.BTC));
-        /*markets.add(market(exchangeInfo, account, Currency.GRT, Currency.BTC));
+        markets.add(market(exchangeInfo, account, Currency.GRT, Currency.BTC));
         markets.add(market(exchangeInfo, account, Currency.LINK, Currency.BTC));
         markets.add(market(exchangeInfo, account, Currency.LTC, Currency.BTC));
         markets.add(market(exchangeInfo, account, Currency.TRX, Currency.BTC));
@@ -79,7 +78,7 @@ public class Botcoin
         markets.add(market(exchangeInfo, account, Currency.XLM, Currency.BTC));
         markets.add(market(exchangeInfo, account, Currency.XMR, Currency.BTC));
         markets.add(market(exchangeInfo, account, Currency.XRP, Currency.BTC));
-        markets.add(market(exchangeInfo, account, Currency.ZIL, Currency.BTC));*/
+        markets.add(market(exchangeInfo, account, Currency.ZIL, Currency.BTC));
 
         return markets;
     }
