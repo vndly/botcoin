@@ -83,7 +83,7 @@ public class ComplexStrategy implements Strategy<Price>
                 statusFile.save(allTimeHigh,
                                 boughtPrice,
                                 price.value,
-                                percentageDown,
+                                percentageDown.negate(),
                                 balanceA,
                                 balanceB);
 
