@@ -32,9 +32,8 @@ import java.util.List;
 
 // TODO: write config back to file
 // TODO: capture exception when can't buy
-// TODO: get BTC balance before buying
-// TODO: price of alt coins when BTC went up/down
-// TODO: averaging down doubling?
+// TODO: always bet (MIN_QUANTITY * 10)
+// TODO: implement trailing when selling
 public class Botcoin
 {
     public static final Boolean TEST_MODE = true;
