@@ -40,7 +40,6 @@ function priceHistory(json)
 function eventHistory(json, type)
 {
     const list = []
-    var counter = 1
 
     for (var index in json)
     {
@@ -54,7 +53,7 @@ function eventHistory(json, type)
 	        list.push({
 	            x: data.timestamp,
 	            y: data.value,
-	            title: type.toUpperCase() + ': ' + counter++,
+	            title: type.toUpperCase(),
 	            text: eventSummary(custom)
 	        })
         }

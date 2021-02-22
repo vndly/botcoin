@@ -5,6 +5,7 @@ import com.mauriciotogneri.botcoin.market.Symbol;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class ProfitFile
 {
@@ -26,6 +27,6 @@ public class ProfitFile
         total = total.add(value);
 
         Log log = new Log(path);
-        log.write(total.toString());
+        log.write(total.setScale(8, RoundingMode.DOWN).toString());
     }
 }
