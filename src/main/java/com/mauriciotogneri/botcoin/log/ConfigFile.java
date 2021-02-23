@@ -11,7 +11,7 @@ import java.util.Properties;
 
 public class ConfigFile
 {
-    private final Symbol symbol;
+    private final String symbol;
     public String mode;
     public BigDecimal spent;
     public BigDecimal bought;
@@ -21,6 +21,11 @@ public class ConfigFile
     public static final String MODE_SHUTDOWN = "shutdown";
 
     public ConfigFile(Symbol symbol)
+    {
+        this(symbol.name);
+    }
+
+    public ConfigFile(String symbol)
     {
         this.symbol = symbol;
         load();
@@ -43,9 +48,9 @@ public class ConfigFile
         }
     }
 
-    private String path(@NotNull Symbol symbol)
+    private String path(@NotNull String symbol)
     {
-        return String.format("output/%s/config.properties", symbol.name);
+        return String.format("output/%s/config.properties", symbol);
     }
 
     public boolean isRunning()
@@ -69,6 +74,15 @@ public class ConfigFile
     {
         this.spent = spent;
         this.bought = bought;
+
+        write();
+    }
+
+    public void reset()
+    {
+        this.mode = MODE_RUNNING;
+        this.spent = new BigDecimal("0");
+        this.bought = new BigDecimal("0");
 
         write();
     }
