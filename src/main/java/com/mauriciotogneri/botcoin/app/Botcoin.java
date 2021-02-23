@@ -30,6 +30,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+// TODO: keep track of latest balance B to not to buy more than we can
 // TODO: implement trailing when selling
 public class Botcoin
 {
