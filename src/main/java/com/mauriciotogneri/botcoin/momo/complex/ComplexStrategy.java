@@ -191,6 +191,8 @@ public class ComplexStrategy implements Strategy<Price>
             amountSpent = amountSpent.add(toSpend);
             amountBought = amountBought.add(quantity);
 
+            configFile.update(amountSpent, amountBought);
+
             LogEvent logEvent = LogEvent.buy(
                     balanceA.of(quantity),
                     balanceB.of(price),
@@ -256,6 +258,8 @@ public class ComplexStrategy implements Strategy<Price>
             allTimeHigh = BigDecimal.ZERO;
             amountSpent = BigDecimal.ZERO;
             amountBought = BigDecimal.ZERO;
+
+            configFile.update(amountSpent, amountBought);
 
             return logEvent;
         }

@@ -59,8 +59,23 @@ public class ConfigFile
 
     public void stop()
     {
+        mode = MODE_STOPPED;
+
+        write();
+    }
+
+    public void update(BigDecimal spent, BigDecimal bought)
+    {
+        this.spent = spent;
+        this.bought = bought;
+
+        write();
+    }
+
+    public void write()
+    {
         Log log = new Log(path(symbol));
-        log.write(String.format("MODE=%s%n", MODE_STOPPED));
+        log.write(String.format("MODE=%s%n", mode));
         log.write(String.format("SPENT=%s%n", spent.toString()));
         log.write(String.format("BOUGHT=%s", bought.toString()));
     }
