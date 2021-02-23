@@ -1,9 +1,13 @@
 package com.mauriciotogneri.botcoin.app;
 
 import com.binance.api.client.BinanceApiRestClient;
+import com.binance.api.client.domain.OrderSide;
+import com.binance.api.client.domain.OrderType;
+import com.binance.api.client.domain.account.NewOrder;
 import com.mauriciotogneri.botcoin.exchange.Binance;
 import com.mauriciotogneri.botcoin.exchange.BinancePriceProvider;
 import com.mauriciotogneri.botcoin.exchange.BinanceTrader;
+import com.mauriciotogneri.botcoin.json.Json;
 import com.mauriciotogneri.botcoin.momo.basic.BasicStrategy;
 import com.mauriciotogneri.botcoin.provider.DataProvider;
 import com.mauriciotogneri.botcoin.provider.Price;

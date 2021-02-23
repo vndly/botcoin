@@ -27,19 +27,21 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class CandleStrategy implements Strategy<RequestDataDTO> {
+public class CandleStrategyOLD implements Strategy<RequestDataDTO> {
     private BigDecimal spent = BigDecimal.ZERO;
     private final String symbol;
     private final Balance balanceA;
     private final Balance balanceB;
     private final DataProviderSleepTime dataProviderSleepTime;
+    //private String lostLimitOrderId;
+    //private BigDecimal oldLimit = BigDecimal.ZERO;
     private BigDecimal stopLimit = BigDecimal.ZERO;
 
-    public CandleStrategy(@NotNull Balance balanceA,
-                          @NotNull Balance balanceB,
-                          Symbol symbol,
-                          DataProviderSleepTime dataProviderSleepTime) {
-        this.symbol = symbol.name;
+    public CandleStrategyOLD(@NotNull Balance balanceA,
+                             @NotNull Balance balanceB,
+                             Symbol symbol,
+                             DataProviderSleepTime dataProviderSleepTime) {
+        this.symbol = symbol.toString();
         this.balanceA = balanceA;
         this.balanceB = balanceB;
         this.dataProviderSleepTime = dataProviderSleepTime;
@@ -47,7 +49,7 @@ public class CandleStrategy implements Strategy<RequestDataDTO> {
 
     @Override
     public List<NewOrder> orders(@NotNull RequestDataDTO requestDataDTO) {
-        /** GET DATA **/
+        // FakeTrader.LAST_PRICE = new BigDecimal(requestDataDTO.tickerPrice.getPrice());
         List<Candlestick> candlestickBars = requestDataDTO.candlestickBars;
 
         Candlestick lastCandlestick = candlestickBars.get(candlestickBars.size() - 1);
@@ -55,14 +57,29 @@ public class CandleStrategy implements Strategy<RequestDataDTO> {
         TickerPrice lastTickerPrice = requestDataDTO.tickerPrice;
 
         BigDecimal lastPrice = new BigDecimal(requestDataDTO.tickerPrice.getPrice());
-        /** GET DATA **/
+
+        /** AVERAGE STRATEGY **/
+        LastPricesAverageDTO lastPricesAverageDTO = new LastPricesAverageDTO();
+        lastPricesAverageDTO.getAverages(candlestickBars);
+        boolean shortIsUp = 0 < lastPricesAverageDTO.avgShort.compareTo(lastPricesAverageDTO.avgLong);
+
+        LastPricesAverageDTO oldPricesAverageDTO = new LastPricesAverageDTO();
+        oldPricesAverageDTO.getAverages(candlestickBars);
+        boolean shortWasUp = 0 < oldPricesAverageDTO.avgShort.compareTo(oldPricesAverageDTO.avgLong);
+        /** AVERAGE STRATEGY **/
 
         boolean haveBalanceA = balanceA.amount.compareTo(BigDecimal.ZERO) > ConfigConst.MIN_EUR_TO_TRADE;
         boolean haveBalanceB = balanceB.amount.compareTo(BigDecimal.ZERO) > ConfigConst.MIN_BTC_TO_TRADE;
 
-        /** COMPUTE DATA **/
         // Get avg volume of last 4 candles
         Integer oldCandlestickVolumeAvg = getAvgVolumeLastFiveMin(candlestickBars);
+
+
+        // Sell when arrive to limit
+        // BigDecimal newLimit = lastPrice.multiply(new BigDecimal("0.999"));
+
+        // Bought price < actual price * 0.005%
+        // boolean possibleSell = 0 > boughtPrice().compareTo(new BigDecimal(price.getPrice()).multiply(new BigDecimal("1.005")));
 
         // Sell if price is smaller than bought price -0.5%
         boolean sellAtLost = 0 > new BigDecimal(lastTickerPrice.getPrice()).compareTo(boughtPrice().multiply(new BigDecimal("0.995")));
@@ -90,59 +107,55 @@ public class CandleStrategy implements Strategy<RequestDataDTO> {
 
         // Checks that last 4 candles didn't pump a 2% or more
         boolean comeFromPick = Double.parseDouble(candlestickBars.get(candlestickBars.size() - 4).getOpen()) < (Double.parseDouble(lastCandlestick.getOpen()) * 0.98);
-        /** COMPUTE DATA **/
 
-        /** AVERAGE STRATEGY **/
-        LastPricesAverageDTO lastPricesAverageDTO = new LastPricesAverageDTO();
-        lastPricesAverageDTO.getAverages(candlestickBars);
-        boolean shortIsUp = 0 < lastPricesAverageDTO.avgShort.compareTo(lastPricesAverageDTO.avgLong);
-
-        LastPricesAverageDTO oldPricesAverageDTO = new LastPricesAverageDTO();
-        oldPricesAverageDTO.getOldAverages(candlestickBars);
-        boolean shortWasUp = 0 < oldPricesAverageDTO.avgShort.compareTo(oldPricesAverageDTO.avgLong);
-        /** AVERAGE STRATEGY **/
-
-        System.out.println("---------------------- STATUS -------------------------");
-        System.out.println("Last Price: " + lastPrice.toString());
-        System.out.println("1: " + haveBalanceA + " - " + haveBalanceB);
-        System.out.println("2: " + shortWasUp + " - " + shortIsUp);
-
-        /** LOGIC **/
-        if ((haveBalanceA && actualPriceIsNearPastCloseCandlePrice && !comeFromPick && spotCandle) ||
-                (!shortWasUp && shortIsUp && haveBalanceA)) {
+        if ((haveBalanceA && actualPriceIsNearPastCloseCandlePrice && !comeFromPick && spotCandle) || (!shortWasUp && shortIsUp && haveBalanceA)) {
             System.out.println("---------------------- BUY -------------------------");
             System.out.println("Last Price: " + lastPrice.toString());
 
+            //oldLimit = new BigDecimal(0);
+            //lostLimitOrderId = "";
             stopLimit = lastPrice.multiply(new BigDecimal("0.998"));
 
-            // TODO: this is wrong.... i need to change BNB to BTC and with the good quantity
+            List<NewOrder> newOrders = new ArrayList<>();
+            newOrders.add(NewOrder.marketBuy(
+                    symbol,
+                    balanceA
+                            .amount
+                            .multiply(new BigDecimal("0.998"))
+                            .divide(lastPrice, balanceB.asset.step, RoundingMode.DOWN)
+                            .toString()));
+
+            //newOrders.add(NewOrder.limitSell(symbol, TimeInForce.GTC,  balanceB.amount.divide(lastPrice, balanceA.asset.decimals, RoundingMode.DOWN).toString(), newLimit.toString()));
+
+            return newOrders;
+
+        } else if (haveBalanceB && (sellAtLost || sellWithWin)) { // TODO: add crossing avarage buy
+            System.out.println("---------------------- SELL -------------------------");
+            System.out.println("Last Price: " + lastPrice.toString());
+            /*
+            if (0 < newLimit.compareTo(oldLimit) && !isEmpty(lostLimitOrderId)) {
+                System.out.println("New Limit: " + newLimit.toString());
+                CancelOrderResponse response = Binance.cancelOrder(symbol, Long.parseLong(lostLimitOrderId));
+                if (response.getStatus().equals(OrderStatus.CANCELED.toString())) {
+                    return Collections.singletonList(NewOrder.limitSell(symbol, TimeInForce.GTC, balanceB.amount.toString(), newLimit.toString()));
+                }
+            }
+
+            if (isEmpty(lostLimitOrderId)){
+                System.out.println("Set Limit: " + newLimit.toString());
+                return Collections.singletonList(NewOrder.limitSell(symbol, TimeInForce.GTC, balanceB.amount.toString(), newLimit.toString()));
+            }*/
+
             return Collections.singletonList(
                     NewOrder.marketSell(
                             symbol,
-                            balanceA.amount.divide(new BigDecimal(lastTickerPrice.getPrice()),
-                                    balanceB.asset.decimals,
+                            balanceB.amount.divide(new BigDecimal(lastTickerPrice.getPrice()),
+                                    balanceA.asset.decimals,
                                     RoundingMode.DOWN).toString()));
 
-        } else if (haveBalanceB && (sellAtLost || sellWithWin)) {
-            System.out.println("---------------------- SELL -------------------------");
-            System.out.println("Last Price: " + lastPrice.toString());
-
-            // TODO: this is wrong.... i need to change BTC to BNB and with the good quantity
-            return Collections.singletonList(
-                    NewOrder.marketBuy(
-                            symbol,
-                            balanceB
-                                    .amount
-                                    .multiply(new BigDecimal("0.998"))
-                                    .divide(lastPrice, balanceA.asset.step, RoundingMode.DOWN)
-                                    .toString()));
-
         } else if (haveBalanceB &&  needBiggerLimit) {
-            System.out.println("---------------------- INCREASE STOP LIMIT -------------------------");
-            System.out.println("From: " + stopLimit + " To: " + lastPrice.multiply(new BigDecimal("0.995")).toString());
             stopLimit = lastPrice.multiply(new BigDecimal("0.995"));
         }
-        /** LOGIC **/
 
         return new ArrayList<>();
     }
@@ -182,8 +195,8 @@ public class CandleStrategy implements Strategy<RequestDataDTO> {
             BigDecimal price = toSpend.divide(quantity, balanceA.asset.decimals, RoundingMode.DOWN);
 
             Account account = Binance.account();
-            balanceA.amount = Binance.balance(account, balanceA.asset).multiply(new BigDecimal("0.15"));
-            balanceB.amount = Binance.balance(account, balanceB.asset);
+            balanceA.amount = Binance.balance(account, balanceA.asset); // balanceA.amount.subtract(toSpend);
+            balanceB.amount = Binance.balance(account, balanceB.asset); // balanceB.amount.add(quantity);
             spent = spent.add(toSpend);
 
             dataProviderSleepTime.value = 3 * 1000;
@@ -220,8 +233,8 @@ public class CandleStrategy implements Strategy<RequestDataDTO> {
             BigDecimal profit = toGain.subtract(originalCost);
 
             Account account = Binance.account();
-            balanceA.amount = Binance.balance(account, balanceA.asset).multiply(new BigDecimal("0.15"));
-            balanceB.amount = Binance.balance(account, balanceB.asset);
+            balanceA.amount = Binance.balance(account, balanceA.asset);// balanceA.amount.add(toGain);
+            balanceB.amount = Binance.balance(account, balanceB.asset);//  balanceB.amount.subtract(quantity);
 
             spent = spent.subtract(originalCost);
 
@@ -258,7 +271,7 @@ public class CandleStrategy implements Strategy<RequestDataDTO> {
     private Integer getAvgVolumeLastFiveMin(List<Candlestick> candlestickBars) {
         Integer avgVolumeLastFiveMin = 0;
         for (int y = 1; y <= ConfigConst.NUMBER_OF_CANDLES_TO_LOOK_BACK; y++) {
-            avgVolumeLastFiveMin += (int) Double.parseDouble(candlestickBars.get(candlestickBars.size() - 1 -y).getVolume());
+            avgVolumeLastFiveMin += Integer.parseInt(candlestickBars.get(candlestickBars.size() - 1 -y).getVolume());
         }
         return avgVolumeLastFiveMin / ConfigConst.NUMBER_OF_CANDLES_TO_LOOK_BACK;
     }

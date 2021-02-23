@@ -39,7 +39,7 @@ public class BinanceMellauPriceProvider implements DataProvider<RequestDataDTO>
 
         Long now = System.currentTimeMillis();
         Long xMinAgo = now - ((ConfigConst.NUMBER_FOR_LONG_AVERAGE + 5) * 60000);
-        List<Candlestick> candlestickBars = client.getCandlestickBars(symbol, CandlestickInterval.ONE_MINUTE, ConfigConst.NUMBER_FOR_LONG_AVERAGE, xMinAgo, now);
+        List<Candlestick> candlestickBars = client.getCandlestickBars(symbol, CandlestickInterval.ONE_MINUTE, ConfigConst.NUMBER_FOR_LONG_AVERAGE + 1, xMinAgo, now);
         TickerPrice tickerPrice = client.getPrice(symbol);
 
         RequestDataDTO requestedData = new RequestDataDTO();
