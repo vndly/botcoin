@@ -8,6 +8,8 @@ public class CleanFiles
 {
     public static void main(String[] args)
     {
+        Log.truncate("error.txt");
+
         File root = new File("output");
 
         for (File symbol : root.listFiles())
