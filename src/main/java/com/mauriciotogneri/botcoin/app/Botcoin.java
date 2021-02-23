@@ -30,11 +30,9 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-// TODO: write config back to file
 // TODO: capture exception when can't buy
 // TODO: always bet (MIN_QUANTITY * 10)
 // TODO: implement trailing when selling
-// Started with: 0.02502124 BTC
 public class Botcoin
 {
     public static final Boolean TEST_MODE = true;
