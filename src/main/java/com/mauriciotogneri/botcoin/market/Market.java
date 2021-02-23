@@ -8,6 +8,7 @@ import com.mauriciotogneri.botcoin.strategy.Strategy;
 import com.mauriciotogneri.botcoin.trader.OrderSent;
 import com.mauriciotogneri.botcoin.trader.Trader;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Market<T> implements Runnable
@@ -39,7 +40,7 @@ public class Market<T> implements Runnable
             }
 
             List<OrderSent> sent = trader.process(orders);
-            List<Object> events = strategy.update(sent);
+            List<Object> events = !sent.isEmpty() ? strategy.update(sent) : new ArrayList<>();
 
             LogEntry logEntry = new LogEntry(data, sent, events);
             log.jsonFile(logEntry);

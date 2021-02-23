@@ -1,13 +1,9 @@
 package com.mauriciotogneri.botcoin.exchange;
 
-import com.binance.api.client.BinanceApiCallback;
 import com.binance.api.client.BinanceApiClientFactory;
 import com.binance.api.client.BinanceApiRestClient;
-import com.binance.api.client.BinanceApiWebSocketClient;
 import com.binance.api.client.domain.account.Account;
 import com.binance.api.client.domain.account.AssetBalance;
-import com.binance.api.client.domain.event.OrderTradeUpdateEvent;
-import com.binance.api.client.domain.event.UserDataUpdateEvent.UserDataUpdateEventType;
 import com.mauriciotogneri.botcoin.wallet.Asset;
 import com.mauriciotogneri.botcoin.wallet.Balance;
 
@@ -32,21 +28,6 @@ public class Binance
         BinanceApiClientFactory factory = factory();
 
         return factory.newRestClient();
-    }
-
-    public static void onOrderTradeUpdateEvent(BinanceApiCallback<OrderTradeUpdateEvent> callback)
-    {
-        BinanceApiRestClient client = apiClient();
-        BinanceApiWebSocketClient webSocketClient = factory().newWebSocketClient();
-        String listenKey = client.startUserDataStream();
-        client.keepAliveUserDataStream(listenKey);
-        webSocketClient.onUserDataUpdateEvent(listenKey, response -> {
-            if (response.getEventType() == UserDataUpdateEventType.ORDER_TRADE_UPDATE)
-            {
-                OrderTradeUpdateEvent orderTradeUpdateEvent = response.getOrderTradeUpdateEvent();
-                callback.onResponse(orderTradeUpdateEvent);
-            }
-        });
     }
 
     @NotNull

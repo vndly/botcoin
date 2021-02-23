@@ -31,8 +31,15 @@ public class BinanceTrader implements Trader
         {
             Log.console("Attempt to execute order: %s", Json.toJsonString(order));
 
-            NewOrderResponse response = client.newOrder(order);
-            sent.add(new OrderSent(order, response));
+            try
+            {
+                NewOrderResponse response = client.newOrder(order);
+                sent.add(new OrderSent(order, response));
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
         }
 
         return sent;

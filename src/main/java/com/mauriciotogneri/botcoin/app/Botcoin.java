@@ -30,7 +30,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-// TODO: capture exception when can't buy
 // TODO: always bet (MIN_QUANTITY * 10)
 // TODO: implement trailing when selling
 public class Botcoin
