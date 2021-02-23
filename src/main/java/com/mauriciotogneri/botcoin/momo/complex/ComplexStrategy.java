@@ -97,7 +97,6 @@ public class ComplexStrategy implements Strategy<Price>
                         price.value,
                         limit,
                         percentageDown,
-                        balanceA,
                         balanceB);
 
                 if (amount.compareTo(minQuantity) > 0)
