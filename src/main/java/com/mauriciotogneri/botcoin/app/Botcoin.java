@@ -34,6 +34,7 @@ import java.util.List;
 // TODO: capture exception when can't buy
 // TODO: always bet (MIN_QUANTITY * 10)
 // TODO: implement trailing when selling
+// Started with: 0.02502124 BTC
 public class Botcoin
 {
     public static final Boolean TEST_MODE = true;

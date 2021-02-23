@@ -39,6 +39,7 @@ total=0.00187904 BTC
 allTimeHigh=0.03473350
 boughtPrice=0.03407800
 currentPrice=0.03194200
+spent=0.101450206
 percentage=-6.26%
 balanceA=2.97700000 ADA
 balanceB=0.29785479 BTC
