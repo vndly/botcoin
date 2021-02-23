@@ -54,7 +54,7 @@ public class ComplexStrategy implements Strategy<Price>
         this.balanceB = balanceB;
         this.minQuantity = minQuantity;
         this.buyStrategy = new ComplexBuyStrategy(minQuantity);
-        this.sellStrategy = new ComplexSellStrategy(minQuantity);
+        this.sellStrategy = new ComplexSellStrategy();
         this.configFile = configFile;
         this.amountSpent = configFile.spent;
         this.amountBought = configFile.bought;
@@ -96,8 +96,7 @@ public class ComplexStrategy implements Strategy<Price>
                         symbol,
                         price.value,
                         limit,
-                        percentageDown,
-                        balanceB);
+                        percentageDown);
 
                 if (amount.compareTo(minQuantity) > 0)
                 {

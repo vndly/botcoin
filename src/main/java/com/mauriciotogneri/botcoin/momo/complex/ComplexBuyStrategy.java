@@ -1,10 +1,7 @@
 package com.mauriciotogneri.botcoin.momo.complex;
 
-import com.binance.api.client.domain.account.Account;
-import com.mauriciotogneri.botcoin.exchange.Binance;
 import com.mauriciotogneri.botcoin.log.Log;
 import com.mauriciotogneri.botcoin.market.Symbol;
-import com.mauriciotogneri.botcoin.wallet.Balance;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -24,8 +21,7 @@ public class ComplexBuyStrategy
     public BigDecimal amount(Symbol symbol,
                              @NotNull BigDecimal price,
                              BigDecimal limit,
-                             BigDecimal percentageDown,
-                             Balance balanceB)
+                             BigDecimal percentageDown)
     {
         BigDecimal result = BigDecimal.ZERO;
 
@@ -35,16 +31,7 @@ public class ComplexBuyStrategy
 
             if (percentageDown.compareTo(MIN_PERCENTAGE_DOWN) >= 0)
             {
-                BigDecimal amountToBuy = minQuantity.multiply(new BigDecimal("10"));
-                BigDecimal cost = amountToBuy.multiply(price);
-
-                Account account = Binance.account();
-                BigDecimal updatedBalanceB = Binance.balance(account, balanceB);
-
-                if (updatedBalanceB.compareTo(cost) >= 0)
-                {
-                    result = amountToBuy;
-                }
+                return minQuantity.multiply(new BigDecimal("10"));
             }
         }
 

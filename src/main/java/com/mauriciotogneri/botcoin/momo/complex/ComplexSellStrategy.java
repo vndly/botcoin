@@ -12,12 +12,6 @@ import java.math.RoundingMode;
 public class ComplexSellStrategy
 {
     private final BigDecimal MIN_PERCENTAGE_UP = new BigDecimal("0.01");
-    private final BigDecimal minQuantity;
-
-    public ComplexSellStrategy(BigDecimal minQuantity)
-    {
-        this.minQuantity = minQuantity;
-    }
 
     public BigDecimal amount(Symbol symbol,
                              @NotNull BigDecimal price,
@@ -33,12 +27,7 @@ public class ComplexSellStrategy
 
             if (percentageUp.compareTo(MIN_PERCENTAGE_UP) >= 0)
             {
-                BigDecimal amountToSell = balanceA.amount.setScale(balanceA.asset.step, RoundingMode.DOWN);
-
-                if (amountToSell.compareTo(minQuantity) >= 0)
-                {
-                    result = amountToSell;
-                }
+                return balanceA.amount.setScale(balanceA.asset.step, RoundingMode.DOWN);
             }
         }
 
