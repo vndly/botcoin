@@ -8,6 +8,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.nio.channels.FileChannel;
 
 public class Log
@@ -35,7 +37,7 @@ public class Log
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            Log.error(e);
 
             throw new RuntimeException("Cannot create log file " + path);
         }
@@ -51,7 +53,7 @@ public class Log
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            Log.error(e);
         }
     }
 
@@ -78,7 +80,7 @@ public class Log
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            Log.error(e);
         }
     }
 
@@ -91,7 +93,7 @@ public class Log
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            Log.error(e);
         }
     }
 
@@ -103,5 +105,35 @@ public class Log
     public static void jsonConsole(Object object)
     {
         console(Json.toJsonString(object));
+    }
+
+    public static void error(Exception exception)
+    {
+        exception.printStackTrace();
+
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(stringWriter);
+        exception.printStackTrace(printWriter);
+
+        error(stringWriter.toString());
+    }
+
+    public static void error(String text)
+    {
+        try
+        {
+            File file = new File("error.txt");
+
+            FileWriter fileWriter = new FileWriter(file, true);
+            BufferedWriter writer = new BufferedWriter(fileWriter);
+
+            writer.write(String.format("%s%n%n%n", text));
+            writer.flush();
+            writer.close();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 }

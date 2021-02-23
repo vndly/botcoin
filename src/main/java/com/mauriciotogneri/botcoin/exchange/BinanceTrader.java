@@ -38,7 +38,7 @@ public class BinanceTrader implements Trader
             }
             catch (Exception e)
             {
-                e.printStackTrace();
+                Log.error(e);
             }
         }
 

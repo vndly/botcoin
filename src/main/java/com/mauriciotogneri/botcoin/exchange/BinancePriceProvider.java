@@ -2,6 +2,7 @@ package com.mauriciotogneri.botcoin.exchange;
 
 import com.binance.api.client.BinanceApiRestClient;
 import com.binance.api.client.domain.market.TickerPrice;
+import com.mauriciotogneri.botcoin.log.Log;
 import com.mauriciotogneri.botcoin.market.Symbol;
 import com.mauriciotogneri.botcoin.provider.DataProvider;
 import com.mauriciotogneri.botcoin.provider.Price;
@@ -45,7 +46,7 @@ public class BinancePriceProvider implements DataProvider<Price>
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            Log.error(e);
 
             return new Price(
                     System.currentTimeMillis(),

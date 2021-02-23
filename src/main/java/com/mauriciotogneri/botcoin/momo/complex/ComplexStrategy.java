@@ -7,6 +7,7 @@ import com.binance.api.client.domain.account.NewOrder;
 import com.binance.api.client.domain.account.NewOrderResponse;
 import com.mauriciotogneri.botcoin.app.Botcoin;
 import com.mauriciotogneri.botcoin.exchange.Binance;
+import com.mauriciotogneri.botcoin.json.Json;
 import com.mauriciotogneri.botcoin.log.ConfigFile;
 import com.mauriciotogneri.botcoin.log.Log;
 import com.mauriciotogneri.botcoin.log.ProfitFile;
@@ -208,6 +209,8 @@ public class ComplexStrategy implements Strategy<Price>
         }
         else
         {
+            Log.error(String.format("ORDER NOT FILLED: %s", Json.toJsonString(response)));
+
             return "ERROR";
         }
     }
@@ -265,6 +268,8 @@ public class ComplexStrategy implements Strategy<Price>
         }
         else
         {
+            Log.error(String.format("ORDER NOT FILLED: %s", Json.toJsonString(response)));
+
             return "ERROR";
         }
     }

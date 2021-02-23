@@ -38,7 +38,7 @@ public class ConfigFile
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            Log.error(e);
         }
     }
 
