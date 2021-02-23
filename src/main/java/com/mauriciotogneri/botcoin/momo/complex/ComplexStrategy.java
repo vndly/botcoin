@@ -15,6 +15,7 @@ import com.mauriciotogneri.botcoin.market.Symbol;
 import com.mauriciotogneri.botcoin.momo.LogEvent;
 import com.mauriciotogneri.botcoin.provider.Price;
 import com.mauriciotogneri.botcoin.strategy.Strategy;
+import com.mauriciotogneri.botcoin.trader.FakeTrader;
 import com.mauriciotogneri.botcoin.trader.OrderSent;
 import com.mauriciotogneri.botcoin.wallet.Balance;
 
@@ -64,6 +65,8 @@ public class ComplexStrategy implements Strategy<Price>
     @Override
     public List<NewOrder> orders(@NotNull Price price)
     {
+        FakeTrader.LAST_PRICE = price.value;
+
         List<NewOrder> result = new ArrayList<>();
         configFile.load();
 

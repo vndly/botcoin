@@ -2,7 +2,6 @@ package com.mauriciotogneri.botcoin.momo.complex;
 
 import com.mauriciotogneri.botcoin.log.Log;
 import com.mauriciotogneri.botcoin.market.Symbol;
-import com.mauriciotogneri.botcoin.trader.FakeTrader;
 import com.mauriciotogneri.botcoin.wallet.Balance;
 
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +30,7 @@ public class ComplexBuyStrategy
 
         if (price.compareTo(limit) < 0)
         {
-            Log.console("[%s] Trying to buy at:  %s/%s (-%s%%)", symbol.name, price, limit, percentageDown.multiply(new BigDecimal("100")).setScale(2, RoundingMode.DOWN).toString());
+            Log.console("[%s] Price diff: %s/%s (-%s%%)", symbol.name, price, limit, percentageDown.multiply(new BigDecimal("100")).setScale(2, RoundingMode.DOWN).toString());
 
             if (percentageDown.compareTo(MIN_PERCENTAGE_DOWN) >= 0)
             {
@@ -41,7 +40,6 @@ public class ComplexBuyStrategy
 
                 if (amountToBuy.compareTo(minQuantity) >= 0)
                 {
-                    FakeTrader.LAST_PRICE = price;
                     result = amountToBuy;
                 }
             }
