@@ -1,4 +1,4 @@
-package com.mauriciotogneri.botcoin.momo.complex;
+package com.mauriciotogneri.botcoin.momo;
 
 import com.binance.api.client.domain.OrderSide;
 import com.binance.api.client.domain.OrderStatus;
@@ -13,7 +13,6 @@ import com.mauriciotogneri.botcoin.log.Log;
 import com.mauriciotogneri.botcoin.log.ProfitFile;
 import com.mauriciotogneri.botcoin.log.StatusFile;
 import com.mauriciotogneri.botcoin.market.Symbol;
-import com.mauriciotogneri.botcoin.momo.LogEvent;
 import com.mauriciotogneri.botcoin.provider.Price;
 import com.mauriciotogneri.botcoin.strategy.Strategy;
 import com.mauriciotogneri.botcoin.trader.FakeTrader;
@@ -34,8 +33,6 @@ public class ComplexStrategy implements Strategy<Price>
     private final Balance balanceA;
     private final Balance balanceB;
     private final BigDecimal minQuantity;
-    private final ComplexBuyStrategy buyStrategy;
-    private final ComplexSellStrategy sellStrategy;
     private final ConfigFile configFile;
     private final ProfitFile profitFile;
     private final StatusFile statusFile;
@@ -43,6 +40,9 @@ public class ComplexStrategy implements Strategy<Price>
     private BigDecimal allTimeHigh = BigDecimal.ZERO;
     private BigDecimal amountSpent;
     private BigDecimal amountBought;
+
+    private final BigDecimal MIN_PERCENTAGE_DOWN = new BigDecimal("0.01");
+    private final BigDecimal MIN_PERCENTAGE_UP = new BigDecimal("0.01");
 
     public ComplexStrategy(@NotNull Symbol symbol,
                            Balance balanceA,
@@ -54,8 +54,6 @@ public class ComplexStrategy implements Strategy<Price>
         this.balanceA = balanceA;
         this.balanceB = balanceB;
         this.minQuantity = minQuantity;
-        this.buyStrategy = new ComplexBuyStrategy(minQuantity);
-        this.sellStrategy = new ComplexSellStrategy();
         this.configFile = configFile;
         this.amountSpent = configFile.spent;
         this.amountBought = configFile.bought;
@@ -93,7 +91,7 @@ public class ComplexStrategy implements Strategy<Price>
                                 balanceA,
                                 balanceB);
 
-                BigDecimal amount = buyStrategy.amount(
+                BigDecimal amount = buyAmount(
                         symbol,
                         price.value,
                         limit,
@@ -115,7 +113,7 @@ public class ComplexStrategy implements Strategy<Price>
                                 balanceA,
                                 balanceB);
 
-                BigDecimal amount = sellStrategy.amount(
+                BigDecimal amount = sellAmount(
                         symbol,
                         price.value,
                         boughtPrice,
@@ -133,6 +131,47 @@ public class ComplexStrategy implements Strategy<Price>
             Log.console("[%s] Shutting down market", symbol.name);
 
             result = null;
+        }
+
+        return result;
+    }
+
+    private BigDecimal buyAmount(Symbol symbol,
+                                 @NotNull BigDecimal price,
+                                 BigDecimal limit,
+                                 BigDecimal percentageDown)
+    {
+        BigDecimal result = BigDecimal.ZERO;
+
+        if (price.compareTo(limit) < 0)
+        {
+            Log.console("[%s] Price diff: %s/%s (-%s%%)", symbol.name, price, limit, percentageDown.multiply(new BigDecimal("100")).setScale(2, RoundingMode.DOWN).toString());
+
+            if (percentageDown.compareTo(MIN_PERCENTAGE_DOWN) >= 0)
+            {
+                return minQuantity.multiply(new BigDecimal("10"));
+            }
+        }
+
+        return result;
+    }
+
+    private BigDecimal sellAmount(Symbol symbol,
+                                  @NotNull BigDecimal price,
+                                  BigDecimal boughtPrice,
+                                  BigDecimal percentageUp,
+                                  Balance balanceA)
+    {
+        BigDecimal result = BigDecimal.ZERO;
+
+        if ((price.compareTo(boughtPrice) > 0) && (boughtPrice.compareTo(BigDecimal.ZERO) > 0))
+        {
+            Log.console("[%s] Price diff: %s/%s (+%s%%)", symbol.name, price, boughtPrice, percentageUp.multiply(new BigDecimal("100")).setScale(2, RoundingMode.DOWN).toString());
+
+            if (percentageUp.compareTo(MIN_PERCENTAGE_UP) >= 0)
+            {
+                return balanceA.amount.setScale(balanceA.asset.step, RoundingMode.DOWN);
+            }
         }
 
         return result;

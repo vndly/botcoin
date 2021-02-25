@@ -14,7 +14,7 @@ import com.mauriciotogneri.botcoin.log.ProfitFile;
 import com.mauriciotogneri.botcoin.market.Market;
 import com.mauriciotogneri.botcoin.market.Symbol;
 import com.mauriciotogneri.botcoin.momo.LogEvent;
-import com.mauriciotogneri.botcoin.momo.complex.ComplexStrategy;
+import com.mauriciotogneri.botcoin.momo.ComplexStrategy;
 import com.mauriciotogneri.botcoin.provider.DataProvider;
 import com.mauriciotogneri.botcoin.provider.FilePriceProvider;
 import com.mauriciotogneri.botcoin.provider.Price;
@@ -30,6 +30,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+// TODO: use all time high as limit to calculate down percentage
 // TODO: keep track of latest balance B to not to buy more than we can
 // TODO: implement trailing when selling
 public class Botcoin
