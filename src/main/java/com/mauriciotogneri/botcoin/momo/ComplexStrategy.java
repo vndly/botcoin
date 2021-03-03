@@ -40,8 +40,8 @@ public class ComplexStrategy implements Strategy<Price>
     private BigDecimal allTimeHigh = BigDecimal.ZERO;
     private BigDecimal amountSpent;
     private BigDecimal amountBought;
-    private BigDecimal sellHighLimit;
-    private BigDecimal sellLowLimit;
+    private BigDecimal sellHighLimit = BigDecimal.ZERO;
+    private BigDecimal sellLowLimit = BigDecimal.ZERO;
 
     private final BigDecimal MIN_PERCENTAGE_DOWN = new BigDecimal("0.01");
     private final BigDecimal MIN_PERCENTAGE_UP = new BigDecimal("0.01");
@@ -123,10 +123,6 @@ public class ComplexStrategy implements Strategy<Price>
                 {
                     result = Collections.singletonList(NewOrder.marketSell(symbol.name, amount.toString()));
                 }
-            }
-            else
-            {
-                System.out.println();
             }
         }
         else
