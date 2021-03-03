@@ -78,10 +78,10 @@ public class ComplexStrategy implements Strategy<Price>
             }
 
             BigDecimal boughtPrice = boughtPrice();
+            BigDecimal limit = (amountSpent.compareTo(BigDecimal.ZERO) == 0) ? allTimeHigh : boughtPrice;
 
-            if ((amountSpent.compareTo(BigDecimal.ZERO) == 0) || (price.value.compareTo(boughtPrice) < 0))
+            if ((amountSpent.compareTo(BigDecimal.ZERO) == 0) && (price.value.compareTo(limit) < 0))
             {
-                BigDecimal limit = (amountSpent.compareTo(BigDecimal.ZERO) == 0) ? allTimeHigh : boughtPrice;
                 BigDecimal percentageDown = percentageDiff(price.value, limit);
 
                 statusFile.save(allTimeHigh,
@@ -92,7 +92,6 @@ public class ComplexStrategy implements Strategy<Price>
                                 balanceB);
 
                 BigDecimal amount = buyAmount(
-                        symbol,
                         price.value,
                         limit,
                         percentageDown);
@@ -114,16 +113,18 @@ public class ComplexStrategy implements Strategy<Price>
                                 balanceB);
 
                 BigDecimal amount = sellAmount(
-                        symbol,
                         price.value,
                         boughtPrice,
-                        percentageUp,
-                        balanceA);
+                        percentageUp);
 
                 if (amount.compareTo(minQuantity) > 0)
                 {
                     result = Collections.singletonList(NewOrder.marketSell(symbol.name, amount.toString()));
                 }
+            }
+            else
+            {
+                System.out.println();
             }
         }
         else
@@ -136,8 +137,7 @@ public class ComplexStrategy implements Strategy<Price>
         return result;
     }
 
-    private BigDecimal buyAmount(Symbol symbol,
-                                 @NotNull BigDecimal price,
+    private BigDecimal buyAmount(@NotNull BigDecimal price,
                                  BigDecimal limit,
                                  BigDecimal percentageDown)
     {
@@ -156,11 +156,9 @@ public class ComplexStrategy implements Strategy<Price>
         return result;
     }
 
-    private BigDecimal sellAmount(Symbol symbol,
-                                  @NotNull BigDecimal price,
+    private BigDecimal sellAmount(@NotNull BigDecimal price,
                                   BigDecimal boughtPrice,
-                                  BigDecimal percentageUp,
-                                  Balance balanceA)
+                                  BigDecimal percentageUp)
     {
         BigDecimal result = BigDecimal.ZERO;
 
