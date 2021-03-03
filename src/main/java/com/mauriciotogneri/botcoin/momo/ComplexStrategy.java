@@ -40,6 +40,8 @@ public class ComplexStrategy implements Strategy<Price>
     private BigDecimal allTimeHigh = BigDecimal.ZERO;
     private BigDecimal amountSpent;
     private BigDecimal amountBought;
+    private BigDecimal sellHighLimit;
+    private BigDecimal sellLowLimit;
 
     private final BigDecimal MIN_PERCENTAGE_DOWN = new BigDecimal("0.01");
     private final BigDecimal MIN_PERCENTAGE_UP = new BigDecimal("0.01");
@@ -137,7 +139,7 @@ public class ComplexStrategy implements Strategy<Price>
         return result;
     }
 
-    private BigDecimal buyAmount(@NotNull BigDecimal price,
+    private BigDecimal buyAmount(BigDecimal price,
                                  BigDecimal limit,
                                  BigDecimal percentageDown)
     {
@@ -156,7 +158,7 @@ public class ComplexStrategy implements Strategy<Price>
         return result;
     }
 
-    private BigDecimal sellAmount(@NotNull BigDecimal price,
+    private BigDecimal sellAmount(BigDecimal price,
                                   BigDecimal boughtPrice,
                                   BigDecimal percentageUp)
     {
@@ -166,7 +168,15 @@ public class ComplexStrategy implements Strategy<Price>
         {
             Log.console("[%s] Price diff: %s/%s (+%s%%)", symbol.name, price, boughtPrice, percentageUp.multiply(new BigDecimal("100")).setScale(2, RoundingMode.DOWN).toString());
 
-            if (percentageUp.compareTo(MIN_PERCENTAGE_UP) >= 0)
+            boolean firstSellLimit = (sellHighLimit.compareTo(BigDecimal.ZERO) == 0) && (percentageUp.compareTo(MIN_PERCENTAGE_UP) >= 0);
+            boolean newSellLimit = (sellHighLimit.compareTo(BigDecimal.ZERO) > 0) && (price.compareTo(sellHighLimit) > 0);
+
+            if (firstSellLimit || newSellLimit)
+            {
+                sellHighLimit = price;
+                sellLowLimit = sellHighLimit.subtract(sellHighLimit.multiply(MIN_PERCENTAGE_UP.divide(new BigDecimal("2"), balanceB.asset.decimals, RoundingMode.DOWN)));
+            }
+            else if ((sellLowLimit.compareTo(BigDecimal.ZERO) > 0) && (price.compareTo(sellLowLimit) <= 0))
             {
                 return balanceA.amount.setScale(balanceA.asset.step, RoundingMode.DOWN);
             }
@@ -298,6 +308,8 @@ public class ComplexStrategy implements Strategy<Price>
             allTimeHigh = BigDecimal.ZERO;
             amountSpent = BigDecimal.ZERO;
             amountBought = BigDecimal.ZERO;
+            sellHighLimit = BigDecimal.ZERO;
+            sellLowLimit = BigDecimal.ZERO;
 
             configFile.update(amountSpent, amountBought);
 
