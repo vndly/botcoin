@@ -80,7 +80,7 @@ public class ComplexStrategy implements Strategy<Price>
             BigDecimal boughtPrice = boughtPrice();
             BigDecimal limit = (amountSpent.compareTo(BigDecimal.ZERO) == 0) ? allTimeHigh : boughtPrice;
 
-            if ((amountSpent.compareTo(BigDecimal.ZERO) == 0) && (price.value.compareTo(limit) < 0))
+            if (price.value.compareTo(limit) < 0)
             {
                 BigDecimal percentageDown = percentageDiff(price.value, limit);
 
