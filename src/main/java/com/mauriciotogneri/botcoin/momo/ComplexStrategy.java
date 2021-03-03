@@ -171,6 +171,8 @@ public class ComplexStrategy implements Strategy<Price>
             {
                 sellHighLimit = price;
                 sellLowLimit = sellHighLimit.subtract(sellHighLimit.multiply(MIN_PERCENTAGE_UP.divide(new BigDecimal("2"), balanceB.asset.decimals, RoundingMode.DOWN)));
+
+                Log.console("[%s] New sell limit: %s/%s", symbol.name, sellHighLimit, sellLowLimit);
             }
             else if ((sellLowLimit.compareTo(BigDecimal.ZERO) > 0) && (price.compareTo(sellLowLimit) <= 0))
             {
