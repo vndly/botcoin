@@ -42,6 +42,7 @@ public class ComplexStrategy implements Strategy<Price>
     private BigDecimal amountBought;
     private BigDecimal sellHighLimit = BigDecimal.ZERO;
     private BigDecimal sellLowLimit = BigDecimal.ZERO;
+    private BigDecimal lastBoughtPrice;
 
     private final BigDecimal MIN_PERCENTAGE_DOWN = new BigDecimal("0.01");
     private final BigDecimal MIN_PERCENTAGE_UP = new BigDecimal("0.01");
@@ -59,6 +60,7 @@ public class ComplexStrategy implements Strategy<Price>
         this.configFile = configFile;
         this.amountSpent = configFile.spent;
         this.amountBought = configFile.bought;
+        this.lastBoughtPrice = new BigDecimal(Integer.MAX_VALUE);
         this.profitFile = new ProfitFile(symbol);
         this.statusFile = new StatusFile(symbol);
     }
@@ -80,7 +82,7 @@ public class ComplexStrategy implements Strategy<Price>
             }
 
             BigDecimal boughtPrice = boughtPrice();
-            BigDecimal limit = (amountSpent.compareTo(BigDecimal.ZERO) == 0) ? allTimeHigh : boughtPrice;
+            BigDecimal limit = (amountSpent.compareTo(BigDecimal.ZERO) == 0) ? allTimeHigh : lastBoughtPrice;
 
             if (price.value.compareTo(limit) < 0)
             {
@@ -236,6 +238,7 @@ public class ComplexStrategy implements Strategy<Price>
 
             amountSpent = amountSpent.add(toSpend);
             amountBought = amountBought.add(quantity);
+            lastBoughtPrice = price;
 
             configFile.update(amountSpent, amountBought);
 
@@ -306,6 +309,7 @@ public class ComplexStrategy implements Strategy<Price>
             allTimeHigh = BigDecimal.ZERO;
             amountSpent = BigDecimal.ZERO;
             amountBought = BigDecimal.ZERO;
+            lastBoughtPrice = new BigDecimal(Integer.MAX_VALUE);
             sellHighLimit = BigDecimal.ZERO;
             sellLowLimit = BigDecimal.ZERO;
 
