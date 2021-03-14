@@ -39,6 +39,8 @@ public class BinanceTrader implements Trader
             catch (Exception e)
             {
                 Log.error(e);
+                Log.error(Json.toJsonString(order));
+                Log.error("=======================================");
             }
         }
 

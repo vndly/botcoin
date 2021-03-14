@@ -37,6 +37,9 @@ public class Botcoin
 
     public static void main(String[] args)
     {
+        Log.truncate("error.txt");
+        Log.truncate("console.txt");
+
         List<Market<?>> markets = markets();
         int sleepTime = (1000 * FREQUENCY) / markets.size();
 
