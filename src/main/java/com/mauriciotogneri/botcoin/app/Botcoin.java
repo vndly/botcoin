@@ -3,7 +3,6 @@ package com.mauriciotogneri.botcoin.app;
 import com.binance.api.client.domain.account.Account;
 import com.binance.api.client.domain.general.ExchangeInfo;
 import com.binance.api.client.domain.general.FilterType;
-import com.binance.api.client.domain.general.SymbolFilter;
 import com.binance.api.client.domain.general.SymbolInfo;
 import com.mauriciotogneri.botcoin.exchange.Binance;
 import com.mauriciotogneri.botcoin.exchange.BinancePriceProvider;
@@ -13,8 +12,8 @@ import com.mauriciotogneri.botcoin.log.Log;
 import com.mauriciotogneri.botcoin.log.ProfitFile;
 import com.mauriciotogneri.botcoin.market.Market;
 import com.mauriciotogneri.botcoin.market.Symbol;
-import com.mauriciotogneri.botcoin.momo.LogEvent;
 import com.mauriciotogneri.botcoin.momo.ComplexStrategy;
+import com.mauriciotogneri.botcoin.momo.LogEvent;
 import com.mauriciotogneri.botcoin.provider.DataProvider;
 import com.mauriciotogneri.botcoin.provider.FilePriceProvider;
 import com.mauriciotogneri.botcoin.provider.Price;
@@ -87,8 +86,8 @@ public class Botcoin
         ConfigFile configFile = new ConfigFile(symbol);
 
         SymbolInfo symbolInfo = exchangeInfo.getSymbolInfo(symbol.name);
-        SymbolFilter filter = symbolInfo.getSymbolFilter(FilterType.LOT_SIZE);
-        BigDecimal minQuantity = new BigDecimal(filter.getMinQty());
+        BigDecimal minQuantity = new BigDecimal(symbolInfo.getSymbolFilter(FilterType.LOT_SIZE).getMinQty());
+        BigDecimal minLotSize = new BigDecimal(symbolInfo.getSymbolFilter(FilterType.MIN_NOTIONAL).getMinNotional());
 
         DataProvider<Price> dataProvider = TEST_MODE ?
                 new FilePriceProvider(String.format("input/prices_%s%s_ONE_MINUTE.csv", currencyA.name(), currencyB.name())) :
@@ -107,7 +106,7 @@ public class Botcoin
         BigDecimal balanceAssetB = Binance.balance(account, symbol.assetB);
         Balance balanceB = new Balance(symbol.assetB, balanceAssetB);
 
-        Strategy<Price> strategy = new ComplexStrategy(symbol, balanceA, balanceB, minQuantity, configFile);
+        Strategy<Price> strategy = new ComplexStrategy(symbol, balanceA, balanceB, minQuantity, minLotSize, configFile);
 
         Log log = new Log(String.format("output/%s/logs.json", symbol.name));
 

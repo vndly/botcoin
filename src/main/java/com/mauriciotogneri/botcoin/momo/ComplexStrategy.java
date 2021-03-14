@@ -33,6 +33,7 @@ public class ComplexStrategy implements Strategy<Price>
     private final Balance balanceA;
     private final Balance balanceB;
     private final BigDecimal minQuantity;
+    private final BigDecimal minLotSize;
     private final ConfigFile configFile;
     private final ProfitFile profitFile;
     private final StatusFile statusFile;
@@ -51,12 +52,14 @@ public class ComplexStrategy implements Strategy<Price>
                            Balance balanceA,
                            Balance balanceB,
                            BigDecimal minQuantity,
+                           BigDecimal minLotSize,
                            @NotNull ConfigFile configFile)
     {
         this.symbol = symbol;
         this.balanceA = balanceA;
         this.balanceB = balanceB;
         this.minQuantity = minQuantity;
+        this.minLotSize = minLotSize;
         this.configFile = configFile;
         this.amountSpent = configFile.spent;
         this.amountBought = configFile.bought;
@@ -100,10 +103,7 @@ public class ComplexStrategy implements Strategy<Price>
                         limit,
                         percentageDown);
 
-                if (amount.compareTo(minQuantity) > 0)
-                {
-                    result = Collections.singletonList(NewOrder.marketBuy(symbol.name, amount.toString()));
-                }
+                result = Collections.singletonList(NewOrder.marketBuy(symbol.name, amount.toString()));
             }
             else if ((amountBought.compareTo(BigDecimal.ZERO) > 0) && (price.value.compareTo(boughtPrice) > 0))
             {
@@ -121,10 +121,7 @@ public class ComplexStrategy implements Strategy<Price>
                         boughtPrice,
                         percentageUp);
 
-                if (amount.compareTo(minQuantity) > 0)
-                {
-                    result = Collections.singletonList(NewOrder.marketSell(symbol.name, amount.toString()));
-                }
+                result = Collections.singletonList(NewOrder.marketSell(symbol.name, amount.toString()));
             }
         }
         else
@@ -149,7 +146,7 @@ public class ComplexStrategy implements Strategy<Price>
 
             if (percentageDown.compareTo(MIN_PERCENTAGE_DOWN) >= 0)
             {
-                return minQuantity.multiply(new BigDecimal("10"));
+                return minQuantity.multiply(new BigDecimal("10")).max(minLotSize);
             }
         }
 
