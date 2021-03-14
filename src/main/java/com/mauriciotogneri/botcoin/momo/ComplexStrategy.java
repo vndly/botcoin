@@ -103,7 +103,10 @@ public class ComplexStrategy implements Strategy<Price>
                         limit,
                         percentageDown);
 
-                result = Collections.singletonList(NewOrder.marketBuy(symbol.name, amount.toString()));
+                if (amount.compareTo(BigDecimal.ZERO) > 0)
+                {
+                    result = Collections.singletonList(NewOrder.marketBuy(symbol.name, amount.toString()));
+                }
             }
             else if ((amountBought.compareTo(BigDecimal.ZERO) > 0) && (price.value.compareTo(boughtPrice) > 0))
             {
@@ -121,7 +124,10 @@ public class ComplexStrategy implements Strategy<Price>
                         boughtPrice,
                         percentageUp);
 
-                result = Collections.singletonList(NewOrder.marketSell(symbol.name, amount.toString()));
+                if (amount.compareTo(BigDecimal.ZERO) > 0)
+                {
+                    result = Collections.singletonList(NewOrder.marketSell(symbol.name, amount.toString()));
+                }
             }
         }
         else
