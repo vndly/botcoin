@@ -87,7 +87,7 @@ public class Botcoin
 
         SymbolInfo symbolInfo = exchangeInfo.getSymbolInfo(symbol.name);
         BigDecimal minQuantity = new BigDecimal(symbolInfo.getSymbolFilter(FilterType.LOT_SIZE).getMinQty());
-        BigDecimal minLotSize = new BigDecimal(symbolInfo.getSymbolFilter(FilterType.MIN_NOTIONAL).getMinNotional());
+        BigDecimal minNotional = new BigDecimal(symbolInfo.getSymbolFilter(FilterType.MIN_NOTIONAL).getMinNotional());
 
         DataProvider<Price> dataProvider = TEST_MODE ?
                 new FilePriceProvider(String.format("input/prices_%s%s_ONE_MINUTE.csv", currencyA.name(), currencyB.name())) :
@@ -106,7 +106,7 @@ public class Botcoin
         BigDecimal balanceAssetB = Binance.balance(account, symbol.assetB);
         Balance balanceB = new Balance(symbol.assetB, balanceAssetB);
 
-        Strategy<Price> strategy = new ComplexStrategy(symbol, balanceA, balanceB, minQuantity, minLotSize, configFile);
+        Strategy<Price> strategy = new ComplexStrategy(symbol, balanceA, balanceB, minQuantity, minNotional, configFile);
 
         Log log = new Log(String.format("output/%s/logs.json", symbol.name));
 

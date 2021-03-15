@@ -33,7 +33,7 @@ public class ComplexStrategy implements Strategy<Price>
     private final Balance balanceA;
     private final Balance balanceB;
     private final BigDecimal minQuantity;
-    private final BigDecimal minLotSize;
+    private final BigDecimal minNotional;
     private final ConfigFile configFile;
     private final ProfitFile profitFile;
     private final StatusFile statusFile;
@@ -52,14 +52,14 @@ public class ComplexStrategy implements Strategy<Price>
                            Balance balanceA,
                            Balance balanceB,
                            BigDecimal minQuantity,
-                           BigDecimal minLotSize,
+                           BigDecimal minNotional,
                            @NotNull ConfigFile configFile)
     {
         this.symbol = symbol;
         this.balanceA = balanceA;
         this.balanceB = balanceB;
         this.minQuantity = minQuantity;
-        this.minLotSize = minLotSize;
+        this.minNotional = minNotional;
         this.configFile = configFile;
         this.amountSpent = configFile.spent;
         this.amountBought = configFile.bought;
@@ -152,7 +152,10 @@ public class ComplexStrategy implements Strategy<Price>
 
             if (percentageDown.compareTo(MIN_PERCENTAGE_DOWN) >= 0)
             {
-                return minQuantity.multiply(new BigDecimal("10")).max(minLotSize);
+                BigDecimal buyAmount = minQuantity.multiply(new BigDecimal("10"));
+                BigDecimal notionalValue = buyAmount.multiply(price).max(minNotional);
+
+                return notionalValue.divide(price, balanceA.asset.step, RoundingMode.DOWN);
             }
         }
 
