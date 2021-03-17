@@ -40,7 +40,6 @@ public class BinanceTrader implements Trader
             {
                 Log.error(e);
                 Log.error(Json.toJsonString(order));
-                Log.error("=======================================");
             }
         }
 

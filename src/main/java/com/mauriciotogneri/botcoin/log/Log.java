@@ -11,6 +11,7 @@ import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.channels.FileChannel;
+import java.time.LocalDateTime;
 
 public class Log
 {
@@ -127,6 +128,7 @@ public class Log
             FileWriter fileWriter = new FileWriter(file, true);
             BufferedWriter writer = new BufferedWriter(fileWriter);
 
+            writer.write(String.format("%s%n", LocalDateTime.now().toString()));
             writer.write(String.format("%s%n%n%n", text));
             writer.flush();
             writer.close();

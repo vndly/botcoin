@@ -153,7 +153,7 @@ public class ComplexStrategy implements Strategy<Price>
             if (percentageDown.compareTo(MIN_PERCENTAGE_DOWN) >= 0)
             {
                 BigDecimal buyAmount = minQuantity.multiply(new BigDecimal("10"));
-                BigDecimal notionalValue = buyAmount.multiply(price).max(minNotional);
+                BigDecimal notionalValue = buyAmount.multiply(price).max(minNotional.multiply(new BigDecimal("1.1")));
 
                 return notionalValue.divide(price, balanceA.asset.step, RoundingMode.DOWN);
             }
