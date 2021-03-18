@@ -131,7 +131,7 @@ public class ComplexStrategy implements Strategy<Price>
             }
             else
             {
-                Log.console("[%s] Price unchanged");
+                Log.console("[%s] Price unchanged", symbol.name);
 
                 statusFile.save(allTimeHigh,
                                 boughtPrice,
