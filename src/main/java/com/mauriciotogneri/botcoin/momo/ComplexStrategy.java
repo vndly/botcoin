@@ -129,6 +129,17 @@ public class ComplexStrategy implements Strategy<Price>
                     result = Collections.singletonList(NewOrder.marketSell(symbol.name, amount.toString()));
                 }
             }
+            else
+            {
+                Log.console("[%s] Price unchanged");
+
+                statusFile.save(allTimeHigh,
+                                boughtPrice,
+                                price.value,
+                                BigDecimal.ZERO,
+                                balanceA,
+                                balanceB);
+            }
         }
         else
         {
