@@ -46,6 +46,7 @@ public class BinancePriceProvider implements DataProvider<Price>
         }
         catch (Exception e)
         {
+            Log.error("ERROR IN PRICE PROVIDER:");
             Log.error(e);
 
             return new Price(

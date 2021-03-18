@@ -31,23 +31,31 @@ public class Market<T> implements Runnable
     {
         while (dataProvider.hasData())
         {
-            T data = dataProvider.data();
-            List<NewOrder> orders = strategy.orders(data);
-
-            if (orders == null)
+            try
             {
-                break;
+                T data = dataProvider.data();
+                List<NewOrder> orders = strategy.orders(data);
+
+                if (orders == null)
+                {
+                    break;
+                }
+
+                List<OrderSent> sent = trader.process(orders);
+                List<Object> events = !sent.isEmpty() ? strategy.update(sent) : new ArrayList<>();
+
+                LogEntry logEntry = new LogEntry(data, sent, events);
+                log.jsonFile(logEntry);
+
+                if (logEntry.hasEvents())
+                {
+                    Log.jsonConsole(logEntry);
+                }
             }
-
-            List<OrderSent> sent = trader.process(orders);
-            List<Object> events = !sent.isEmpty() ? strategy.update(sent) : new ArrayList<>();
-
-            LogEntry logEntry = new LogEntry(data, sent, events);
-            log.jsonFile(logEntry);
-
-            if (logEntry.hasEvents())
+            catch (Exception e)
             {
-                Log.jsonConsole(logEntry);
+                Log.error("ERROR IN MARKET LOOP:");
+                Log.error(e);
             }
         }
     }

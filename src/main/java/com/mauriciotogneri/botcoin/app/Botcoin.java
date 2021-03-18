@@ -53,7 +53,7 @@ public class Botcoin
             }
             catch (Exception e)
             {
-                // ignore
+                Log.error(e);
             }
         }
     }
