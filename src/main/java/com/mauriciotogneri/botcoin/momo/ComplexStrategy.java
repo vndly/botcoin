@@ -155,8 +155,6 @@ public class ComplexStrategy implements Strategy<Price>
                                  BigDecimal limit,
                                  BigDecimal percentageDown)
     {
-        BigDecimal result = BigDecimal.ZERO;
-
         if (price.compareTo(limit) < 0)
         {
             Log.console("[%s] Price diff: %s/%s (-%s%%)", symbol.name, price, limit, percentageDown.multiply(new BigDecimal("100")).setScale(2, RoundingMode.DOWN).toString());
@@ -170,15 +168,13 @@ public class ComplexStrategy implements Strategy<Price>
             }
         }
 
-        return result;
+        return BigDecimal.ZERO;
     }
 
     private BigDecimal sellAmount(BigDecimal price,
                                   BigDecimal boughtPrice,
                                   BigDecimal percentageUp)
     {
-        BigDecimal result = BigDecimal.ZERO;
-
         if ((price.compareTo(boughtPrice) > 0) && (boughtPrice.compareTo(BigDecimal.ZERO) > 0))
         {
             Log.console("[%s] Price diff: %s/%s (+%s%%)", symbol.name, price, boughtPrice, percentageUp.multiply(new BigDecimal("100")).setScale(2, RoundingMode.DOWN).toString());
@@ -195,11 +191,14 @@ public class ComplexStrategy implements Strategy<Price>
             }
             else if ((sellLowLimit.compareTo(BigDecimal.ZERO) > 0) && (price.compareTo(sellLowLimit) <= 0))
             {
+                Account account = Binance.account();
+                balanceA.amount = Binance.balance(account, balanceA);
+                
                 return balanceA.amount.setScale(balanceA.asset.step, RoundingMode.DOWN);
             }
         }
 
-        return result;
+        return BigDecimal.ZERO;
     }
 
     @Override
