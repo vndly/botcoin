@@ -19,6 +19,7 @@ public class ConfigFile
     public static final String MODE_RUNNING = "running";
     public static final String MODE_STOPPED = "stopped";
     public static final String MODE_SHUTDOWN = "shutdown";
+    public static final String MODE_SELL = "sell";
 
     public ConfigFile(Symbol symbol)
     {
@@ -55,12 +56,17 @@ public class ConfigFile
 
     public boolean isRunning()
     {
-        return mode.equals(MODE_RUNNING) || mode.equals(MODE_SHUTDOWN);
+        return mode.equals(MODE_RUNNING) || mode.equals(MODE_SHUTDOWN) || mode.equals(MODE_SELL);
     }
 
-    public boolean isShutdown()
+    public boolean shouldSell()
     {
-        return mode.equals(MODE_SHUTDOWN);
+        return mode.equals(MODE_SELL);
+    }
+
+    public boolean shouldStop()
+    {
+        return mode.equals(MODE_SHUTDOWN) || mode.equals(MODE_SELL);
     }
 
     public void stop()

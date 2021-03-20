@@ -78,6 +78,16 @@ public class ComplexStrategy implements Strategy<Price>
 
         if (configFile.isRunning())
         {
+            if (configFile.shouldSell())
+            {
+                BigDecimal amount = maxSellAmount();
+
+                if (amount.compareTo(BigDecimal.ZERO) > 0)
+                {
+                    result = Collections.singletonList(NewOrder.marketSell(symbol.name, amount.toString()));
+                }
+            }
+
             if (price.value.compareTo(allTimeHigh) >= 0)
             {
                 allTimeHigh = price.value;
@@ -191,14 +201,19 @@ public class ComplexStrategy implements Strategy<Price>
             }
             else if ((sellLowLimit.compareTo(BigDecimal.ZERO) > 0) && (price.compareTo(sellLowLimit) <= 0))
             {
-                Account account = Binance.account();
-                balanceA.amount = Binance.balance(account, balanceA);
-                
-                return balanceA.amount.setScale(balanceA.asset.step, RoundingMode.DOWN);
+                return maxSellAmount();
             }
         }
 
         return BigDecimal.ZERO;
+    }
+
+    private BigDecimal maxSellAmount()
+    {
+        Account account = Binance.account();
+        balanceA.amount = Binance.balance(account, balanceA);
+
+        return balanceA.amount.setScale(balanceA.asset.step, RoundingMode.DOWN);
     }
 
     @Override
@@ -305,7 +320,7 @@ public class ComplexStrategy implements Strategy<Price>
 
             profitFile.save(profit);
 
-            if (configFile.isShutdown())
+            if (configFile.shouldStop())
             {
                 configFile.stop();
             }
