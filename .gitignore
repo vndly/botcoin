@@ -1,6 +1,7 @@
 .idea/*
 target
 *.iml
+console.txt
 error.txt
 output/
 out/
