@@ -41,8 +41,8 @@ public class LogEvent
 
     public void log(@NotNull Symbol symbol)
     {
-        Log balanceLog = new Log(balancePath(symbol));
-        balanceLog.file(lastOperationProperties());
+        Log log = new Log(balancePath(symbol));
+        log.file(lastOperationProperties());
     }
 
     public static String balancePath(@NotNull Symbol symbol)

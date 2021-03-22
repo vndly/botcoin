@@ -36,6 +36,7 @@ public class Botcoin
 
     public static void main(String[] args)
     {
+        Log.truncate("account.txt");
         Log.truncate("error.txt");
         Log.truncate("console.txt");
 

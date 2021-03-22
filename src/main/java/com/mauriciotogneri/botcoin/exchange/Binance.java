@@ -4,6 +4,7 @@ import com.binance.api.client.BinanceApiClientFactory;
 import com.binance.api.client.BinanceApiRestClient;
 import com.binance.api.client.domain.account.Account;
 import com.binance.api.client.domain.account.AssetBalance;
+import com.mauriciotogneri.botcoin.log.Log;
 import com.mauriciotogneri.botcoin.wallet.Asset;
 import com.mauriciotogneri.botcoin.wallet.Balance;
 
@@ -33,7 +34,21 @@ public class Binance
     @NotNull
     public static Account account()
     {
-        return apiClient().getAccount();
+        Account account = apiClient().getAccount();
+
+        Log log = new Log("account.txt");
+
+        for (AssetBalance balance : account.getBalances())
+        {
+            BigDecimal amount = new BigDecimal(balance.getFree());
+
+            if (amount.compareTo(BigDecimal.ZERO) != 0)
+            {
+                log.line(String.format("%s=%s%n", balance.getAsset(), amount.setScale(8, RoundingMode.DOWN).toString()));
+            }
+        }
+
+        return account;
     }
 
     @NotNull

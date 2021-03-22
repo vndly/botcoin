@@ -63,6 +63,19 @@ public class Log
         System.out.printf(var1 + "%n", var2);
     }
 
+    public void line(String data)
+    {
+        try
+        {
+            writer.write(data);
+            writer.flush();
+        }
+        catch (Exception e)
+        {
+            Log.error(e);
+        }
+    }
+
     public void file(String data)
     {
         try
