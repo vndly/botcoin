@@ -26,6 +26,7 @@ import com.mauriciotogneri.botcoin.wallet.Currency;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +40,9 @@ public class Botcoin
         Log.truncate("account.txt");
         Log.truncate("error.txt");
         Log.truncate("console.txt");
+
+        Log log = new Log("start.txt");
+        log.write(LocalDateTime.now().toString());
 
         List<Market<?>> markets = markets();
         int sleepTime = (1000 * FREQUENCY) / markets.size();
