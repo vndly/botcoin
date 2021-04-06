@@ -142,11 +142,12 @@ public class ComplexStrategy implements Strategy<Price>
             else
             {
                 Log.console("[%s] Price unchanged", symbol.name);
+                BigDecimal percentage = percentageDiff(price.value, limit);
 
                 statusFile.save(allTimeHigh,
                                 boughtPrice,
                                 price.value,
-                                BigDecimal.ZERO,
+                                percentage,
                                 balanceA,
                                 balanceB);
             }
