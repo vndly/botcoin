@@ -132,7 +132,8 @@ public class ComplexStrategy implements Strategy<Price>
                 BigDecimal amount = sellAmount(
                         price.value,
                         boughtPrice,
-                        percentageUp);
+                        percentageUp,
+                        configFile.shouldShutdown());
 
                 if (amount.compareTo(BigDecimal.ZERO) > 0)
                 {
@@ -189,25 +190,33 @@ public class ComplexStrategy implements Strategy<Price>
 
     private BigDecimal sellAmount(BigDecimal price,
                                   BigDecimal boughtPrice,
-                                  BigDecimal percentageUp)
+                                  BigDecimal percentageUp,
+                                  Boolean shouldShutdown)
     {
         if ((price.compareTo(boughtPrice) > 0) && (boughtPrice.compareTo(BigDecimal.ZERO) > 0))
         {
             Log.console("[%s] Price diff: %s/%s (+%s%%)", symbol.name, price, boughtPrice, percentageUp.multiply(new BigDecimal("100")).setScale(2, RoundingMode.DOWN).toString());
 
-            boolean firstSellLimit = (sellHighLimit.compareTo(BigDecimal.ZERO) == 0) && (percentageUp.compareTo(MIN_PERCENTAGE_UP) >= 0);
-            boolean newSellLimit = (sellHighLimit.compareTo(BigDecimal.ZERO) > 0) && (price.compareTo(sellHighLimit) > 0);
-
-            if (firstSellLimit || newSellLimit)
-            {
-                sellHighLimit = price;
-                sellLowLimit = sellHighLimit.subtract(sellHighLimit.multiply(MIN_PERCENTAGE_UP.divide(new BigDecimal("2"), balanceB.asset.decimals, RoundingMode.DOWN)));
-
-                Log.console("[%s] New sell limit: %s/%s", symbol.name, sellHighLimit, sellLowLimit);
-            }
-            else if ((sellLowLimit.compareTo(BigDecimal.ZERO) > 0) && (price.compareTo(sellLowLimit) <= 0))
+            if (shouldShutdown)
             {
                 return maxSellAmount();
+            }
+            else
+            {
+                boolean firstSellLimit = (sellHighLimit.compareTo(BigDecimal.ZERO) == 0) && (percentageUp.compareTo(MIN_PERCENTAGE_UP) >= 0);
+                boolean newSellLimit = (sellHighLimit.compareTo(BigDecimal.ZERO) > 0) && (price.compareTo(sellHighLimit) > 0);
+
+                if (firstSellLimit || newSellLimit)
+                {
+                    sellHighLimit = price;
+                    sellLowLimit = sellHighLimit.subtract(sellHighLimit.multiply(MIN_PERCENTAGE_UP.divide(new BigDecimal("2"), balanceB.asset.decimals, RoundingMode.DOWN)));
+
+                    Log.console("[%s] New sell limit: %s/%s", symbol.name, sellHighLimit, sellLowLimit);
+                }
+                else if ((sellLowLimit.compareTo(BigDecimal.ZERO) > 0) && (price.compareTo(sellLowLimit) <= 0))
+                {
+                    return maxSellAmount();
+                }
             }
         }
 

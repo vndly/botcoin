@@ -64,6 +64,11 @@ public class ConfigFile
         return mode.equals(MODE_SELL);
     }
 
+    public boolean shouldShutdown()
+    {
+        return mode.equals(MODE_SHUTDOWN);
+    }
+
     public boolean shouldStop()
     {
         return mode.equals(MODE_SHUTDOWN) || mode.equals(MODE_SELL);
