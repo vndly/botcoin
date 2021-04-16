@@ -25,6 +25,7 @@ import com.mauriciotogneri.botcoin.wallet.Currency;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -69,17 +70,17 @@ public class Botcoin
         ExchangeInfo exchangeInfo = Binance.apiClient().getExchangeInfo();
         Account account = Binance.account();
 
+        File[] symbols = new File("output").listFiles();
         List<Market<?>> markets = new ArrayList<>();
-        markets.add(market(exchangeInfo, account, Currency.ADA, Currency.BTC));
-        markets.add(market(exchangeInfo, account, Currency.BNB, Currency.BTC));
-        markets.add(market(exchangeInfo, account, Currency.DOT, Currency.BTC));
-        markets.add(market(exchangeInfo, account, Currency.EOS, Currency.BTC));
-        markets.add(market(exchangeInfo, account, Currency.ETH, Currency.BTC));
-        markets.add(market(exchangeInfo, account, Currency.GRT, Currency.BTC));
-        markets.add(market(exchangeInfo, account, Currency.LINK, Currency.BTC));
-        markets.add(market(exchangeInfo, account, Currency.LTC, Currency.BTC));
-        markets.add(market(exchangeInfo, account, Currency.XLM, Currency.BTC));
-        markets.add(market(exchangeInfo, account, Currency.XMR, Currency.BTC));
+
+        if (symbols != null)
+        {
+            for (File symbol : symbols)
+            {
+                Currency[] currencies = Currency.currencies(symbol.getName());
+                markets.add(market(exchangeInfo, account, currencies[0], currencies[1]));
+            }
+        }
 
         return markets;
     }
