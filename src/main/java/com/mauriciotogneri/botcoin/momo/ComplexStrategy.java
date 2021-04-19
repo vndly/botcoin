@@ -10,6 +10,7 @@ import com.mauriciotogneri.botcoin.exchange.Binance;
 import com.mauriciotogneri.botcoin.json.Json;
 import com.mauriciotogneri.botcoin.log.ConfigFile;
 import com.mauriciotogneri.botcoin.log.Log;
+import com.mauriciotogneri.botcoin.log.ParamsFile;
 import com.mauriciotogneri.botcoin.log.ProfitFile;
 import com.mauriciotogneri.botcoin.log.StatusFile;
 import com.mauriciotogneri.botcoin.market.Symbol;
@@ -37,6 +38,7 @@ public class ComplexStrategy implements Strategy<Price>
     private final ConfigFile configFile;
     private final ProfitFile profitFile;
     private final StatusFile statusFile;
+    private final ParamsFile paramsFile;
 
     private BigDecimal allTimeHigh = BigDecimal.ZERO;
     private BigDecimal amountSpent;
@@ -45,8 +47,10 @@ public class ComplexStrategy implements Strategy<Price>
     private BigDecimal sellLowLimit = BigDecimal.ZERO;
     private BigDecimal lastBoughtPrice;
 
-    private final BigDecimal MIN_PERCENTAGE_DOWN = new BigDecimal("0.01");
-    private final BigDecimal MIN_PERCENTAGE_UP = new BigDecimal("0.01");
+    private BigDecimal MIN_PERCENTAGE_DOWN = new BigDecimal("0.01");
+    private BigDecimal MIN_PERCENTAGE_UP = new BigDecimal("0.01");
+    private BigDecimal MIN_QUANTITY_MULTIPLIER = new BigDecimal("10");
+    private BigDecimal NOTIONAL_VALUE_MULTIPLIER = new BigDecimal("1.1");
 
     public ComplexStrategy(@NotNull Symbol symbol,
                            Balance balanceA,
@@ -66,12 +70,19 @@ public class ComplexStrategy implements Strategy<Price>
         this.lastBoughtPrice = new BigDecimal(Integer.MAX_VALUE);
         this.profitFile = new ProfitFile(symbol);
         this.statusFile = new StatusFile(symbol);
+        this.paramsFile = new ParamsFile();
     }
 
     @Override
     public List<NewOrder> orders(@NotNull Price price)
     {
         FakeTrader.LAST_PRICE = price.value;
+
+        paramsFile.load();
+        MIN_PERCENTAGE_DOWN = paramsFile.minPercentageDown;
+        MIN_PERCENTAGE_UP = paramsFile.minPercentageUp;
+        MIN_QUANTITY_MULTIPLIER = paramsFile.minQuantityMultiplier;
+        NOTIONAL_VALUE_MULTIPLIER = paramsFile.notionalValueMultiplier;
 
         List<NewOrder> result = new ArrayList<>();
         configFile.load();
@@ -178,8 +189,8 @@ public class ComplexStrategy implements Strategy<Price>
 
             if (percentageDown.compareTo(MIN_PERCENTAGE_DOWN) >= 0)
             {
-                BigDecimal buyAmount = minQuantity.multiply(new BigDecimal("10"));
-                BigDecimal notionalValue = buyAmount.multiply(price).max(minNotional.multiply(new BigDecimal("1.1")));
+                BigDecimal buyAmount = minQuantity.multiply(MIN_QUANTITY_MULTIPLIER);
+                BigDecimal notionalValue = buyAmount.multiply(price).max(minNotional.multiply(NOTIONAL_VALUE_MULTIPLIER));
 
                 return notionalValue.divide(price, balanceA.asset.step, RoundingMode.DOWN);
             }
