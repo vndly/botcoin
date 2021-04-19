@@ -74,11 +74,18 @@ public class ComplexStrategy implements Strategy<Price>
     }
 
     @Override
+    public Boolean isRunning()
+    {
+        configFile.load();
+
+        return configFile.isRunning();
+    }
+
+    @Override
     public List<NewOrder> orders(@NotNull Price price)
     {
         FakeTrader.LAST_PRICE = price.value;
         List<NewOrder> result = new ArrayList<>();
-        configFile.load();
 
         if (configFile.isRunning())
         {
