@@ -33,7 +33,7 @@ import java.util.List;
 
 public class Botcoin
 {
-    public static final Boolean TEST_MODE = true;
+    public static final Boolean TEST_MODE = Boolean.parseBoolean(System.getenv("TEST_MODE"));
     private static final Integer FREQUENCY = 10; // in seconds
 
     public static void main(String[] args)
