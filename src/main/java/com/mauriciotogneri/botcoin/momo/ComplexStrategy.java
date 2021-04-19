@@ -87,93 +87,90 @@ public class ComplexStrategy implements Strategy<Price>
         FakeTrader.LAST_PRICE = price.value;
         List<NewOrder> result = new ArrayList<>();
 
-        if (configFile.isRunning())
+        paramsFile.load();
+        MIN_PERCENTAGE_DOWN = paramsFile.minPercentageDown;
+        MIN_PERCENTAGE_UP = paramsFile.minPercentageUp;
+        MIN_QUANTITY_MULTIPLIER = paramsFile.minQuantityMultiplier;
+        NOTIONAL_VALUE_MULTIPLIER = paramsFile.notionalValueMultiplier;
+
+        if (configFile.shouldSell())
         {
-            paramsFile.load();
-            MIN_PERCENTAGE_DOWN = paramsFile.minPercentageDown;
-            MIN_PERCENTAGE_UP = paramsFile.minPercentageUp;
-            MIN_QUANTITY_MULTIPLIER = paramsFile.minQuantityMultiplier;
-            NOTIONAL_VALUE_MULTIPLIER = paramsFile.notionalValueMultiplier;
+            BigDecimal amount = maxSellAmount();
 
-            if (configFile.shouldSell())
+            if (amount.compareTo(BigDecimal.ZERO) > 0)
             {
-                BigDecimal amount = maxSellAmount();
+                return Collections.singletonList(NewOrder.marketSell(symbol.name, amount.toString()));
+            }
+        }
 
-                if (amount.compareTo(BigDecimal.ZERO) > 0)
-                {
-                    return Collections.singletonList(NewOrder.marketSell(symbol.name, amount.toString()));
-                }
+        if (price.value.compareTo(allTimeHigh) >= 0)
+        {
+            allTimeHigh = price.value;
+            Log.console("[%s] New all time high: %s", symbol.name, allTimeHigh);
+        }
+
+        BigDecimal boughtPrice = boughtPrice();
+        BigDecimal limit = (amountSpent.compareTo(BigDecimal.ZERO) == 0) ? allTimeHigh : lastBoughtPrice;
+
+        if (price.value.compareTo(limit) < 0)
+        {
+            BigDecimal percentageDown = percentageDiff(price.value, limit);
+
+            statusFile.save(allTimeHigh,
+                            boughtPrice,
+                            price.value,
+                            percentageDown.negate(),
+                            balanceA,
+                            balanceB);
+
+            BigDecimal amount = buyAmount(
+                    price.value,
+                    limit,
+                    percentageDown);
+
+            if (amount.compareTo(BigDecimal.ZERO) > 0)
+            {
+                result = Collections.singletonList(NewOrder.marketBuy(symbol.name, amount.toString()));
+            }
+        }
+        else if ((amountBought.compareTo(BigDecimal.ZERO) > 0) && (price.value.compareTo(boughtPrice) > 0))
+        {
+            BigDecimal percentageUp = percentageDiff(price.value, boughtPrice);
+
+            statusFile.save(allTimeHigh,
+                            boughtPrice,
+                            price.value,
+                            percentageUp,
+                            balanceA,
+                            balanceB);
+
+            BigDecimal amount = sellAmount(
+                    price.value,
+                    boughtPrice,
+                    percentageUp,
+                    configFile.shouldShutdown());
+
+            if (amount.compareTo(BigDecimal.ZERO) > 0)
+            {
+                result = Collections.singletonList(NewOrder.marketSell(symbol.name, amount.toString()));
+            }
+        }
+        else
+        {
+            Log.console("[%s] Price unchanged", symbol.name);
+            BigDecimal percentage = (boughtPrice.compareTo(BigDecimal.ZERO) != 0) ? percentageDiff(price.value, boughtPrice) : BigDecimal.ZERO;
+
+            if ((percentage.compareTo(BigDecimal.ZERO) != 0) && (price.value.compareTo(boughtPrice) < 0))
+            {
+                percentage = percentage.negate();
             }
 
-            if (price.value.compareTo(allTimeHigh) >= 0)
-            {
-                allTimeHigh = price.value;
-                Log.console("[%s] New all time high: %s", symbol.name, allTimeHigh);
-            }
-
-            BigDecimal boughtPrice = boughtPrice();
-            BigDecimal limit = (amountSpent.compareTo(BigDecimal.ZERO) == 0) ? allTimeHigh : lastBoughtPrice;
-
-            if (price.value.compareTo(limit) < 0)
-            {
-                BigDecimal percentageDown = percentageDiff(price.value, limit);
-
-                statusFile.save(allTimeHigh,
-                                boughtPrice,
-                                price.value,
-                                percentageDown.negate(),
-                                balanceA,
-                                balanceB);
-
-                BigDecimal amount = buyAmount(
-                        price.value,
-                        limit,
-                        percentageDown);
-
-                if (amount.compareTo(BigDecimal.ZERO) > 0)
-                {
-                    result = Collections.singletonList(NewOrder.marketBuy(symbol.name, amount.toString()));
-                }
-            }
-            else if ((amountBought.compareTo(BigDecimal.ZERO) > 0) && (price.value.compareTo(boughtPrice) > 0))
-            {
-                BigDecimal percentageUp = percentageDiff(price.value, boughtPrice);
-
-                statusFile.save(allTimeHigh,
-                                boughtPrice,
-                                price.value,
-                                percentageUp,
-                                balanceA,
-                                balanceB);
-
-                BigDecimal amount = sellAmount(
-                        price.value,
-                        boughtPrice,
-                        percentageUp,
-                        configFile.shouldShutdown());
-
-                if (amount.compareTo(BigDecimal.ZERO) > 0)
-                {
-                    result = Collections.singletonList(NewOrder.marketSell(symbol.name, amount.toString()));
-                }
-            }
-            else
-            {
-                Log.console("[%s] Price unchanged", symbol.name);
-                BigDecimal percentage = (boughtPrice.compareTo(BigDecimal.ZERO) != 0) ? percentageDiff(price.value, boughtPrice) : BigDecimal.ZERO;
-
-                if ((percentage.compareTo(BigDecimal.ZERO) != 0) && (price.value.compareTo(boughtPrice) < 0))
-                {
-                    percentage = percentage.negate();
-                }
-
-                statusFile.save(allTimeHigh,
-                                boughtPrice,
-                                price.value,
-                                percentage,
-                                balanceA,
-                                balanceB);
-            }
+            statusFile.save(allTimeHigh,
+                            boughtPrice,
+                            price.value,
+                            percentage,
+                            balanceA,
+                            balanceB);
         }
 
         return result;
