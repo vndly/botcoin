@@ -35,12 +35,6 @@ public class Market<T> implements Runnable
             {
                 T data = dataProvider.data();
                 List<NewOrder> orders = strategy.orders(data);
-
-                if (orders == null)
-                {
-                    break;
-                }
-
                 List<OrderSent> sent = trader.process(orders);
                 List<Object> events = !sent.isEmpty() ? strategy.update(sent) : new ArrayList<>();
 

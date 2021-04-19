@@ -77,25 +77,24 @@ public class ComplexStrategy implements Strategy<Price>
     public List<NewOrder> orders(@NotNull Price price)
     {
         FakeTrader.LAST_PRICE = price.value;
-
-        paramsFile.load();
-        MIN_PERCENTAGE_DOWN = paramsFile.minPercentageDown;
-        MIN_PERCENTAGE_UP = paramsFile.minPercentageUp;
-        MIN_QUANTITY_MULTIPLIER = paramsFile.minQuantityMultiplier;
-        NOTIONAL_VALUE_MULTIPLIER = paramsFile.notionalValueMultiplier;
-
         List<NewOrder> result = new ArrayList<>();
         configFile.load();
 
         if (configFile.isRunning())
         {
+            paramsFile.load();
+            MIN_PERCENTAGE_DOWN = paramsFile.minPercentageDown;
+            MIN_PERCENTAGE_UP = paramsFile.minPercentageUp;
+            MIN_QUANTITY_MULTIPLIER = paramsFile.minQuantityMultiplier;
+            NOTIONAL_VALUE_MULTIPLIER = paramsFile.notionalValueMultiplier;
+
             if (configFile.shouldSell())
             {
                 BigDecimal amount = maxSellAmount();
 
                 if (amount.compareTo(BigDecimal.ZERO) > 0)
                 {
-                    result = Collections.singletonList(NewOrder.marketSell(symbol.name, amount.toString()));
+                    return Collections.singletonList(NewOrder.marketSell(symbol.name, amount.toString()));
                 }
             }
 
@@ -168,12 +167,6 @@ public class ComplexStrategy implements Strategy<Price>
                                 balanceA,
                                 balanceB);
             }
-        }
-        else
-        {
-            Log.console("[%s] Shutting down market", symbol.name);
-
-            result = null;
         }
 
         return result;
