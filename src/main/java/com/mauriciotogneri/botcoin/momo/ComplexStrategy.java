@@ -189,7 +189,7 @@ public class ComplexStrategy implements Strategy<Price>
                 BigDecimal buyAmount = minQuantity.multiply(MIN_QUANTITY_MULTIPLIER);
                 BigDecimal notionalValue = buyAmount.multiply(price).max(minNotional.multiply(NOTIONAL_VALUE_MULTIPLIER));
 
-                return notionalValue.divide(price, balanceA.asset.step, RoundingMode.DOWN);
+                return notionalValue.divide(price, balanceA.asset.step, RoundingMode.UP);
             }
         }
 
