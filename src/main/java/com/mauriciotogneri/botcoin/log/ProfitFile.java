@@ -28,5 +28,6 @@ public class ProfitFile
 
         Log log = new Log(path);
         log.write(total.setScale(8, RoundingMode.DOWN).toString());
+        log.close();
     }
 }

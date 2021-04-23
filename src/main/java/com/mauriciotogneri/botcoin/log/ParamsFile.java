@@ -1,6 +1,7 @@
 package com.mauriciotogneri.botcoin.log;
 
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.Properties;
 
@@ -15,8 +16,10 @@ public class ParamsFile
     {
         try
         {
+            InputStream inputStream = new FileInputStream("params.properties");
             Properties properties = new Properties();
-            properties.load(new FileInputStream("params.properties"));
+            properties.load(inputStream);
+            inputStream.close();
 
             minPercentageDown = new BigDecimal(properties.getProperty("MIN_PERCENTAGE_DOWN"));
             minPercentageUp = new BigDecimal(properties.getProperty("MIN_PERCENTAGE_UP"));

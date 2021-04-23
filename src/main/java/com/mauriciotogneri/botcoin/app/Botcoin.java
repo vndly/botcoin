@@ -44,6 +44,7 @@ public class Botcoin
 
         Log log = new Log("start.txt");
         log.write(LocalDateTime.now().toString());
+        log.close();
 
         List<Market<?>> markets = markets();
         int sleepTime = (1000 * FREQUENCY) / markets.size();

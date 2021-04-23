@@ -5,6 +5,7 @@ import com.mauriciotogneri.botcoin.market.Symbol;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Properties;
@@ -36,8 +37,10 @@ public class ConfigFile
     {
         try
         {
+            InputStream inputStream = new FileInputStream(path(symbol));
             Properties properties = new Properties();
-            properties.load(new FileInputStream(path(symbol)));
+            properties.load(inputStream);
+            inputStream.close();
 
             mode = properties.getProperty("MODE");
             spent = new BigDecimal(properties.getProperty("SPENT"));
@@ -102,7 +105,8 @@ public class ConfigFile
     {
         Log log = new Log(path(symbol));
         log.write(String.format("MODE=%s%n", mode));
-        log.write(String.format("SPENT=%s%n", spent.setScale(8, RoundingMode.DOWN).toString()));
-        log.write(String.format("BOUGHT=%s", bought.setScale(8, RoundingMode.DOWN).toString()));
+        log.write(String.format("SPENT=%s%n", spent.setScale(8, RoundingMode.DOWN)));
+        log.write(String.format("BOUGHT=%s", bought.setScale(8, RoundingMode.DOWN)));
+        log.close();
     }
 }

@@ -44,9 +44,11 @@ public class Binance
 
             if (amount.compareTo(BigDecimal.ZERO) != 0)
             {
-                log.line(String.format("%s=%s%n", balance.getAsset(), amount.setScale(8, RoundingMode.DOWN).toString()));
+                log.line(String.format("%s=%s%n", balance.getAsset(), amount.setScale(8, RoundingMode.DOWN)));
             }
         }
+
+        log.close();
 
         return account;
     }

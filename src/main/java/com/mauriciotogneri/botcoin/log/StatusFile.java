@@ -46,5 +46,6 @@ public class StatusFile
 
         Log log = new Log(path);
         log.write(builder.toString());
+        log.close();
     }
 }

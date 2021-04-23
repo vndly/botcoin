@@ -43,6 +43,7 @@ public class LogEvent
     {
         Log log = new Log(balancePath(symbol));
         log.file(lastOperationProperties());
+        log.close();
     }
 
     public static String balancePath(@NotNull Symbol symbol)

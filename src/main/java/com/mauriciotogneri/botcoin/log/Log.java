@@ -151,4 +151,17 @@ public class Log
             e.printStackTrace();
         }
     }
+
+    public void close()
+    {
+        try
+        {
+            writer.flush();
+            writer.close();
+        }
+        catch (Exception e)
+        {
+            // ignore
+        }
+    }
 }
